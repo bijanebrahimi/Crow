@@ -88,6 +88,7 @@ class InfoHandler(tornado.web.RequestHandler):
                 instance_refresh()
                 user_info = core.INSTANCE['conn'].users_show()
             
+                core.INSTANCE['history']['info']['user']['id'] = user_info['id']
                 core.INSTANCE['history']['info']['user']['avatar'] = user_info['profile_image_url']
                 core.INSTANCE['history']['info']['user']['nickname'] = user_info['screen_name']
                 core.INSTANCE['history']['info']['user']['name'] = user_info['name']
@@ -229,8 +230,12 @@ class HomeHandler(tornado.web.RequestHandler):
             pynotify.init("Crow")
             for notice in home_timeline:
                 if notice['text']:
-                    Hello = pynotify.Notification (notice['user']['screen_name'], notice['text'], "dialog-information")
-                    Hello.show ()
+                    # TODO: set priority for being mensioned
+                    if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
+                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                    # TODO: prevent from notification flooding
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                    notification.show()
             core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
 
         if core.INSTANCE['history']['home_timeline']['first_id'] is None:
