@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=480, initial-scale=1.0">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="/static/css/main.css" rel="stylesheet" media="screen">
+        <link rel="shortcut icon" href="/static/img/favicon.png" />
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12 well" style="margin-top: 20px;">
+                    <legend>Please Sign In</legend>
+                    <div id='login-form'>
+                        <input type="text" id="username" class="span12" name="username" placeholder="Username">
+                        <input type="password" id="password" class="span12" name="password" placeholder="Password">
+                        <button type="submit" id="login-btn" class="btn btn-info btn-block" data-loading-text="Signing in ...">Sign in</button>
+                    </div>    
+                </div>
+            </div>
+        </div>
+        <script>
+            var SETTINGS = { 'api': {'login': '/account/login'}}
+        </script>
+        <script src="/static/js/jquery-2.0.3.min.js"></script>
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/static/js/core.js"></script>
+        <script src="/static/js/events.js"></script>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+*.pyc
+*.geany
+*~
+
+*.zip
+*.tar.gz

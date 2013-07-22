@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Crow :: Statusnet client</title>
+        <meta name="viewport" content="width=480, initial-scale=1.0">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="/static/css/main.css" rel="stylesheet" media="screen">
+        <link rel="shortcut icon" href="/static/img/favicon.png" />
+    </head>
+    <body ><!-- data-toggle="context" data-target="#context-menu-app" -->
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div id='status-form' class="well span12 pull-left">
+                    <textarea id='status-textarea' class='span12' type='text' placeholder="Your Status"></textarea>
+                    <!--<select class='pull-left span6'>
+                                            <option>Everyone</option>
+                                        </select>-->
+                    <label id="status-length-limit" class='pull-left'>0</label>
+                    <div class="btn-group pull-right">
+                        <button id='status-send-btn' class="btn" data-loading-text="Send ...">Send</button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li id='status-plugin-shorturl'><a class="app-link" href="#"><i class='icon icon-plus'></i> Shorten my links</a></li>
+                            <li id='status-plugin-bidi'><a class="app-link" href="#"><i class='icon icon-plus'></i> BiDirectional Status</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="timeline">
+                    <div id="timeline-navbar" class="navbar span12 subnav">
+                        <div class="navbar-inner">
+                            <div class="container">
+                                <a class="app-link brand" href="#">
+                                    <img class='avatar thumbnail' src=''>
+                                </a>
+                                <ul class="nav">
+                                    <li class="active"><a class="app-link" href="#">Home</a></li>
+                                </ul>
+                                <ul class="nav pull-right">
+                                    <li>
+                                        <a class="app-link" href="#">
+                                            <img class='loading' src="/static/img/ajax.gif">
+                                        </a>
+                                    </li>
+                                    <li class="dropdown" id="status-streams">
+                                        <a href="#" role="button" class="app-link dropdown-toggle" data-toggle="dropdown">
+                                            <b class="icon icon-comment"></b>
+                                            <i></i>
+                                        </a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+                                            <li class="divider"></li>
+                                            <li><a class="app-link empty" tabindex="-1" href="#"><i class='icon icon-trash'></i>Empty</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="timeline-container">
+                        <div id="timeline-content"></div>
+                        <div id="timeline-replies"></div>
+                        <div id="timeline-"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var DEBUG = []
+            var GLOBAL = []
+            var SETTINGS = {'api': {'login': '/account/login',
+                                    'info': '/account/info',
+                                    'home': '/statuses/home',
+                                    'conversation': '/statuses/conversation',
+                                    'update': '/statuses/update',
+                                    'repeat': '/statuses/repeat',
+                                    'reply': '/statuses/reply',
+                                    
+                                    'plugin_short_url': '/plugins/short_url',
+                                    'plugin_force_url': '/plugins/force_rtl'},
+                            'status_length_limit': 0,
+                            'stream_count': 0,
+                            'app': { 'title': 'Crow :: Statusnet client'}}
+        </script>
+        <script src="/static/js/jquery-2.0.3.min.js"></script>
+        
+        <script src="/static/js/date.js"></script>
+        <script src="/static/js/jquery.timeago.js"></script>
+        <script src="/static/js/moment.min.js"></script>
+        <script src="/static/js/livestamp.min.js"></script>
+        
+        
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/static/js/bootstrap-contextmenu.js"></script>
+        <script src="/static/js/template.js"></script>
+        <script src="/static/js/core.js"></script>
+        <script src="/static/js/events.js"></script>
+        <!-- Context Menu -->
+        <!--
+        <div id="context-menu-app">
+            <ul class="dropdown-menu" role="menu">
+                <li><a tabindex="-1" href="#">copy link location</a></li>
+                <li><a tabindex="-1" href="#">copy link text</a></li>
+            </ul>
+        </div>
+        -->
+    </body>
+</html>
