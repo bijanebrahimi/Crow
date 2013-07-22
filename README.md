@@ -7,16 +7,16 @@ Install
 
 ### Requirements?
 
-crow contains a small web server written in *python* and the reset is HTML and Javascript.
+crow contains a small web server written in *python 2.7+* and the reset is HTML and Javascript.
 
-#### Debian baseds
+#### Debian & Ubuntu Friends
 
         sudo apt-get install python-pip
         sudo pip install tornado
 
 #### Fedora
 
-        sudo yum install python pip
+        sudo yum install python-pip
         sudo python-pip install tornado
 
 Run
