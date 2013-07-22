@@ -3,6 +3,8 @@
 # from python
 import json
 import tornado.web
+import pynotify
+
 
 # from application
 import core
@@ -207,31 +209,36 @@ class HomeHandler(tornado.web.RequestHandler):
             self.write('home failed')
     
     def post(self):
-        try:
-            event = self.get_argument("event")
-            home_timeline = []
-            
-            instance_refresh()
-            if core.INSTANCE['history']['home_timeline']['last_id']:
-                if event == 'refresh' and core.INSTANCE['history']['notices']:
-                    home_timeline = core.INSTANCE['history']['notices']
-                else:
-                    print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
-                    home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
-                    core.INSTANCE['history']['notices'] += home_timeline
+        # try:
+        event = self.get_argument("event")
+        home_timeline = []
+        
+        instance_refresh()
+        if core.INSTANCE['history']['home_timeline']['last_id']:
+            if event == 'refresh' and core.INSTANCE['history']['notices']:
+                home_timeline = core.INSTANCE['history']['notices']
             else:
-                home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
-                core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
+                print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
+                home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
+                core.INSTANCE['history']['notices'] += home_timeline
+        else:
+            home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
+            core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
 
-            if home_timeline:
-                core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
+        if home_timeline:
+            pynotify.init("Crow")
+            for notice in home_timeline:
+                if notice['text']:
+                    Hello = pynotify.Notification (notice['user']['screen_name'], notice['text'], "dialog-information")
+                    Hello.show ()
+            core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
 
-            if core.INSTANCE['history']['home_timeline']['first_id'] is None:
-                core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
+        if core.INSTANCE['history']['home_timeline']['first_id'] is None:
+            core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
 
-            self.write(json.dumps({'success': True, 'home_timeline': parse_notices(home_timeline)}))
-        except:
-            self.write(json.dumps({'success': False, 'error': 'Failed to get home timeline'}))
+        self.write(json.dumps({'success': True, 'home_timeline': parse_notices(home_timeline)}))
+        # except:
+            # self.write(json.dumps({'success': False, 'error': 'Failed to get home timeline'}))
 
 # Status
 class UpdateHandler(tornado.web.RequestHandler):
