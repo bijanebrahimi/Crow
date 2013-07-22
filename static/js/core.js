@@ -44,6 +44,7 @@ function get_info(){
 }
 
 function timeline_update(seconds, event){
+    var interval = seconds
     if(!event)
         event = ''
     $('#timeline-navbar .navbar-inner ul li a img.loading').fadeIn(200)
@@ -59,7 +60,8 @@ function timeline_update(seconds, event){
                'failed': function(){ },
                'always': function(){
                     $('#timeline-navbar .navbar-inner ul li a img.loading').fadeOut(200)
-                    if(seconds)
-                        setTimeout(function(){ console.log('updating...'); timeline_update(); }, seconds)
+                    // console.log('updating [' + intervalinterval + ']')
+                    if(interval)
+                        setTimeout(function(){ console.log('updating...'); timeline_update(interval); }, interval)
                }})
 }
