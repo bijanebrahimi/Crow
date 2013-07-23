@@ -94,14 +94,21 @@ function _notice_form(notice){
 }
 function _notice_thumbnails(notice){
     attachments = ''
-    console.log('attachment')
-    if (notice.attachments)
+    if (notice.attachments){
+        console.log('attachment', notice.attachments)
         for(j=0; j<notice.attachments.length; j++){
-            console.log('attachment here')
+            // console.log(notice.attachments[j])
             // TODO: check for other types of attachments, like videos maybe?
-            attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
-            // attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
+            mimetype = notice.attachments[j].mimetype
+            if (mimetype.match(/^image/)){
+                attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
+            }else if (mimetype.match(/^text/)){
+                attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
+            }else{
+                attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
+            }
         }
+    }
     return attachments
 }
 
