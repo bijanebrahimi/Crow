@@ -240,15 +240,17 @@ class HomeHandler(tornado.web.RequestHandler):
             instance_refresh()
             if core.INSTANCE['history']['home_timeline']['last_id']:
                 if event == 'refresh' and core.INSTANCE['history']['notices']:
+                    print 'from cache'
                     home_timeline = core.INSTANCE['history']['notices']
                 else:
                     print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
                     home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
-                    core.INSTANCE['history']['notices'] += home_timeline
+                    tmp = home_timeline + core.INSTANCE['history']['notices']
+                    core.INSTANCE['history']['notices'] += sorted(tmp, key=lambda k: k['id'], reverse=True)
             else:
                 home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
-                # core.INSTANCE['history']['notices'] += home_timeline
-                core.INSTANCE['history']['notices'] = sorted(core.INSTANCE['history']['notices'] + home_timeline, key=lambda k: k['id'], reverse=True)
+                tmp = home_timeline + core.INSTANCE['history']['notices']
+                core.INSTANCE['history']['notices'] += sorted(tmp, key=lambda k: k['id'], reverse=True)
 
             if home_timeline:
                 core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
