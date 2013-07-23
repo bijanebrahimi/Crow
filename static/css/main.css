@@ -56,6 +56,7 @@ a.text-html.hide{
 #status-streams ul{
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 #status-streams ul li a{
     padding: 5px;
