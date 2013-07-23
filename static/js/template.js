@@ -92,7 +92,7 @@ function _notice_form(notice){
                 </div>\
             </div>'
 }
-function _notice_thumbnails(notice){
+function _notice_attachments(notice){
     attachments = ''
     if (notice.attachments){
         console.log('attachment', notice.attachments)
@@ -103,7 +103,8 @@ function _notice_thumbnails(notice){
             if (mimetype.match(/^image/)){
                 attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
             }else if (mimetype.match(/^text/)){
-                attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
+                attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                // attachments += '<button class="btn btn-mini btn-info">more</button>'
             }else{
                 attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
             }
@@ -139,7 +140,7 @@ function template_html_timeline_notice(notice, unique_conversation){
                             <img src="' + notice.user.profile_image_url + '">\
                             <span">' + notice.statusnet_html + '</span>\
                         </p>\
-                        ' + _notice_thumbnails(notice) + '\
+                        ' + _notice_attachments(notice) + '\
                     </div>\
                     <span class="info">' + _notice_metadata(notice) + _notice_action(notice, unique_conversation) + '</span>\
                     ' + _notice_form(notice) + '\

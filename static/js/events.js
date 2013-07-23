@@ -279,7 +279,30 @@ $(document).ready(function(){
             $(element_id).animate({opacity: 0.3}, 500, function(){ $(this).css('opacity', 1) })
         }
     })
-
+    $(document).on('click', 'a.attachment.more', function(e){
+        e.preventDefault()
+        button = $(this)
+        notice_paragraph = $(this).parents("p:first")
+        notice_content = $(notice_paragraph).children(':not(img:first)')
+        url = $(notice_paragraph).siblings('.attachments.text-html').attr('href')
+        
+        button.attr('data-loading-text', 'loading').button('loading')
+        ajax_post(SETTINGS['api']['attachment_text_html'],
+                  {'url': url},
+                  {'success': function(response){
+                        DEBUG = response
+                        $(notice_content).replaceWith(response.content)
+                    },
+                   'error': function(response){
+                        console.log(response)
+                    },
+                   'failed': function(){},
+                   'always': function(){
+                        button.button('reset')
+                    },
+                  })
+    })
+    
     $('a.brand').click(function(e){
         e.preventDefault()
         $('body').animate({scrollTop: 0}, '500', 'swing')

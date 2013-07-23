@@ -189,6 +189,27 @@ class ConversationHandler(tornado.web.RequestHandler):
     def get(self):
         pass
 
+class AttachmentHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        pass
+
+    def post(self):
+        response = {'success': False, 'content': '', 'error': ''}
+        try:
+            import urllib
+            import re
+            url = self.get_argument("url")
+            html = urllib.urlopen(url).read()
+            body = re.search(r"<body>(.*)</body>", html).groups()[0]
+            response['content'] = body
+            response['success'] = True
+        except:
+            response['error'] = 'failed to get info'
+        self.write(json.dumps(response))
+
+    def get(self):
+        pass
+
 
 # Pages
 class HomeHandler(tornado.web.RequestHandler):
@@ -210,41 +231,41 @@ class HomeHandler(tornado.web.RequestHandler):
             self.write('home failed')
     
     def post(self):
-        # try:
-        event = self.get_argument("event")
-        home_timeline = []
-        
-        instance_refresh()
-        if core.INSTANCE['history']['home_timeline']['last_id']:
-            if event == 'refresh' and core.INSTANCE['history']['notices']:
-                home_timeline = core.INSTANCE['history']['notices']
+        try:
+            event = self.get_argument("event")
+            home_timeline = []
+            
+            instance_refresh()
+            if core.INSTANCE['history']['home_timeline']['last_id']:
+                if event == 'refresh' and core.INSTANCE['history']['notices']:
+                    home_timeline = core.INSTANCE['history']['notices']
+                else:
+                    print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
+                    home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
+                    core.INSTANCE['history']['notices'] += home_timeline
             else:
-                print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
-                home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
-                core.INSTANCE['history']['notices'] += home_timeline
-        else:
-            home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
-            core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
+                home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
+                core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
 
-        if home_timeline:
-            core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
-            if len(home_timeline) < 10:
-                pynotify.init("Crow")
-                notification = None
-                for notice in home_timeline:
-                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-                    if notice['text'] and notification:
-                        if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
-                            notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                        # TODO: prevent from notification flooding
-                        notification.show()
+            if home_timeline:
+                core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
+                if len(home_timeline) < 10:
+                    pynotify.init("Crow")
+                    notification = None
+                    for notice in home_timeline:
+                        notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                        if notice['text'] and notification:
+                            if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
+                                notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                            # TODO: prevent from notification flooding
+                            notification.show()
 
-        if core.INSTANCE['history']['home_timeline']['first_id'] is None:
-            core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
+            if core.INSTANCE['history']['home_timeline']['first_id'] is None:
+                core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
 
-        self.write(json.dumps({'success': True, 'home_timeline': parse_notices(home_timeline)}))
-        # except:
-            # self.write(json.dumps({'success': False, 'error': 'Failed to get home timeline'}))
+            self.write(json.dumps({'success': True, 'home_timeline': parse_notices(home_timeline)}))
+        except:
+            self.write(json.dumps({'success': False, 'error': 'Failed to get home timeline'}))
 
 # Status
 class UpdateHandler(tornado.web.RequestHandler):

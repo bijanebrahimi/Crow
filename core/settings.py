@@ -22,6 +22,8 @@ ROUTS = [
     (r'/statuses/repeat', statusnet.RepeatHandler),
     (r'/statuses/reply', statusnet.ReplyHandler),
     
+    (r'/attachment/text_html', statusnet.AttachmentHandler),
+    
     (r'/plugins/short_url', statusnet.PluginShorturl),
     (r'/plugins/force_rtl', statusnet.PluginBiDi),
     
