@@ -227,16 +227,17 @@ class HomeHandler(tornado.web.RequestHandler):
             core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
 
         if home_timeline:
-            pynotify.init("Crow")
-            for notice in home_timeline:
-                if notice['text']:
-                    # TODO: set priority for being mensioned
-                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-                    if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
-                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                    # TODO: prevent from notification flooding
-                    notification.show()
             core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
+            if len(home_timeline) < 10:
+                pynotify.init("Crow")
+                notification = None
+                for notice in home_timeline:
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                    if notice['text'] and notification:
+                        if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
+                            notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                        # TODO: prevent from notification flooding
+                        notification.show()
 
         if core.INSTANCE['history']['home_timeline']['first_id'] is None:
             core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
