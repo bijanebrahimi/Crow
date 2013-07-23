@@ -43,7 +43,6 @@ a.text-html.hide{
 }
 
 #status-form textarea{
-    resize: none;
 }
 #status-form #status-length-limit{
     color: #717171;
@@ -171,7 +170,6 @@ div.notice-form textarea{
     height: 60px;
     margin: 0px;
     padding: 0px;
-    resize: none;
 }
 div.notice-form .btn-group{
     margin-top: 5px;
