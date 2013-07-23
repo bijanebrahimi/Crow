@@ -27,10 +27,17 @@ function get_info(){
     ajax_post(SETTINGS['api']['info'],
         {},
         {'success': function(response){
+            SETTINGS['info']['user'] = response.user
+            SETTINGS['info']['server'] = response.server
             console.log(response)
-            $('#timeline-navbar .navbar-inner .brand .avatar').attr('src', response.user.avatar)
-            SETTINGS['status_length_limit'] = response.server.length_limit
-            $('#status-length-limit').html(SETTINGS['status_length_limit'])
+            
+            $('#timeline-navbar .navbar-inner .brand .avatar').attr('src', SETTINGS['info']['user'].avatar)
+            // SETTINGS['status_length_limit'] = response.server.length_limit
+            $('#status-length-limit').html(SETTINGS['info']['server']['length_limit'])
+            
+            // $("textarea").autoSuggest(SETTINGS['info']['user']['friends'],
+                // {selectedItemProp: "screen_name",
+                 // searchObjProps: "screen_name"});
         },
         'error': function(response){
             console.log(response)

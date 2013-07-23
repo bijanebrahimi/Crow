@@ -5,7 +5,8 @@ function template_html_alert(type, text){
 function _notice_time(notice){
     absolute_time = notice.created_at
     timestamp = Date.parse(notice.created_at) / 1000
-    relative_time = dateFormat("mmmm d, yyyy HH")
+    relative_time = 'What'
+    // relative_time = dateFormat("mmmm d, yyyy HH")
     return '<span data-livestamp="' + timestamp + '">' + relative_time + '</span>'
     // return '<abbr class="timeago" datetime="' + absolute_time + '">' + relative_time + '</abbr>'
 }

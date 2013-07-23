@@ -108,9 +108,9 @@ $(document).ready(function(){
     
     // Status TexArea
     $('#status-textarea').keyup(function(e){
-        if (SETTINGS['status_length_limit'] > 0){
+        if (SETTINGS['info']['server']['length_limit'] > 0){
             status = $(this).val();
-            $('#status-length-limit').html(SETTINGS['status_length_limit'] - status.length)
+            $('#status-length-limit').html(SETTINGS['info']['server']['length_limit'] - status.length)
         }
     });
     $('#status-textarea').keypress(function(e){
@@ -187,7 +187,7 @@ $(document).ready(function(){
         screen_name = $(reply_textarea).attr('data-screenname')
         if($(reply_textarea).attr('data-action') == 'reply' || !$(reply_textarea).is(":visible"))
             $(reply_form).toggle()
-        $(reply_textarea).val('@'+screen_name+' ').attr('data-action', 'reply')
+        $(reply_textarea).focus().val('@'+screen_name+' ').attr('data-action', 'reply')
         
         DEBUG = $(this)
     })
@@ -214,18 +214,20 @@ $(document).ready(function(){
         }
     })
     $(document).on('keyup', '.notice-form textarea', function(){
-        if (SETTINGS['status_length_limit'] > 0){
+        if (SETTINGS['info']['server']['length_limit'] > 0){
             status = $(this).val();
-            $(this).siblings('.btn-group').children('.btn[disabled="disabled"]').html(SETTINGS['status_length_limit'] - status.length)
+            $(this).siblings('.btn-group').children('.btn[disabled="disabled"]').html(SETTINGS['info']['server']['length_limit'] - status.length)
         }
     })
     $(document).on('keypress', '.notice-form textarea', function(e){
         if (e.keyCode == 13) {
-            if($(this).attr('data-action') == 'repeat'){
-                
-            }else{
-                
-            }
+            // TODO
+            // $(this).siblings('.btn-group').children('.btn')
+            // if($(this).attr('data-action') == ''){
+                // 
+            // }else{
+                // 
+            // }
             // $('#status-send-btn').trigger('click')
             return false
         }
@@ -254,6 +256,7 @@ $(document).ready(function(){
                        $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
                     },
                    'always': function(){
+                       $(textarea).parent().toogle()
                        $(button).button('reset');
                    },
                   })
