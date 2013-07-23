@@ -231,10 +231,10 @@ class HomeHandler(tornado.web.RequestHandler):
             for notice in home_timeline:
                 if notice['text']:
                     # TODO: set priority for being mensioned
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
                     if core.INSTANCE['history']['info']['user']['id'] == notice['in_reply_to_user_id']:
                         notification.set_urgency(pynotify.URGENCY_CRITICAL)
                     # TODO: prevent from notification flooding
-                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
                     notification.show()
             core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
 

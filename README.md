@@ -11,12 +11,12 @@ crow contains a small web server written in *python 2.7+* and the reset is HTML 
 
 #### Debian & Ubuntu Friends
 
-        sudo apt-get install python-pip
+        sudo apt-get install python-pip python-notify
         sudo pip install tornado
 
 #### Fedora
 
-        sudo yum install python-pip
+        sudo yum install python-pip python-notify
         sudo python-pip install tornado
 
 Run
