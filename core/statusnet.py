@@ -94,6 +94,7 @@ class InfoHandler(tornado.web.RequestHandler):
                 core.INSTANCE['history']['info']['user']['name'] = user_info['name']
                 core.INSTANCE['history']['info']['user']['utc_offset'] = user_info['utc_offset']
                 core.INSTANCE['history']['info']['user']['profile_url'] = user_info['statusnet_profile_url']
+                core.INSTANCE['history']['info']['user']['friends'] = core.INSTANCE['conn'].statuses_friends(user_id=core.INSTANCE['history']['info']['user']['id'])
                 core.INSTANCE['history']['info']['server']['length_limit'] = core.INSTANCE['conn'].length_limit
                 
                 response['user'] = core.INSTANCE['history']['info']['user']
@@ -181,6 +182,7 @@ class ConversationHandler(tornado.web.RequestHandler):
             instance_refresh()
             conversation = self.get_argument("conversation")
             response['conversation'] = parse_notices(core.INSTANCE['conn'].statusnet_conversation(conversation))
+            core.INSTANCE['history']['notices'] = sorted(core.INSTANCE['history']['notices'] + response['conversation'], key=lambda k: k['id'], reverse=True)
             response['success'] = True
         except:
             response['error'] = 'failed to get info'
@@ -245,7 +247,8 @@ class HomeHandler(tornado.web.RequestHandler):
                     core.INSTANCE['history']['notices'] += home_timeline
             else:
                 home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
-                core.INSTANCE['history']['notices'] = home_timeline + core.INSTANCE['history']['notices']
+                # core.INSTANCE['history']['notices'] += home_timeline
+                core.INSTANCE['history']['notices'] = sorted(core.INSTANCE['history']['notices'] + home_timeline, key=lambda k: k['id'], reverse=True)
 
             if home_timeline:
                 core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
