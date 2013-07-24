@@ -5,8 +5,7 @@ function template_html_alert(type, text){
 function _notice_time(notice){
     absolute_time = notice.created_at
     timestamp = Date.parse(notice.created_at) / 1000
-    relative_time = 'What'
-    // relative_time = dateFormat("mmmm d, yyyy HH")
+    relative_time = notice.created_at
     return '<span data-livestamp="' + timestamp + '">' + relative_time + '</span>'
     // return '<abbr class="timeago" datetime="' + absolute_time + '">' + relative_time + '</abbr>'
 }
@@ -62,12 +61,19 @@ function _notice_favorites(notice){
         // html_metadata = '<span class="favoriteds">' + html_metadata + ' liked it</span>'
     // }
 }
+function _notice_repeated(notice){
+    if(notice.retweeted_status){
+        return '<br><span class="repeated"> repeated by ' + notice.user.screen_name + '</span>'
+    }
+    return '';
+}
 function _notice_metadata(notice){
     return '<div class="metadata">\
                 ' + _notice_time(notice) + '\
                 ' + _notice_source(notice.source) + '\
                 ' + _notice_context(notice) + '\
                 ' + _notice_favorites(notice) + '\
+                ' + _notice_repeated(notice) + '\
             </div>'
 }
 function _notice_action(notice, unique_conversation){
