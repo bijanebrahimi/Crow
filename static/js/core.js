@@ -31,7 +31,7 @@ function login(){
     ajax_post(SETTINGS['api']['login'],
               {'username': username, 'password': password},
               {'success': function(response){
-                    // window.location = response.redirect
+                    window.location = response.redirect
                },
                'error': function(response){
                     console.log(response)
