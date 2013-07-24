@@ -67,7 +67,7 @@ function get_info(){
                 SETTINGS['info']['user']['friends_list'][i]['type'] = 'friend'
             }
             
-            _jquery_plugin_mentioninput($('textarea:first'))
+            _jquery_plugin_mentioninput()
         },
         'error': function(response){
             console.log(response)
