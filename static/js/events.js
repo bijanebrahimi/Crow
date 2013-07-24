@@ -118,7 +118,7 @@ $(document).ready(function(){
         e.preventDefault()
         notice = $(this).parent().parent().parent().parent().attr('data-notice')
         reply_form = $(this).parent().parent().parent().children('.notice-form')
-        reply_textarea = $(reply_form).children('textarea')
+        reply_textarea = $(reply_form).find('textarea')
         
         screen_name = $(reply_textarea).attr('data-screenname')
         if($(reply_textarea).attr('data-action') == 'reply' || !$(reply_textarea).is(":visible"))
