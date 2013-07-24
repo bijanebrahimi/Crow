@@ -31,27 +31,13 @@ $(document).ready(function(){
     get_info()
     
     // Login Page
+    $('input[name=username], input[name=password]').keyup(function(e){
+        if (e.keyCode == 13) {
+            login()
+        }
+    })
     $('#login-btn').click(function(){
-        button = this
-        $(button).button('loading')
-        username = $('input[name=username]').val()
-        password = $('input[name=password]').val()
-        $('.well .alert').fadeOut(200).remove()
-        ajax_post(SETTINGS['api']['login'],
-                  {'username': username, 'password': password},
-                  {'success': function(response){
-                        window.location = response.redirect
-                   },
-                   'error': function(response){
-                        $(template_html_alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
-                   },
-                   'failed': function(){
-                        $(template_html_alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
-                    },
-                   'always': function(){
-                        $(button).button('reset')
-                   },
-                  })
+        login()
     });
     
     // Plugins

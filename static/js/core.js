@@ -22,6 +22,29 @@ function ajax_post(url, data, callbacks){
     });
 }
 
+function login(){
+    button = $('#login-btn')
+    $(button).button('loading')
+    username = $('input[name=username]').val()
+    password = $('input[name=password]').val()
+    $('.well .alert').fadeOut(200).remove()
+    ajax_post(SETTINGS['api']['login'],
+              {'username': username, 'password': password},
+              {'success': function(response){
+                    // window.location = response.redirect
+               },
+               'error': function(response){
+                    console.log(response)
+                    $(template_html_alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
+               },
+               'failed': function(){
+                    $(template_html_alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
+                },
+               'always': function(){
+                    $(button).button('reset')
+               },
+              })
+}
 function get_info(){
     $('#timeline-navbar .navbar-inner ul li a img.loading').fadeIn(200)
     ajax_post(SETTINGS['api']['info'],
