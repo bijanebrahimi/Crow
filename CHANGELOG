@@ -11,3 +11,5 @@ version 0.0.2
     - many small javascript UI improvements
     - fixed: showing duplicated notices
     
+version 0.0.2-1
+    - fixed textbox getting blank when new notices arrives

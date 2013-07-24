@@ -1,13 +1,16 @@
 function _jquery_plugin_mentioninput(html){
     if(!html)
         html = $('body')
-    $(html).find('textarea').mentionsInput({
-        onDataRequest:function (mode, query, callback) {
-            var data = SETTINGS['info']['user']['friends_list']
-            data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-            callback.call(this, data);
-        }
-    });
+    textarea = $(html).find('textarea').each(function(){
+        if(!$(this).attr('data-mentions-input'))
+            $(this).mentionsInput({
+                onDataRequest:function (mode, query, callback) {
+                    var data = SETTINGS['info']['user']['friends_list']
+                    data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                    callback.call(this, data);
+                }
+            });
+    })
 }
 
 function template_html_alert(type, text){
