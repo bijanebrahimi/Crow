@@ -143,7 +143,7 @@ function _notice_attachments(notice){
 
 function template_html_stream_notice(notice){
     return '<li class="stream-item">\
-                <a class="app-link" tabindex="-1" href="#status-home-' + notice.id + '">\
+                <a class="app-link" tabindex="-1" href="#status-home-' + notice.id + '" title="' + notice.text + '">\
                     <img class="icon" src="' + notice.user.profile_image_url + '" width=24px>\
                     ' + notice.user.screen_name + ', ' + _notice_time(notice) + '\
                 </a>\
