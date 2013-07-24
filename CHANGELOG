@@ -1,0 +1,13 @@
+version 0.0.1
+    - project started
+
+version 0.0.2
+    - added desktop notification (pynotify)
+    - added desktop notification highlight support
+    - added mention suggestion/autocompletion after @
+    - add mimetype check for notices attachments
+    - added text/html attachment loading via ajax
+    - keep retrieved notices in memory (sorted)
+    - many small javascript UI improvements
+    - fixed: showing duplicated notices
+    
