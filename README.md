@@ -31,7 +31,7 @@ or clone the code:
 
         mkdir crow
         cd crow
-        git clone git@github.com:bijanebrahimi/Crow.git
+        git clone git@github.com:bijanebrahimi/Crow.git ./
 
 crows uses html as GUI so you need to run it on your browser. 
 first you need to run the server.
