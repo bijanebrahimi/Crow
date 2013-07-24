@@ -5,16 +5,17 @@ import json
 import tornado.web
 import pynotify
 
-
 # from application
 import core
 import config
 from libs import StatusNet
 
+CACHE = {'instance': None, 'notices':[], 'last_id': None, 'first_id': None}
+
 def instance_refresh():
-    if core.INSTANCE['conn'] is None:
+    if CACHE['instance'] is None:
         print 'AUTHENTICATING ...'
-        core.INSTANCE['conn'] = StatusNet(config.STATUSNET['api_path'],
+        CACHE['instance'] = StatusNet(config.STATUSNET['api_path'],
                                           core.INSTANCE['username'],
                                           core.INSTANCE['password'])
         print 'AUTHENTICATED'
@@ -58,15 +59,15 @@ class LoginHandler(tornado.web.RequestHandler):
             self.write('failed')
 
     def post(self):
-        username = self.get_argument("username")
-        password = self.get_argument("password")
         try:
+            username = self.get_argument("username")
+            password = self.get_argument("password")
             if username == '':
                 self.write(json.dumps({'success': False, 'error': 'please enter your username'}))
             elif password == '':
                 self.write(json.dumps({'success': False, 'error': 'please enter your password'}))
             else:
-                core.INSTANCE['conn'] = StatusNet(config.STATUSNET['api_path'], username, password)
+                CACHE['instance'] = StatusNet(config.STATUSNET['api_path'], username, password)
                 core.INSTANCE['username'] = username
                 core.INSTANCE['password'] = password
                 self.write(json.dumps({'success': True, 'redirect': '/statuses/home'}))
@@ -86,7 +87,7 @@ class InfoHandler(tornado.web.RequestHandler):
                 response['server'] = core.INSTANCE['history']['info']['server']
             else:
                 instance_refresh()
-                user_info = core.INSTANCE['conn'].users_show()
+                user_info = CACHE['instance'].users_show()
             
                 core.INSTANCE['history']['info']['user']['id'] = user_info['id']
                 core.INSTANCE['history']['info']['user']['avatar'] = user_info['profile_image_url']
@@ -94,8 +95,8 @@ class InfoHandler(tornado.web.RequestHandler):
                 core.INSTANCE['history']['info']['user']['name'] = user_info['name']
                 core.INSTANCE['history']['info']['user']['utc_offset'] = user_info['utc_offset']
                 core.INSTANCE['history']['info']['user']['profile_url'] = user_info['statusnet_profile_url']
-                core.INSTANCE['history']['info']['user']['friends'] = core.INSTANCE['conn'].statuses_friends(user_id=core.INSTANCE['history']['info']['user']['id'])
-                core.INSTANCE['history']['info']['server']['length_limit'] = core.INSTANCE['conn'].length_limit
+                core.INSTANCE['history']['info']['user']['friends'] = CACHE['instance'].statuses_friends(user_id=core.INSTANCE['history']['info']['user']['id'])
+                core.INSTANCE['history']['info']['server']['length_limit'] = CACHE['instance'].length_limit
                 
                 response['user'] = core.INSTANCE['history']['info']['user']
                 response['server'] = core.INSTANCE['history']['info']['server']
@@ -181,8 +182,9 @@ class ConversationHandler(tornado.web.RequestHandler):
         try:
             instance_refresh()
             conversation = self.get_argument("conversation")
-            response['conversation'] = parse_notices(core.INSTANCE['conn'].statusnet_conversation(conversation))
-            core.INSTANCE['history']['notices'] = sorted(core.INSTANCE['history']['notices'] + response['conversation'], key=lambda k: k['id'], reverse=True)
+            response['conversation'] = parse_notices(CACHE['instance'].statusnet_conversation(conversation))
+            tmp = CACHE['notices'] + response['conversation']
+            CACHE['notices'] = sorted(tmp, key=lambda k: k['id'], reverse=True)
             response['success'] = True
         except:
             response['error'] = 'failed to get info'
@@ -220,7 +222,7 @@ class HomeHandler(tornado.web.RequestHandler):
 
     def get(self):
         content = ''
-        if core.INSTANCE['conn'] is None:
+        if CACHE['instance'] is None:
             self.redirect("/account/login")
             return True
 
@@ -233,27 +235,25 @@ class HomeHandler(tornado.web.RequestHandler):
             self.write('home failed')
     
     def post(self):
+        global CACHE
         try:
             event = self.get_argument("event")
+            instance_refresh()
             home_timeline = []
             
-            instance_refresh()
-            if core.INSTANCE['history']['home_timeline']['last_id']:
-                if event == 'refresh' and core.INSTANCE['history']['notices']:
-                    print 'from cache'
-                    home_timeline = core.INSTANCE['history']['notices']
+            if CACHE['last_id']:
+                if event == 'refresh' and CACHE['notices']:
+                    home_timeline = CACHE['notices']
                 else:
-                    print "since: %s" % core.INSTANCE['history']['home_timeline']['last_id']
-                    home_timeline = core.INSTANCE['conn'].statuses_home_timeline(since_id=core.INSTANCE['history']['home_timeline']['last_id'])
-                    tmp = home_timeline + core.INSTANCE['history']['notices']
-                    core.INSTANCE['history']['notices'] += sorted(tmp, key=lambda k: k['id'], reverse=True)
+                    home_timeline = CACHE['instance'].statuses_home_timeline(since_id=CACHE['last_id'])
+                    tmp = home_timeline + CACHE['notices']
+                    CACHE['notices'] = sorted(tmp, key=lambda k: k['id'], reverse=True)
             else:
-                home_timeline = core.INSTANCE['conn'].statuses_home_timeline(count=40)
-                tmp = home_timeline + core.INSTANCE['history']['notices']
-                core.INSTANCE['history']['notices'] += sorted(tmp, key=lambda k: k['id'], reverse=True)
+                home_timeline = CACHE['instance'].statuses_home_timeline(count=40)
+                CACHE['notices'] = home_timeline
 
             if home_timeline:
-                core.INSTANCE['history']['home_timeline']['last_id'] = home_timeline[0]['id']
+                CACHE['last_id'] = home_timeline[0]['id']
                 if len(home_timeline) < 10:
                     pynotify.init("Crow")
                     notification = None
@@ -265,8 +265,8 @@ class HomeHandler(tornado.web.RequestHandler):
                             # TODO: prevent from notification flooding
                             notification.show()
 
-            if core.INSTANCE['history']['home_timeline']['first_id'] is None:
-                core.INSTANCE['history']['home_timeline']['first_id'] = home_timeline[len(home_timeline)-1]['id']
+            if CACHE['first_id'] is None:
+                CACHE['first_id'] = home_timeline[len(home_timeline)-1]['id']
 
             self.write(json.dumps({'success': True, 'home_timeline': parse_notices(home_timeline)}))
         except:
@@ -284,7 +284,7 @@ class UpdateHandler(tornado.web.RequestHandler):
         status = self.get_argument("status")
         try:
             instance_refresh()
-            status_update = core.INSTANCE['conn'].statuses_update(status, source=core.APPLICATION['source'], in_reply_to_status_id=0, latitude=-200, longitude=-200, place_id="", display_coordinates=False, long_dent="split", dup_first_word=False)
+            status_update = CACHE['instance'].statuses_update(status, source=core.APPLICATION['source'], in_reply_to_status_id=0, latitude=-200, longitude=-200, place_id="", display_coordinates=False, long_dent="split", dup_first_word=False)
             self.write(json.dumps({'success': True, 'notice': parse_notices([status_update])}))
         except:
             self.write(json.dumps({'success': False, 'error': 'Failed to update the status'}))
@@ -302,7 +302,7 @@ class RepeatHandler(tornado.web.RequestHandler):
             # status = self.get_argument("status")
             notice = self.get_argument("notice")
             instance_refresh()
-            status_repeat = core.INSTANCE['conn'].statuses_retweet(notice, source=core.APPLICATION['source'])
+            status_repeat = CACHE['instance'].statuses_retweet(notice, source=core.APPLICATION['source'])
             self.write(json.dumps({'success': True, 'notice': parse_notices([status_repeat])}))
         except:
             self.write(json.dumps({'success': False, 'error': 'Failed to repeat status'}))
@@ -320,7 +320,7 @@ class ReplyHandler(tornado.web.RequestHandler):
             status = self.get_argument("status")
             notice = self.get_argument("notice")
             instance_refresh()
-            status_reply = core.INSTANCE['conn'].statuses_update(status, source="Crow", in_reply_to_status_id=notice, latitude=-200, longitude=-200, place_id="", display_coordinates=False, long_dent="split", dup_first_word=False)
+            status_reply = CACHE['instance'].statuses_update(status, source="Crow", in_reply_to_status_id=notice, latitude=-200, longitude=-200, place_id="", display_coordinates=False, long_dent="split", dup_first_word=False)
             self.write(json.dumps({'success': True, 'notice': parse_notices([status_reply])}))
         except:
             self.write(json.dumps({'success': False, 'error': 'Failed to reply to status'}))
