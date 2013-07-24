@@ -51,8 +51,7 @@ $(document).ready(function(){
     $(document).on('keypress', 'textarea', function(e){
         if (e.keyCode == 13) {
             $(this).parent().parent().siblings('.btn-group').children('.btn.send').click()
-            console.log('here')
-            console.log($(this).parent().parent().siblings('.btn-group'))
+            return false
         }
     })
     
