@@ -55,12 +55,19 @@ function get_info(){
             console.log(response)
             
             $('#timeline-navbar .navbar-inner .brand .avatar').attr('src', SETTINGS['info']['user'].avatar)
-            // SETTINGS['status_length_limit'] = response.server.length_limit
             $('#status-length-limit').html(SETTINGS['info']['server']['length_limit'])
             
-            // $("textarea").autoSuggest(SETTINGS['info']['user']['friends'],
-                // {selectedItemProp: "screen_name",
-                 // searchObjProps: "screen_name"});
+            SETTINGS['info']['user']['friends_list'] = []
+            for(i=SETTINGS['info']['user']['friends'].length-1; i>=0; i--){
+                friend = SETTINGS['info']['user']['friends'][i]
+                SETTINGS['info']['user']['friends_list'][i] = {}
+                SETTINGS['info']['user']['friends_list'][i]['id'] = friend['id']
+                SETTINGS['info']['user']['friends_list'][i]['name'] = friend['screen_name']
+                SETTINGS['info']['user']['friends_list'][i]['avatar'] = friend['profile_image_url']
+                SETTINGS['info']['user']['friends_list'][i]['type'] = 'friend'
+            }
+            
+            _jquery_plugin_mentioninput($('textarea:first'))
         },
         'error': function(response){
             console.log(response)

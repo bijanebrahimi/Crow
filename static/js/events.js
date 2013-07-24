@@ -40,57 +40,6 @@ $(document).ready(function(){
         login()
     });
     
-    // Plugins
-    $('#status-plugin-shorturl').click(function(e){
-        e.stopPropagation()
-        e.preventDefault()
-        button = $(this)
-        status = $('#status-textarea').val()
-        $(button).find('.icon').addClass('icon-loading')
-        
-        ajax_post(SETTINGS['api']['plugin_short_url'],
-                  {'status': status},
-                  {'success': function(response){ $('#status-textarea').val(response.status) },
-                   'error': function(response){},
-                   'failed': function(){},
-                   'always': function(){ $(button).find('.icon').removeClass('icon-loading') },
-                  })
-    })
-    $('#status-plugin-bidi').click(function(e){
-        e.stopPropagation()
-        e.preventDefault()
-        button = $(this)
-        status = $('#status-textarea').val()
-        $(button).find('.icon').addClass('icon-loading')
-        
-        ajax_post(SETTINGS['api']['plugin_force_url'],
-                  {'status': status, 'action': 'force'},
-                  {'success': function(response){
-                        if(response.rtl && response.status)
-                            $('#status-textarea').val(response.status)
-                    },
-                   'error': function(response){},
-                   'failed': function(){},
-                   'always': function(){ $(button).find('.icon').removeClass('icon-loading') },
-                  })
-    })
-    $('#status-textarea').keyup(function(e){
-        if (e.keyCode == 32) {
-            status = $(this).val()
-            ajax_post(SETTINGS['api']['plugin_force_url'],
-                      {'status': status, 'action': 'check'},
-                      {'success': function(response){
-                            if(response.rtl)
-                                $('#status-textarea').css('direction', 'rtl')
-                            else
-                                $('#status-textarea').css('direction', 'ltr')
-                        },
-                       'error': function(response){},
-                       'failed': function(){},
-                       'always': function(){},
-                      })
-        }
-    });
     
     // Status TexArea
     $('#status-textarea').keyup(function(e){
@@ -218,34 +167,81 @@ $(document).ready(function(){
             return false
         }
     })
-    $(document).on('click', '.notice-form .btn-group .btn', function(e){
+    $(document).on('click', '.notice-form .btn-group .btn.send', function(e){
         button = this;
         $(button).button('loading');
-        textarea = $(button).parent().siblings('textarea')
+        form = $(button).parent().parent()
+        textarea = $(button).parent().parent().find('textarea')
 
-        action = $(textarea).attr('data-action')
+        console.log(textarea)
         status = $(textarea).val()
         notice = $(textarea).attr('data-notice')
-        ajax_post(SETTINGS['api'][action],
-                  {'status': status, 'notice': notice},
-                  {'success': function(response){
-                        DEBUG = response
-                        html = $('#timeline-content')
-                        template_timeline_notices(response.notice, html)
-                        $(textarea).val('')
-                   },
-                   'error': function(response){
-                       console.log(response)
-                       // $(bs_html_alert('error', response['error'])).insertAfter('.well > legend');
-                   },
-                   'failed': function(){
-                       $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
-                    },
-                   'always': function(){
-                       $(textarea).parent().toogle()
-                       $(button).button('reset');
-                   },
-                  })
+        if(status)
+            ajax_post(SETTINGS['api']['reply'],
+                      {'status': status, 'notice': notice},
+                      {'success': function(response){
+                            DEBUG = response
+                            html = $('#timeline-content')
+                            template_timeline_notices(response.notice, html)
+                            $(textarea).val('')
+                       },
+                       'error': function(response){
+                           console.log(response)
+                           // $(bs_html_alert('error', response['error'])).insertAfter('.well > legend');
+                       },
+                       'failed': function(){
+                           $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
+                        },
+                       'always': function(){
+                           form.toggle()
+                           $(button).button('reset');
+                       },
+                      })
+    })
+    $(document).on('click', '.status-plugin-shorturl', function(e){
+        console.log('short url')
+        e.stopPropagation()
+        e.preventDefault()
+        button = $(this)
+        // status = $('#status-textarea').val()
+        textarea = $(this).parent().parent().parent().find('textarea:first')
+        status = $(textarea).val()
+        
+        if(status){
+            $(button).find('.icon').addClass('icon-loading')
+            ajax_post(SETTINGS['api']['plugin_short_url'],
+                      {'status': status},
+                      {'success': function(response){
+                          $(textarea).val(response.status)
+                        },
+                       'error': function(response){},
+                       'failed': function(){},
+                       'always': function(){ $(button).find('.icon').removeClass('icon-loading') },
+                      })
+        }
+    })
+    $(document).on('click', '.status-plugin-forcertl', function(e){
+        console.log('force rtl')
+        e.stopPropagation()
+        e.preventDefault()
+        button = $(this)
+        // status = $('#status-textarea').val()
+        textarea = $(button).parent().parent().parent().find('textarea:first')
+        status = $(textarea).val()
+        console.log(button)
+        console.log(textarea)
+        if(status){
+            $(button).find('.icon').addClass('icon-loading')
+            ajax_post(SETTINGS['api']['plugin_force_url'],
+                      {'status': status},
+                      {'success': function(response){
+                            $(textarea).val(response.status)
+                        },
+                       'error': function(response){},
+                       'failed': function(){},
+                       'always': function(){ $(button).find('.icon').removeClass('icon-loading') },
+                      })
+        }
     })
     
     $(document).on('click', '#status-streams ul li a', function(e){

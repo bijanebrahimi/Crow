@@ -25,7 +25,7 @@ ROUTS = [
     (r'/attachment/text_html', statusnet.AttachmentHandler),
     
     (r'/plugins/short_url', statusnet.PluginShorturl),
-    (r'/plugins/force_rtl', statusnet.PluginBiDi),
+    (r'/plugins/force_rtl', statusnet.PluginForceRTL),
     
     (r"/static/(.*)", tornado.web.StaticFileHandler, dict(path=SETTINGS['static_path'])),
 ]

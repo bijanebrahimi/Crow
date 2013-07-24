@@ -5,13 +5,16 @@
         <meta name="viewport" content="width=480, initial-scale=1.0">
         <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="/static/css/main.css" rel="stylesheet" media="screen">
+        <link href="/static/css/jquery.mentionsInput.css" rel="stylesheet" media="screen">
         <link rel="shortcut icon" href="/static/img/favicon.png" />
     </head>
     <body ><!-- data-toggle="context" data-target="#context-menu-app" -->
         <div class="container-fluid">
-            <div class="row-fluid">
+            <div class="row-fluid" style="overflow-x: hidden;">
                 <div id='status-form' class="well span12 pull-left">
-                    <textarea id='status-textarea' class='span12' type='text' placeholder="Your Status"></textarea>
+                    <div>
+                        <textarea id='status-textarea' class='span12' type='text' placeholder="Your Status"></textarea>
+                    </div>
                     <!--<select class='pull-left span6'>
                                             <option>Everyone</option>
                                         </select>-->
@@ -23,7 +26,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li id='status-plugin-shorturl'><a class="app-link" href="#"><i class='icon icon-plus'></i> Shorten my links</a></li>
-                            <li id='status-plugin-bidi'><a class="app-link" href="#"><i class='icon icon-plus'></i> BiDirectional Status</a></li>
+                            <li id='status-plugin-forcertl'><a class="app-link" href="#"><i class='icon icon-plus'></i> Force RTL</a></li>
                         </ul>
                     </div>
                 </div>
@@ -88,6 +91,9 @@
         <script src="/static/js/jquery-2.0.3.min.js"></script>
         <script src="/static/js/moment.min.js"></script>
         <script src="/static/js/livestamp.min.js"></script>
+        <script src="/static/js/underscore-min.js"></script>
+        <script src="/static/js/jquery.elastic.js"></script>
+        <script src="/static/js/jquery.mentionsInput.js"></script>
         
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         

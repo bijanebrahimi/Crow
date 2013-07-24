@@ -137,11 +137,10 @@ class PluginShorturl(tornado.web.RequestHandler):
         except:
             self.write(json.dumps({'success': False, 'error': 'failed to shorten url'}))
 
-class PluginBiDi(tornado.web.RequestHandler):
+class PluginForceRTL(tornado.web.RequestHandler):
     def initialize(self):
         pass
 
-    
     def force_rtl(self, status):
         # TODO: do if only it's not there
         if status[0] != u"\u202b":
@@ -151,7 +150,6 @@ class PluginBiDi(tornado.web.RequestHandler):
     def force_ltr(self, status):
         import re
         return re.sub(ur"(^[\u202b]*)", "", status)
-        
 
     def get(self):
         pass
@@ -160,16 +158,15 @@ class PluginBiDi(tornado.web.RequestHandler):
         response = {'success': False, 'rtl': False, 'status': None}
         try:
             status = self.get_argument("status")
-            action = self.get_argument("action")
             response['rtl'] = is_rtl(status)
-            if response['rtl'] and action == 'force':
+            if response['rtl']:
                 response['status'] = self.force_rtl(status)
-            elif not response['rtl'] and action == 'force':
+            else:
                 response['status'] = self.force_ltr(status)
             response['success'] = True
+            self.write(json.dumps(response))
         except:
             self.write(json.dumps({'success': False, 'error': 'failed to shorten url'}))
-        self.write(json.dumps(response))
 
 
 # Conversation

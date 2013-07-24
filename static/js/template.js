@@ -1,3 +1,15 @@
+function _jquery_plugin_mentioninput(html){
+    if(!html)
+        html = $('body')
+    $(html).find('textarea').mentionsInput({
+        onDataRequest:function (mode, query, callback) {
+            var data = SETTINGS['info']['user']['friends_list']
+            data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+            callback.call(this, data);
+        }
+    });
+}
+
 function template_html_alert(type, text){
     return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
 }
@@ -92,10 +104,19 @@ function _notice_action(notice, unique_conversation){
 }
 function _notice_form(notice){
     return '<div class="notice-form">\
-                <textarea data-notice="' + notice.id + '" data-screenname="' + notice.user.screen_name + '" data-text="' + notice.text + '"></textarea>\
+                <div>\
+                    <textarea data-notice="' + notice.id + '" data-screenname="' + notice.user.screen_name + '" data-text="' + notice.text + '"></textarea>\
+                </div>\
                 <div class="btn-group">\
                     <button class="btn" disabled="disabled">140</button>\
-                    <button class="btn" data-loading-text="Sending ...">Send</button>\
+                    <button class="btn send" data-loading-text="Sending ...">Send</button>\
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">\
+                        <span class="caret"></span>\
+                    </button>\
+                    <ul class="dropdown-menu">\
+                        <li class="status-plugin-shorturl"><a class="app-link" href="#"><i class="icon icon-plus"></i> Shorten my links</a></li>\
+                        <li class="status-plugin-forcertl"><a class="app-link" href="#"><i class="icon icon-plus"></i> Force RTL</a></li>\
+                    </ul>\
                 </div>\
             </div>'
 }
@@ -161,27 +182,29 @@ function template_timeline_notices(notices, html){
         html = $('<div></div>')
         stream = false
     }
-    for (i = notices.length-1; i >=0 ; i--) {
-        notice = notices[i]
-        if($(html).find('.notice[data-notice=' + notice.id + ']').length){
-            continue
-        }else{
-            conversation_object = $(html).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']')
-            if(conversation_object.length){
-                notice_html = template_html_timeline_notice(notice, false)
-                $(conversation_object).children('.replies-holder').append(notice_html)
+    if(notices.length>0){
+        for (i = notices.length-1; i >=0 ; i--) {
+            notice = notices[i]
+            if($(html).find('.notice[data-notice=' + notice.id + ']').length){
+                continue
             }else{
-                notice_html = template_html_timeline_notice(notice, true)
-                $(html).prepend(notice_html)
-            }
-            if(stream){
-                SETTINGS['stream_count'] += 1
-                $('#status-streams ul').prepend(template_html_stream_notice(notice))
-                // $('#status-streams ul > li.divider:first-child').after(template_html_stream_notice(notice))
+                conversation_object = $(html).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']')
+                if(conversation_object.length){
+                    notice_html = template_html_timeline_notice(notice, false)
+                    $(conversation_object).children('.replies-holder').append(notice_html)
+                }else{
+                    notice_html = template_html_timeline_notice(notice, true)
+                    $(html).prepend(notice_html)
+                }
+                if(stream){
+                    SETTINGS['stream_count'] += 1
+                    $('#status-streams ul').prepend(template_html_stream_notice(notice))
+                    // $('#status-streams ul > li.divider:first-child').after(template_html_stream_notice(notice))
+                }
             }
         }
+        template_update_stream_count()
+        _jquery_plugin_mentioninput(html)
     }
-    // $('#status-streams > a i').html(SETTINGS['stream_count'])
-    template_update_stream_count()
     return html
 }
