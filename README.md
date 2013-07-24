@@ -2,6 +2,10 @@ Crow
 ====
 Crow is a small client for Free and OpenSource microblogging platform, StatusNet.
 
+Version
+---------------
+0.0.2
+
 Install
 ---------------
 
@@ -48,7 +52,7 @@ Configuration
 
 the only configuration available right now is the `api_path` which is necessary for statusnet federal instances.
 edit `config.py` and change the api path to your statusnet instance api path.
-read this manual to find out what your api path should change to.
+read [this manual](http://status.net/wiki/API_discovery) to find out what your api path should change to.
 
         STATUSNET = {'api_path': 'http://quitter.se/api/'}
 
@@ -56,11 +60,6 @@ currently working on
 ---------------
 * show retweets
 * favorite button
-* show truncated notices
-
-Version
----------------
-0.0.1
 
 Todo List
 ---------------
