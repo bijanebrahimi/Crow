@@ -48,10 +48,11 @@ $(document).ready(function(){
             $('#status-length-limit').html(SETTINGS['info']['server']['length_limit'] - status.length)
         }
     });
-    $('#status-textarea').keypress(function(e){
+    $(document).on('keypress', 'textarea', function(e){
         if (e.keyCode == 13) {
-            // $('#status-send-btn').trigger('click')
-            return false
+            $(this).parent().parent().siblings('.btn-group').children('.btn.send').click()
+            console.log('here')
+            console.log($(this).parent().parent().siblings('.btn-group'))
         }
     })
     
@@ -151,7 +152,7 @@ $(document).ready(function(){
     $(document).on('keyup', '.notice-form textarea', function(){
         if (SETTINGS['info']['server']['length_limit'] > 0){
             status = $(this).val();
-            $(this).siblings('.btn-group').children('.btn[disabled="disabled"]').html(SETTINGS['info']['server']['length_limit'] - status.length)
+            $(this).parent().parent().siblings('.btn-group').children('.btn[disabled="disabled"]').html(SETTINGS['info']['server']['length_limit'] - status.length)
         }
     })
     $(document).on('keypress', '.notice-form textarea', function(e){
