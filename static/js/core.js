@@ -67,7 +67,7 @@ function get_info(){
                 SETTINGS['info']['user']['friends_list'][i]['type'] = 'friend'
             }
             
-            _jquery_plugin_mentioninput()
+            _jquery_plugin_attach()
         },
         'error': function(response){
             console.log(response)

@@ -1,7 +1,7 @@
-function _jquery_plugin_mentioninput(html){
+function _jquery_plugin_attach(html){
     if(!html)
         html = $('body')
-    textarea = $(html).find('textarea').each(function(){
+    $(html).find('textarea').each(function(){
         if(!$(this).attr('data-mentions-input'))
             $(this).mentionsInput({
                 onDataRequest:function (mode, query, callback) {
@@ -11,10 +11,36 @@ function _jquery_plugin_mentioninput(html){
                 }
             });
     })
+    $(html).find('.notice .notice-holder .content p > img.avatar').each(function(){
+        $(this).popover({trigger:'click', html: true, placement: 'right', delay: 0, content: function(element){ return template_popover_user(this) }})
+    })
 }
 
 function template_html_alert(type, text){
     return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
+}
+
+function template_popover_user(element){
+    console.log(element)
+    description = $(element).attr('data-statusnet-description')
+    url = $(element).attr('data-statusnet-url')
+    avatar = $(element).attr('src')
+    following = $(element).attr('data-statusnet-following')
+    name = $(element).attr('data-statusnet-name')
+    profile_url = $(element).attr('data-statusnet-profile-url')
+    screen_name = $(element).attr('data-statusnet-screen-name')
+    
+    if(following=='true'){
+        friendship = '<button class="btn btn-mini btn-danger">unfollow</button>'
+    }else{
+        friendship = '<button class="btn btn-mini btn-success">follow</button>'
+    }
+    
+    return '<p style="direction:ltr;">\
+                <a href="' + profile_url + '">' + screen_name + '</a>: \
+                "<em>' + description + '</em>"\
+            </p>\
+            <span style="display:block">' + friendship + '</span>'
 }
 
 function _notice_time(notice){
@@ -168,7 +194,7 @@ function template_html_timeline_notice(notice, unique_conversation){
                 <div class="notice-holder pull-right span12">\
                     <div class="content pull-left"><b>' + notice.user.screen_name + '</b>\
                         <p class="' + text_class + '">\
-                            <img src="' + notice.user.profile_image_url + '">\
+                            <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + notice.user.description + '" data-statusnet-url="' + notice.user.url + '" data-statusnet-name="' + notice.user.name + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + notice.user.statusnet_profile_url + '" data-statusnet-screen-name="' + notice.user.screen_name + '" rel="popover" src="' + notice.user.profile_image_url + '">\
                             <span">' + notice.statusnet_html + '</span>\
                         </p>\
                         ' + _notice_attachments(notice) + '\
@@ -207,7 +233,7 @@ function template_timeline_notices(notices, html){
             }
         }
         template_update_stream_count()
-        _jquery_plugin_mentioninput(html)
+        _jquery_plugin_attach(html)
     }
     return html
 }
