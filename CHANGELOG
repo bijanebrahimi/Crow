@@ -13,3 +13,9 @@ version 0.0.2
     
 version 0.0.2-1
     - fixed textbox getting blank when new notices arrives
+
+version 0.0.3
+    - notices in viewport (while scrolling) are flagged as read automatically
+    - added popup for user info over user's avatar
+    - added favorite button
+    - fixed some css errors

@@ -2,9 +2,9 @@ Crow
 ====
 Crow is a small client for Free and OpenSource microblogging platform, StatusNet.
 
-Version
+Current Version
 ---------------
-0.0.2-1
+0.0.3
 
 Install
 ---------------
@@ -58,8 +58,7 @@ read [this manual](http://status.net/wiki/API_discovery) to find out what your a
 
 currently working on
 ---------------
-* show retweets
-* favorite button
+* show replies
 
 Todo List
 ---------------
