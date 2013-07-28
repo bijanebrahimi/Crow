@@ -116,6 +116,7 @@ a.text-html.hide{
 .notice .notice-holder .content > p img:first-child{
     float: left;
     padding: 5px;
+    cursor: pointer;
 }
 .notice .notice-holder .content img.thumbnails{
     max-width: 200px;

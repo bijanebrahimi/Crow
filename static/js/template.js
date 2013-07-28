@@ -12,7 +12,15 @@ function _jquery_plugin_attach(html){
             });
     })
     $(html).find('.notice .notice-holder .content p > img.avatar').each(function(){
-        $(this).popover({trigger:'click', html: true, placement: 'right', delay: 0, content: function(element){ return template_popover_user(this) }})
+        $(this).popover('destroy').popover({
+            trigger: 'hover',
+            html: true,
+            placement: 'right',
+            delay: 0,
+            content: function(element){
+                return template_popover_user(this)
+            }
+        })
     })
 }
 
@@ -29,17 +37,31 @@ function template_popover_user(element){
     profile_url = $(element).attr('data-statusnet-profile-url')
     screen_name = $(element).attr('data-statusnet-screen-name')
     
-    if(following=='true'){
-        friendship = '<button class="btn btn-mini btn-danger">unfollow</button>'
-    }else{
-        friendship = '<button class="btn btn-mini btn-success">follow</button>'
-    }
+    user_location = $(element).attr('data-statusnet-location')
+    created = $(element).attr('data-statusnet-created')
+    timezone = $(element).attr('data-statusnet-timezone')
     
-    return '<p style="direction:ltr;">\
+    fake = $('<p></p>')
+    timestamp = Date.parse(created) / 1000
+    $(fake).livestamp(timestamp);
+    
+    // if(following=='true'){
+        // friendship = '<button class="btn btn-mini btn-danger">unfollow</button>'
+    // }else{
+        // friendship = '<button class="btn btn-mini btn-success">follow</button>'
+    // }
+    
+    return '<p style="float:left; direction:ltr;">\
+                <img style="float:left;" src="' + avatar + '">\
                 <a href="' + profile_url + '">' + screen_name + '</a>: \
                 "<em>' + description + '</em>"\
+             </p><p style="float:left; direction:ltr;">\
+                <em><strong>User Location</strong>: ' + user_location + ' (TZ ' + timezone + ')<br>\
+                <strong>member since:</strong> ' + $(fake).html() + '\
+                </em>\
             </p>\
-            <span style="display:block">' + friendship + '</span>'
+            '
+            // <span style="display:block">' + friendship + '</span>
 }
 
 function _notice_time(notice){
@@ -193,7 +215,7 @@ function template_html_timeline_notice(notice, unique_conversation){
                 <div class="notice-holder pull-right span12 ' + notice_read + '">\
                     <div class="content pull-left"><b>' + notice.user.screen_name + '</b>\
                         <p class="' + text_class + '">\
-                            <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + notice.user.description + '" data-statusnet-url="' + notice.user.url + '" data-statusnet-name="' + notice.user.name + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + notice.user.statusnet_profile_url + '" data-statusnet-screen-name="' + notice.user.screen_name + '" rel="popover" src="' + notice.user.profile_image_url + '">\
+                            <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + notice.user.description + '" data-statusnet-url="' + notice.user.url + '" data-statusnet-name="' + notice.user.name + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + notice.user.statusnet_profile_url + '" data-statusnet-screen-name="' + notice.user.screen_name + '" data-statusnet-location="' + notice.user.location + '" data-statusnet-timezone="' + notice.user.time_zone + '" data-statusnet-created="' + notice.user.created_at + '" rel="popover" src="' + notice.user.profile_image_url + '">\
                             <span">' + notice.statusnet_html + '</span>\
                         </p>\
                         ' + _notice_attachments(notice) + '\
