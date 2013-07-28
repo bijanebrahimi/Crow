@@ -244,7 +244,7 @@ class HomeHandler(tornado.web.RequestHandler):
             
             if CACHE['last_id']:
                 if event == 'refresh' and CACHE['notices']:
-                    home_timeline = CACHE['notices'][:40]
+                    home_timeline = CACHE['notices']
                 else:
                     home_timeline = CACHE['instance'].statuses_home_timeline(since_id=CACHE['last_id'])
                     tmp = home_timeline + CACHE['notices']
@@ -364,17 +364,16 @@ class ReadHandler(tornado.web.RequestHandler):
         pass
     
     def post(self):
-        # try:
-        notice_id = int(self.get_argument("notice"))
-        tmp_notices = []
-        for notice in CACHE['notices']:
-            if notice['id'] == notice_id:
-                notice['read'] = True
-                tmp_notices.append(notice)
-            else:
-                tmp_notices.append(notice)
-        CACHE['notices'] = tmp_notices
-        print CACHE['notices']
-        self.write(json.dumps({'success': True, 'notice_id': notice_id}))
-        # except:
-            # self.write(json.dumps({'success': False, 'error': 'Failed to flag notice as read'}))
+        try:
+            notice_id = int(self.get_argument("notice"))
+            tmp_notices = []
+            for notice in CACHE['notices']:
+                if notice['id'] == notice_id:
+                    notice['read'] = True
+                    tmp_notices.append(notice)
+                else:
+                    tmp_notices.append(notice)
+            CACHE['notices'] = tmp_notices
+            self.write(json.dumps({'success': True, 'notice_id': notice_id}))
+        except:
+            self.write(json.dumps({'success': False, 'error': 'Failed to flag notice as read'}))

@@ -39,6 +39,7 @@ $(document).ready(function(){
                      {'success': function(response){
                         $('.notice[data-notice=' + response.notice_id + '] > .notice-holder').addClass('read')
                         $('li.stream-item a[href="#status-home-' + response.notice_id + '"]').parent().remove()
+                        SETTINGS['stream_count'] -= 1
                         template_update_stream_count()
                       },
                       'error': function(response){
@@ -115,9 +116,7 @@ $(document).ready(function(){
                    'error': function(response){
                        console.log(response)
                    },
-                   'failed': function(){
-                       $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
-                    },
+                   'failed': function(){},
                    'always': function(){
                        $(button).button('reset');
                    },
