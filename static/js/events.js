@@ -29,11 +29,9 @@
 $(document).ready(function(){
     // Notice Espy
     windowSpy = new jQuery.Espy(window, function(entered, state){
-        // console.log(entered, state)
         if(entered && !$(this).hasClass('read')){
            notice_html_ = $(this)
            notice_object_id = $(notice_html_).parent().attr('data-notice')
-           console.log($(this))
            ajax_post(SETTINGS['api']['read'],
                      {'notice': notice_object_id},
                      {'success': function(response){
@@ -171,7 +169,6 @@ $(document).ready(function(){
                   {'notice': notice, 'action': action},
                   {'success': function(response){
                         DEBUG = response
-                        console.log(response)
                         if(action=='create'){
                             $(button).addClass('favorited')
                             $(button).parent().siblings('.metadata').append(_notice_favorites(response.notice[0]))

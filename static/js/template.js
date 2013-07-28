@@ -212,7 +212,7 @@ function template_html_timeline_notice(notice, unique_conversation){
     if(notice.read)
         notice_read = 'read'
     return '<div id="status-home-' + notice.id + '" class="notice span12" ' + _notice_data_attributes(notice, unique_conversation) + '>\
-                <div class="notice-holder pull-right span12 ' + notice_read + '">\
+                <div class="notice-holder pull-right ' + notice_read + '">\
                     <div class="content pull-left"><b>' + notice.user.screen_name + '</b>\
                         <p class="' + text_class + '">\
                             <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + notice.user.description + '" data-statusnet-url="' + notice.user.url + '" data-statusnet-name="' + notice.user.name + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + notice.user.statusnet_profile_url + '" data-statusnet-screen-name="' + notice.user.screen_name + '" data-statusnet-location="' + notice.user.location + '" data-statusnet-timezone="' + notice.user.time_zone + '" data-statusnet-created="' + notice.user.created_at + '" rel="popover" src="' + notice.user.profile_image_url + '">\
