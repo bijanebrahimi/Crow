@@ -148,6 +148,39 @@ $(document).ready(function(){
                       })
         }
     })
+    $(document).on('click', '.action .favorite', function(e){
+        e.preventDefault()
+        button = $(this)
+        $(button).addClass('loading')
+        notice = $(this).parent().parent().parent().parent().attr('data-notice')
+        action = 'create'
+        if ($(this).hasClass('favorited'))
+            action = 'destroy'
+        ajax_post(SETTINGS['api']['favorite'],
+                  {'notice': notice, 'action': action},
+                  {'success': function(response){
+                        DEBUG = response
+                        console.log(response)
+                        if(action=='create'){
+                            $(button).addClass('favorited')
+                            $(button).parent().siblings('.metadata').append(_notice_favorites(response.notice[0]))
+                        }else{
+                            $(button).removeClass('favorited')
+                            $(button).parent().siblings('.metadata').children('.favoriteds').remove()
+                        }
+                        // html = $('#timeline-content')
+                        // template_timeline_notices(response.notice, html)
+                   },
+                   'error': function(response){
+                       console.log(response)
+                   },
+                   'failed': function(){ },
+                   'always': function(){
+                       $(button).removeClass('loading')
+                   },
+                  })
+    })
+    
     $(document).on('keyup', '.notice-form textarea', function(){
         if (SETTINGS['info']['server']['length_limit'] > 0){
             status = $(this).val();

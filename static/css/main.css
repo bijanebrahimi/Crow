@@ -129,11 +129,14 @@ a.text-html.hide{
 .notice .notice-holder .info .metadata{
     float: left;
 }
+
+.notice .notice-holder .info .metadata .favoriteds{
+    display: block;
+}
 .notice .notice-holder .info .action{
     float: right;
     padding-right: 10px;
 }
-
 .notice .notice-holder .info .action a{
     font-size: 15px;
     color: #FFFFFF;
@@ -144,6 +147,12 @@ a.text-html.hide{
     color: #49BA49;
 */
     font-weight: bold;
+}
+.notice .notice-holder .info .action a.favorited{
+    background: #41D63E;
+}
+.notice .notice-holder .info .action a.loading{
+    background: #DDDDDD !important;
 }
 
 a.attachment.more{

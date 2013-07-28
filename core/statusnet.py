@@ -240,7 +240,7 @@ class HomeHandler(tornado.web.RequestHandler):
             
             if CACHE['last_id']:
                 if event == 'refresh' and CACHE['notices']:
-                    home_timeline = CACHE['notices']
+                    home_timeline = CACHE['notices'][:40]
                 else:
                     home_timeline = CACHE['instance'].statuses_home_timeline(since_id=CACHE['last_id'])
                     tmp = home_timeline + CACHE['notices']
@@ -319,5 +319,33 @@ class ReplyHandler(tornado.web.RequestHandler):
             instance_refresh()
             status_reply = CACHE['instance'].statuses_update(status, source="Crow", in_reply_to_status_id=notice, latitude=-200, longitude=-200, place_id="", display_coordinates=False, long_dent="split", dup_first_word=False)
             self.write(json.dumps({'success': True, 'notice': parse_notices([status_reply])}))
+        except:
+            self.write(json.dumps({'success': False, 'error': 'Failed to reply to status'}))
+
+class FavoriteHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        pass
+
+    def get(self):
+        pass
+    
+    def post(self):
+        try:
+            notice_id = int(self.get_argument("notice"))
+            action = self.get_argument("action")
+            instance_refresh()
+            if action == 'create':
+                favorited = CACHE['instance'].favorites_create(id=notice_id)
+            else:
+                favorited = CACHE['instance'].favorites_destroy(id=notice_id)
+            # Update the cache
+            tmp_notices = []
+            for notice in CACHE['notices']:
+                if notice['id'] == notice_id:
+                    tmp_notices.append(favorited)
+                else:
+                    tmp_notices.append(notice)
+            CACHE['notices'] = tmp_notices
+            self.write(json.dumps({'success': True, 'notice': parse_notices([favorited])}))
         except:
             self.write(json.dumps({'success': False, 'error': 'Failed to reply to status'}))

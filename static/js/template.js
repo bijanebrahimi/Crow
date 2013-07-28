@@ -78,7 +78,7 @@ function _notice_context(notice){
 }
 function _notice_favorites(notice){
     if(notice.favorited == true)
-        return '<br><span class="favoriteds">you liked it</span>'
+        return '<span class="favoriteds">you liked it</span>'
     return '';
     // html_metadata = ''
     // class_favorite = ''
@@ -128,8 +128,8 @@ function _notice_action(notice, unique_conversation){
                 ' + action_load_conversation + '\
                 <a href="#" title="Repeat this notice" class="app-link label repeat">\&#x21BB;</a>\
                 <a href="#" title="Reply to this notice" class="app-link label reply">\&#x21B2;</a>\
+                <a href="#" title="Favorite this notice" class="label favorite ' + notice_favorited + '">\&#x2665;</a>\
             </div>'
-    // <a href="#" title="Favorite this notice" class="label favorite ' + notice_favorited + '">\&#x2665;</a>
 }
 function _notice_form(notice){
     return '<div class="notice-form">\

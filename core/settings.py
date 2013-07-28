@@ -21,6 +21,7 @@ ROUTS = [
     
     (r'/statuses/repeat', statusnet.RepeatHandler),
     (r'/statuses/reply', statusnet.ReplyHandler),
+    (r'/statuses/favorite', statusnet.FavoriteHandler),
     
     (r'/attachment/text_html', statusnet.AttachmentHandler),
     
