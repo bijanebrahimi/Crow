@@ -21,7 +21,6 @@ function template_html_alert(type, text){
 }
 
 function template_popover_user(element){
-    console.log(element)
     description = $(element).attr('data-statusnet-description')
     url = $(element).attr('data-statusnet-url')
     avatar = $(element).attr('src')
@@ -152,10 +151,7 @@ function _notice_form(notice){
 function _notice_attachments(notice){
     attachments = ''
     if (notice.attachments){
-        console.log('attachment', notice.attachments)
         for(j=0; j<notice.attachments.length; j++){
-            // console.log(notice.attachments[j])
-            // TODO: check for other types of attachments, like videos maybe?
             mimetype = notice.attachments[j].mimetype
             if (mimetype.match(/^image/)){
                 attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
@@ -190,8 +186,11 @@ function template_html_timeline_notice(notice, unique_conversation){
     text_class = ''
     if(notice.is_rtl)
         text_class = 'rtl'
+    notice_read = ''
+    if(notice.read)
+        notice_read = 'read'
     return '<div id="status-home-' + notice.id + '" class="notice span12" ' + _notice_data_attributes(notice, unique_conversation) + '>\
-                <div class="notice-holder pull-right span12">\
+                <div class="notice-holder pull-right span12 ' + notice_read + '">\
                     <div class="content pull-left"><b>' + notice.user.screen_name + '</b>\
                         <p class="' + text_class + '">\
                             <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + notice.user.description + '" data-statusnet-url="' + notice.user.url + '" data-statusnet-name="' + notice.user.name + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + notice.user.statusnet_profile_url + '" data-statusnet-screen-name="' + notice.user.screen_name + '" rel="popover" src="' + notice.user.profile_image_url + '">\
@@ -212,6 +211,7 @@ function template_timeline_notices(notices, html){
         stream = false
     }
     if(notices.length>0){
+        htmls = []
         for (i = notices.length-1; i >=0 ; i--) {
             notice = notices[i]
             if($(html).find('.notice[data-notice=' + notice.id + ']').length){
@@ -220,17 +220,32 @@ function template_timeline_notices(notices, html){
                 conversation_object = $(html).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']')
                 if(conversation_object.length){
                     notice_html = template_html_timeline_notice(notice, false)
-                    $(conversation_object).children('.replies-holder').append(notice_html)
+                    notice_obj = $(notice_html)
+                    htmls.push($(notice_obj).children('.notice-holder'))
+                    // windowSpy.add($(notice_obj).children('.notice-holder'))
+                    
+                    holder = $(conversation_object).children('.replies-holder')
+                    $(notice_obj).appendTo(holder)
+                    // $(conversation_object).children('.replies-holder').append(notice_html)
                 }else{
                     notice_html = template_html_timeline_notice(notice, true)
-                    $(html).prepend(notice_html)
+                    notice_obj = $(notice_html)
+                    // windowSpy.add($(notice_obj).children('.notice-holder'))
+                    htmls.push($(notice_obj).children('.notice-holder'))
+                    
+                    $(notice_obj).prependTo(html)
+                    // $(html).prepend(notice_html)
                 }
                 if(stream){
-                    SETTINGS['stream_count'] += 1
-                    $('#status-streams ul').prepend(template_html_stream_notice(notice))
-                    // $('#status-streams ul > li.divider:first-child').after(template_html_stream_notice(notice))
+                    if(notice.read==false){
+                        SETTINGS['stream_count'] += 1
+                        $('#status-streams ul').prepend(template_html_stream_notice(notice))
+                    }
                 }
             }
+        }
+        for(k=0; k<htmls.length; k++){
+            windowSpy.add($(htmls[k]))
         }
         template_update_stream_count()
         _jquery_plugin_attach(html)

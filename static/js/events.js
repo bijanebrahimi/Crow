@@ -27,19 +27,32 @@
 })(window.jQuery);
 
 $(document).ready(function(){
+    // Notice Espy
+    windowSpy = new jQuery.Espy(window, function(entered, state){
+        // console.log(entered, state)
+        if(entered && !$(this).hasClass('read')){
+           notice_html_ = $(this)
+           notice_object_id = $(notice_html_).parent().attr('data-notice')
+           console.log($(this))
+           ajax_post(SETTINGS['api']['read'],
+                     {'notice': notice_object_id},
+                     {'success': function(response){
+                        $('.notice[data-notice=' + response.notice_id + '] > .notice-holder').addClass('read')
+                        $('li.stream-item a[href="#status-home-' + response.notice_id + '"]').parent().remove()
+                        template_update_stream_count()
+                      },
+                      'error': function(response){
+                        console.log(response)
+                        $(notice_html_).removeClass('read')
+                      },
+                      'failed': function(){},
+                      'always': function(){}
+                      })
+        }
+    });
+
     // Load Essentials
     get_info()
-    
-    // Login Page
-    $('input[name=username], input[name=password]').keyup(function(e){
-        if (e.keyCode == 13) {
-            login()
-        }
-    })
-    $('#login-btn').click(function(){
-        login()
-    });
-    
     
     // Status TexArea
     $('#status-textarea').keyup(function(e){
@@ -101,7 +114,6 @@ $(document).ready(function(){
                    },
                    'error': function(response){
                        console.log(response)
-                       // $(bs_html_alert('error', response['error'])).insertAfter('.well > legend');
                    },
                    'failed': function(){
                        $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
@@ -181,6 +193,7 @@ $(document).ready(function(){
                   })
     })
     
+    // Notice
     $(document).on('keyup', '.notice-form textarea', function(){
         if (SETTINGS['info']['server']['length_limit'] > 0){
             status = $(this).val();
@@ -206,7 +219,6 @@ $(document).ready(function(){
         form = $(button).parent().parent()
         textarea = $(button).parent().parent().find('textarea')
 
-        console.log(textarea)
         status = $(textarea).val()
         notice = $(textarea).attr('data-notice')
         if(status)
@@ -220,7 +232,6 @@ $(document).ready(function(){
                        },
                        'error': function(response){
                            console.log(response)
-                           // $(bs_html_alert('error', response['error'])).insertAfter('.well > legend');
                        },
                        'failed': function(){
                            $(bs_html_alert('error', 'network failed')).insertAfter('.well > legend');
@@ -232,11 +243,9 @@ $(document).ready(function(){
                       })
     })
     $(document).on('click', '.status-plugin-shorturl', function(e){
-        console.log('short url')
         e.stopPropagation()
         e.preventDefault()
         button = $(this)
-        // status = $('#status-textarea').val()
         textarea = $(this).parent().parent().parent().find('textarea:first')
         status = $(textarea).val()
         
@@ -254,15 +263,11 @@ $(document).ready(function(){
         }
     })
     $(document).on('click', '.status-plugin-forcertl', function(e){
-        console.log('force rtl')
         e.stopPropagation()
         e.preventDefault()
         button = $(this)
-        // status = $('#status-textarea').val()
         textarea = $(button).parent().parent().parent().find('textarea:first')
         status = $(textarea).val()
-        console.log(button)
-        console.log(textarea)
         if(status){
             $(button).find('.icon').addClass('icon-loading')
             ajax_post(SETTINGS['api']['plugin_force_url'],
@@ -277,6 +282,7 @@ $(document).ready(function(){
         }
     })
     
+    // Notice Links
     $(document).on('click', '#status-streams ul li a', function(e){
         e.preventDefault()
         e.stopPropagation()
@@ -287,8 +293,8 @@ $(document).ready(function(){
         }else{
             if(!$(this).parent().hasClass('clicked')){
                 $(this).parent().addClass('clicked')
-                SETTINGS['stream_count'] -= 1
-                template_update_stream_count()
+                // SETTINGS['stream_count'] -= 1
+                // template_update_stream_count()
             }
             element_id = $(this).attr('href')
             element_top = $(element_id).offset().top - 50

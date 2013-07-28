@@ -23,6 +23,8 @@ ROUTS = [
     (r'/statuses/reply', statusnet.ReplyHandler),
     (r'/statuses/favorite', statusnet.FavoriteHandler),
     
+    (r'/statuses/read', statusnet.ReadHandler),
+    
     (r'/attachment/text_html', statusnet.AttachmentHandler),
     
     (r'/plugins/short_url', statusnet.PluginShorturl),

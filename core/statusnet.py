@@ -37,9 +37,13 @@ def is_rtl(status):
     return rtl_chars > ltr_chars
 
 def parse_notices(notices):
+    tmp_notices = []
     for notice in notices:
         notice['is_rtl'] = is_rtl(notice['text'])
-    return notices
+        if notice.get('read') is None:
+            notice['read'] = False
+        tmp_notices.append(notice)
+    return tmp_notices
 
 
 class LoginHandler(tornado.web.RequestHandler):
@@ -262,6 +266,8 @@ class HomeHandler(tornado.web.RequestHandler):
                             # TODO: prevent from notification flooding
                             notification.show()
 
+
+            CACHE['notices'] = parse_notices(CACHE['notices'])
             if CACHE['first_id'] is None:
                 CACHE['first_id'] = home_timeline[len(home_timeline)-1]['id']
 
@@ -348,4 +354,27 @@ class FavoriteHandler(tornado.web.RequestHandler):
             CACHE['notices'] = tmp_notices
             self.write(json.dumps({'success': True, 'notice': parse_notices([favorited])}))
         except:
-            self.write(json.dumps({'success': False, 'error': 'Failed to reply to status'}))
+            self.write(json.dumps({'success': False, 'error': 'Failed to favorite the notice'}))
+
+class ReadHandler(tornado.web.RequestHandler):
+    def initialize(self):
+        pass
+
+    def get(self):
+        pass
+    
+    def post(self):
+        # try:
+        notice_id = int(self.get_argument("notice"))
+        tmp_notices = []
+        for notice in CACHE['notices']:
+            if notice['id'] == notice_id:
+                notice['read'] = True
+                tmp_notices.append(notice)
+            else:
+                tmp_notices.append(notice)
+        CACHE['notices'] = tmp_notices
+        print CACHE['notices']
+        self.write(json.dumps({'success': True, 'notice_id': notice_id}))
+        # except:
+            # self.write(json.dumps({'success': False, 'error': 'Failed to flag notice as read'}))

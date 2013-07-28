@@ -26,6 +26,17 @@
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         <script src="/static/js/template.js"></script>
         <script src="/static/js/core.js"></script>
-        <script src="/static/js/events.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('input[name=username], input[name=password]').keyup(function(e){
+                    if (e.keyCode == 13) {
+                        login()
+                    }
+                })
+                $('#login-btn').click(function(){
+                    login()
+                });
+            })
+        </script>
     </body>
 </html>

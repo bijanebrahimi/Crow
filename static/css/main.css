@@ -107,6 +107,9 @@ a.text-html.hide{
     margin-left: 2.127659574468085%;
 }
 
+.notice .notice-holder.read{
+    
+}
 .notice .notice-holder .content{
     width: 100%;
 }
@@ -161,8 +164,6 @@ a.attachment.more{
     background: #4E4E4E;
     color: white;
 }
-
-
 
 p.rtl{
     direction: rtl;

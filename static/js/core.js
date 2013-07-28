@@ -52,7 +52,6 @@ function get_info(){
         {'success': function(response){
             SETTINGS['info']['user'] = response.user
             SETTINGS['info']['server'] = response.server
-            console.log(response)
             
             $('#timeline-navbar .navbar-inner .brand .avatar').attr('src', SETTINGS['info']['user'].avatar)
             $('#status-length-limit').html(SETTINGS['info']['server']['length_limit'])
@@ -97,7 +96,6 @@ function timeline_update(seconds, event){
                'failed': function(){ },
                'always': function(){
                     $('#timeline-navbar .navbar-inner ul li a img.loading').fadeOut(200)
-                    // console.log('updating [' + intervalinterval + ']')
                     if(interval)
                         setTimeout(function(){ console.log('updating...'); timeline_update(interval); }, interval)
                }})
