@@ -32,21 +32,7 @@ $(document).ready(function(){
         if(entered && !$(this).hasClass('read')){
            notice_html_ = $(this)
            notice_object_id = $(notice_html_).parent().attr('data-notice')
-           ajax_post(SETTINGS['api']['read'],
-                     {'notice': notice_object_id},
-                     {'success': function(response){
-                        $('.notice[data-notice=' + response.notice_id + '] > .notice-holder').addClass('read')
-                        $('li.stream-item a[href="#status-home-' + response.notice_id + '"]').parent().remove()
-                        SETTINGS['stream_count'] -= 1
-                        template_update_stream_count()
-                      },
-                      'error': function(response){
-                        console.log(response)
-                        $(notice_html_).removeClass('read')
-                      },
-                      'failed': function(){},
-                      'always': function(){}
-                      })
+           set_notice_as_read(notice_object_id)
         }
     });
 
@@ -285,6 +271,17 @@ $(document).ready(function(){
         if($(this).hasClass('empty')){
             $('#status-streams ul li.stream-item').remove()
             SETTINGS['stream_count'] = 0
+            // $('#status-streams ul li.stream-item').each(function(){
+                // notice_object_id = $(this).children('a').attr('href').replace("#status-home-", "")
+                // $(this).remove()
+            // })
+            $('.notice .notice-holder').each(function(){
+                if(!$(this).hasClass('read')){
+                    // notice_object_id = $(this).parent().attr('data-notice')
+                    // set_notice_as_read(notice_object_id)
+                    $(this).addClass('read')
+                }
+            })
             template_update_stream_count()
         }else{
             if(!$(this).parent().hasClass('clicked')){

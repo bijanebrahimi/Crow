@@ -79,6 +79,24 @@ function get_info(){
 
 }
 
+function set_notice_as_read(notice_object_id){
+    ajax_post(SETTINGS['api']['read'],
+             {'notice': notice_object_id},
+             {'success': function(response){
+                $('.notice[data-notice=' + response.notice_id + '] > .notice-holder').addClass('read')
+                $('li.stream-item a[href="#status-home-' + response.notice_id + '"]').parent().remove()
+                SETTINGS['stream_count'] -= 1
+                template_update_stream_count()
+              },
+              'error': function(response){
+                console.log(response)
+                $(notice_html_).removeClass('read')
+              },
+              'failed': function(){},
+              'always': function(){}
+              })
+}
+
 function timeline_update(seconds, event){
     var interval = seconds
     if(!event)
