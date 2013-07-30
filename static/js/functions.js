@@ -20,4 +20,28 @@ function is_rtl(text){
             ltr_char_count += 1
     }
     return (rtl_char_count>ltr_char_count)
-};
+}
+function get_short_url(long_url, callable_success, callable_error, callable_always){
+    $.getJSON(
+        "http://api.bitly.com/v3/shorten?callback=?", 
+        { 
+            "format": "json",
+            "apiKey": "R_dd2d4938df1b6e367fa42686912f75be",
+            "login": "crowurls",
+            "longUrl": long_url
+        },
+        function(response){
+            if(response.status_code==200)
+                callable_success(response.data.url);
+            else
+                callable_error(response.status_txt)
+        }
+    ).fail(function(){
+        if(callable_error)
+            callable_error('network failed')
+    })
+    .always(function(){
+        if(callable_always)
+            callable_always()
+    });
+}
