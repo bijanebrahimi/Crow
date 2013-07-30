@@ -105,6 +105,8 @@ class InfoHandler(tornado.web.RequestHandler):
                 response['user'] = core.INSTANCE['history']['info']['user']
                 response['server'] = core.INSTANCE['history']['info']['server']
             response['success'] = True
+            
+            print response
         except:
             response['error'] = 'failed to get info'
         self.write(json.dumps(response))
@@ -223,9 +225,9 @@ class HomeHandler(tornado.web.RequestHandler):
 
     def get(self):
         content = ''
-        if CACHE['instance'] is None:
-            self.redirect("/account/login")
-            return True
+        # if CACHE['instance'] is None:
+            # self.redirect("/account/login")
+            # return True
 
         try:
             with open(core.SETTINGS['static_path'] + '/html/home.html', 'r') as content_file:
@@ -250,7 +252,7 @@ class HomeHandler(tornado.web.RequestHandler):
                     tmp = home_timeline + CACHE['notices']
                     CACHE['notices'] = sorted(tmp, key=lambda k: k['id'], reverse=True)
             else:
-                home_timeline = CACHE['instance'].statuses_home_timeline(count=40)
+                home_timeline = CACHE['instance'].statuses_home_timeline(count=20)
                 CACHE['notices'] = home_timeline
 
             if home_timeline:
@@ -266,7 +268,7 @@ class HomeHandler(tornado.web.RequestHandler):
                             # TODO: prevent from notification flooding
                             notification.show()
 
-
+            print home_timeline
             CACHE['notices'] = parse_notices(CACHE['notices'])
             if CACHE['first_id'] is None:
                 CACHE['first_id'] = home_timeline[len(home_timeline)-1]['id']

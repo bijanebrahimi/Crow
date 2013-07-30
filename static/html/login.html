@@ -24,9 +24,31 @@
         </script>
         <script src="/static/js/jquery-2.0.3.min.js"></script>
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-        <script src="/static/js/template.js"></script>
-        <script src="/static/js/core.js"></script>
+        <script src="/static/js/functions.js"></script>
+        <script src="/static/js/templates.js"></script>
         <script>
+            function login(){
+                button = $('#login-btn')
+                $(button).button('loading')
+                username = $('input[name=username]').val()
+                password = $('input[name=password]').val()
+                $('.well .alert').fadeOut(200).remove()
+                crow.ajax_post('/user/login',
+                          {'username': username, 'password': password},
+                          {'success': function(response){
+                                window.location = response.redirect
+                           },
+                           'error': function(response){
+                               $(crow_template.alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
+                           },
+                           'failed': function(){
+                                $(crow_template.alert('error', response['error'])).hide().appendTo('.well').fadeIn(600)
+                            },
+                           'always': function(){
+                                $(button).button('reset')
+                           },
+                          })
+            }
             $(document).ready(function(){
                 $('input[name=username], input[name=password]').keyup(function(e){
                     if (e.keyCode == 13) {
