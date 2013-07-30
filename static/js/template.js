@@ -190,7 +190,7 @@ function _notice_attachments(notice){
 
 function template_html_stream_notice(notice){
     return '<li class="stream-item">\
-                <a class="app-link" tabindex="-1" href="#status-home-' + notice.id + '" title="' + escape(notice.text) + '">\
+                <a class="app-link" tabindex="-1" href="#status-home-' + notice.id + '" title="' + escape_quotes(notice.text) + '">\
                     <img class="icon" src="' + notice.user.profile_image_url + '" width=24px>\
                     ' + notice.user.screen_name + ', ' + _notice_time(notice) + '\
                 </a>\
@@ -215,7 +215,7 @@ function template_html_timeline_notice(notice, unique_conversation){
                 <div class="notice-holder pull-right ' + notice_read + '">\
                     <div class="content pull-left"><b>' + notice.user.screen_name + '</b>\
                         <p class="' + text_class + '">\
-                            <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + escape(notice.user.description) + '" data-statusnet-url="' + escape(notice.user.url) + '" data-statusnet-name="' + escape(notice.user.name) + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + escape(notice.user.statusnet_profile_url) + '" data-statusnet-screen-name="' + notice.user.screen_name + '" data-statusnet-location="' + escape(notice.user.location) + '" data-statusnet-timezone="' + notice.user.time_zone + '" data-statusnet-created="' + notice.user.created_at + '" rel="popover" src="' + notice.user.profile_image_url + '">\
+                            <img class="avatar" data-title="' + notice.user.name + '" data-statusnet-description="' + escape_quotes(notice.user.description) + '" data-statusnet-url="' + escape_quotes(notice.user.url) + '" data-statusnet-name="' + escape_quotes(notice.user.name) + '" data-statusnet-following="' + notice.user.following + '" data-statusnet-profile-url="' + escape_quotes(notice.user.statusnet_profile_url) + '" data-statusnet-screen-name="' + notice.user.screen_name + '" data-statusnet-location="' + escape_quotes(notice.user.location) + '" data-statusnet-timezone="' + notice.user.time_zone + '" data-statusnet-created="' + notice.user.created_at + '" rel="popover" src="' + notice.user.profile_image_url + '">\
                             <span">' + notice.statusnet_html + '</span>\
                         </p>\
                         ' + _notice_attachments(notice) + '\
