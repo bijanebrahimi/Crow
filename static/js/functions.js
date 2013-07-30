@@ -22,29 +22,36 @@ crow = {
         }
         return (rtl_char_count>ltr_char_count)
     },
-    get_short_url: function(long_url, callable_success, callable_error, callable_always){
-        $.getJSON(
-            "http://api.bitly.com/v3/shorten?callback=?", 
-            { 
-                "format": "json",
-                "apiKey": "R_dd2d4938df1b6e367fa42686912f75be",
-                "login": "crowurls",
-                "longUrl": long_url
+    get_short_url: function(long_url, callable_error){
+        var bitly_regex = new RegExp('^http://bit.ly')
+        if(bitly_regex.test(long_url))
+            return long_url.replace(/^http:\/\//, '')
+        
+        var short_url = long_url
+        jQuery.ajax({
+            url: "http://api.bitly.com/v3/shorten?callback=?&format=json&apiKey=R_dd2d4938df1b6e367fa42686912f75be&login=crowurls&longUrl=" + long_url,
+            type: 'GET',
+            dataType: 'html',
+            async: false,
+            cache: false,
+            timeout: 5000,
+            error: function(){
+                if(callable_error)
+                    callable_error()
             },
-            function(response){
-                if(response.status_code==200)
-                    callable_success(response.data.url);
-                else
-                    callable_error(response.status_txt)
+            success: function(response){
+                response = response.replace(/^\?/, '')
+                data = eval('(' + response + ')')
+                if(data.status_code==200){
+                    console.log(data)
+                    short_url = data.data.url
+                    return data.data.url
+                }else if(callable_error){
+                    callable_error()
+                }
             }
-        ).fail(function(){
-            if(callable_error)
-                callable_error('network failed')
-        })
-        .always(function(){
-            if(callable_always)
-                callable_always()
         });
+        return short_url
     }
 }
 
