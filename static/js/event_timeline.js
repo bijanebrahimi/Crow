@@ -1,3 +1,32 @@
+// Crow navbar scroll
+(function ($) {
+    $(function(){
+        var $win = $(window),
+        $body = $('body'),
+        $nav = $('.navbar'),
+        navHeight = $('.navbar').first().height(),
+        subnavHeight = $('.navbar').first().height(),
+        subnavTop = $('.navbar').length && $('.navbar').offset().top - navHeight,
+        marginTop = parseInt($body.css('margin-top'), 10);
+        isFixed = 0;
+
+        processScroll();
+        $win.on('scroll', processScroll);
+        function processScroll() {
+            var i, scrollTop = $win.scrollTop();
+            if (scrollTop >= subnavTop && !isFixed) {
+                isFixed = 1;
+                $nav.addClass('subnav-fixed');
+                $body.css('margin-top', marginTop + subnavHeight + 'px');
+            } else if (scrollTop <= subnavTop && isFixed) {
+                isFixed = 0;
+                $nav.removeClass('subnav-fixed');
+                $body.css('margin-top', marginTop + 'px');
+            }
+        }
+    });
+})(window.jQuery);
+
 $(document).ready(function(){
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(){
@@ -13,13 +42,14 @@ $(document).ready(function(){
         }
 
         // Length
-        MAX_LENGTH = 140
-        remaining_length = MAX_LENGTH - status.length
-        $(this).siblings('.btn-toolbar').children('.btn-group').children('.btn_status_length').html(remaining_length)
-        if(remaining_length<0)
-            $(this).parent().addClass('exceeded')
-        else
-            $(this).parent().removeClass('exceeded')
+        remaining_length = CROW['max_length'] - status.length
+        $(this).siblings('.btn-toolbar').children('.btn-group').children('.btn_status_length').html(status.length)
+        if(CROW['max_length']){
+            if(status.length>CROW['max_length'])
+                $(this).parent().addClass('exceeded')
+            else
+                $(this).parent().removeClass('exceeded')
+        }
     })
     
     // on short url button
@@ -28,5 +58,11 @@ $(document).ready(function(){
         status = $(textarea).val()
         status = status.replace(/(http:\/\/[^ ]+)/g, crow.get_short_url)
         $(textarea).val(status)
+    })
+
+    // navbar tabs
+    $('#nav-pages li a').click(function(e){
+        e.preventDefault()
+        $(this).tab('show')
     })
 })
