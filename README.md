@@ -1,10 +1,11 @@
 Crow
 ====
 Crow is a small client for Free and OpenSource microblogging platform, StatusNet.
+also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.html).
 
 Current Version
 ---------------
-0.0.3
+0.0.4
 
 Install
 ---------------
@@ -22,6 +23,8 @@ crow contains a small web server written in *python 2.7+* and the reset is HTML 
 
         sudo yum install python-pip python-notify
         sudo python-pip install tornado
+
+* installing `python-notify` is optional since it only get loaded when available
 
 Run
 ---------------
@@ -58,12 +61,12 @@ read [this manual](http://status.net/wiki/API_discovery) to find out what your a
 
 currently working on
 ---------------
-* show replies
+* follow/unfollow users
+* user/group profile view
 
 Todo List
 ---------------
-* follow/unfollow users
-* user/group profile view
+* you suggest :)
 
 Known Issues
 ---------------
