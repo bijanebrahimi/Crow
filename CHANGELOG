@@ -19,3 +19,12 @@ version 0.0.3
     - added popup for user info over user's avatar
     - added favorite button
     - fixed some css errors
+
+version 0.0.4
+    - new look
+    - added replies panel
+    - added load previous page button
+    - adedd Bitly url shorten (javascript)
+    - added Text shorten (for now just removes http:// to shorten text)
+    - javascript text direction added
+    - a lot of code clean ups & refactoring

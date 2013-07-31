@@ -4,7 +4,7 @@ crow_template = {
                     <div class="btn-toolbar">\
                         <div class="btn-group">\
                             <button class="btn btn-small btn_status_ltr active" title="text LTR indicator"><i class="icon icon-align-left"></i></button>\
-                            <button class="btn btn-small btn_status_length" title="shorten text">0</button>\
+                            <button class="btn btn-small btn_status_length" title="shorten text" data-loading-text="sending">0</button>\
                             <button class="btn btn-small btn_status_rtl" title="text RTL indicator"><i class="icon icon-align-right"></i></button>\
                         </div>\
                         <div class="btn-group">\
