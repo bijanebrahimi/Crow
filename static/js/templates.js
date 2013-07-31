@@ -58,7 +58,13 @@ crow_template = {
             var notice_timestamp = Date.parse(notice.created_at) / 1000
             return '<span class="time" data-livestamp="' + notice_timestamp + '"></span> '
         }
-        return '<li class="stream-item">\
+        function _reply(notice){
+            if(notice.in_reply_to_user_id==crow.user_info.id)
+                return 'mentioned'
+            else
+                return ''
+        }
+        return '<li class="stream-item ' + _reply(notice) + '">\
                     <a class="app-link" tabindex="-1" href="#notice-' + notice.id + '" title="' + crow.escape_quotes(notice.text) + '">\
                         <img class="icon" src="' + notice.user.profile_image_url + '" width=24px>\
                         ' + notice.user.screen_name + ', ' + _time(notice) + '\
@@ -160,7 +166,9 @@ crow_template = {
             var notice = notices[i]
 
             // Skip already existing notices
-            if($(container).find('#notice-' + notice.id).length){
+            if(!is_reply && $(container).find('#notice-' + notice.id).length){
+                continue
+            }else if(is_reply && $(container).find('#reply-' + notice.id).length){
                 continue
             }
 
@@ -171,10 +179,11 @@ crow_template = {
                 if(conversation_parent_id){
                     var conversation_parent_id = parseInt(conversation_parent_id.replace('notice-', ''))
                     if(parseInt(conversation_parent_id)>parseInt(notice.id)){
-                        conersation_clone = $(conversation_parent).clone()
-                        var tmp_array = conersation_clone.find('.notice')
+                        // conersation_clone = $(conversation_parent).clone()
+                        // var tmp_array = conersation_clone.find('.notice')
+                        var tmp_array = conversation_parent.find('.notice')
                         $(conversation_parent).children('.notice_replies').html('')
-                        tmp_array.push($(conversation_parent).clone())
+                        tmp_array.push($(conversation_parent))
                         tmp_array = tmp_array.sort(crow.sort_notices)
                         
                         $(conversation_parent).replaceWith($(notice_html))
@@ -182,8 +191,9 @@ crow_template = {
                             $(notice_html).children('.notice_replies').append(tmp_array[j])
                         }
                     }else{
-                        conersation_clone = $(conversation_parent).clone()
-                        var tmp_array = conersation_clone.find('.notice')
+                        // conersation_clone = $(conversation_parent).clone()
+                        // var tmp_array = conersation_clone.find('.notice')
+                        var tmp_array = conversation_parent.find('.notice')
                         tmp_array.push(notice_html)
                         tmp_array = tmp_array.sort(crow.sort_notices)
                         $(conversation_parent).children('.notice_replies').html('')
