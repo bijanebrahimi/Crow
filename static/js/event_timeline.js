@@ -109,7 +109,7 @@ $(document).ready(function(){
     // Notice's action
     $(document).on('click', '.notice_action .favorite', function(){
         var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace('notice-', '')
+        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
         var notice_action = $(button).hasClass('active') ? 'destroy' : 'create'
         $(button).children('i').removeClass('icon-star').addClass('icon-ajax')
         crow.ajax_post('/notice/fav', {'id': notice_id, 'action': notice_action},{
@@ -126,7 +126,7 @@ $(document).ready(function(){
     })
     $(document).on('click', '.notice_action .repeat', function(){
         var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace('notice-', '')
+        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
         $(button).children('i').removeClass('icon-refresh').addClass('icon-ajax')
         crow.ajax_post('/notice/repeat', {'id': notice_id},{
             'success': function(response){
@@ -142,7 +142,7 @@ $(document).ready(function(){
     })
     $(document).on('click', '.notice_action .conversation', function(){
         var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace('notice-')
+        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
         $(button).children('i').removeClass('icon-eye-open').addClass('icon-ajax')
         crow.ajax_post('/notice/reply', {'id': notice_id},{
             'success': function(response){
@@ -210,7 +210,7 @@ $(document).ready(function(){
         crow.stream_remove($(this))
     })
     $(document).on('mouseenter', '.notice .notice_body', function(){
-        var notice_id = $(this).parent().attr('id').replace('notice-', '')
+        var notice_id = $(this).parent().attr('id').replace(/[^0-9]+/, '')
         var stream_item = $('.stream-item a[href="#notice-' + notice_id + '"]')
         if(stream_item.length)
             crow.stream_remove(stream_item, true)

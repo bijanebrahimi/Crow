@@ -116,8 +116,8 @@ crow = {
     },
 
     sort_notices: function(notice_a, notice_b){
-        notice_a_id = parseInt($(notice_a).attr('id').replace('notice-', ''))
-        notice_b_id = parseInt($(notice_b).attr('id').replace('notice-', ''))
+        notice_a_id = parseInt($(notice_a).attr('id').replace(/[^0-9]+/, ''))
+        notice_b_id = parseInt($(notice_b).attr('id').replace(/[^0-9]+/, ''))
         
         return notice_a_id - notice_b_id
     },
