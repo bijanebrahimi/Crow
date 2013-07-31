@@ -200,8 +200,10 @@ $(document).ready(function(){
 
     // Stream
     $(document).on('click', '#stream li a', function(e){
-        e.preventDefault()
-        e.stopPropagation()
+        if(!$(this).hasClass('empty')){
+            e.preventDefault()
+            e.stopPropagation()
+        }
         crow.stream_remove($(this))
     })
     $(document).on('mouseenter', '.notice .notice_body', function(){

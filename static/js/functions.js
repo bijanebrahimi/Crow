@@ -177,7 +177,7 @@ crow = {
             'success': function(response){
                 crow.user_replies = response.notices
                 if(response.previous_page){
-                    var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'))
+                    var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'), false)
                     infinite_scroll_timeline = false
                     
                     crow.stream_add(crow.user_replies, false)
@@ -185,7 +185,7 @@ crow = {
                     // crow_template.streams(crow.user_replies)
                     crow.stream_add(crow.user_replies, true)
                     
-                    var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'))
+                    var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'), false)
                     $($(html).children('div')).prependTo('#home .contents')
                     setTimeout(crow.get_user_timeline, 20000)
                 }
@@ -207,10 +207,10 @@ crow = {
             'success': function(response){
                 crow.user_replies = response.notices
                 if(response.previous_page){
-                    var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'))
+                    var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'), true)
                     infinite_scroll_replies = false
                 }else{
-                    var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'))
+                    var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'), true)
                     $($(html).children('div')).prependTo('#replies .contents')
                     setTimeout(crow.get_user_replies, 20000)
                 }

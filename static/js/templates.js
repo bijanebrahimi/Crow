@@ -73,13 +73,16 @@ crow_template = {
             }
     },
 
-    notice: function(notice){
+    notice: function(notice, is_reply){
         function _time(notice){
             var notice_timestamp = Date.parse(notice.created_at) / 1000
             return '<span class="time" data-livestamp="' + notice_timestamp + '"></span> '
         }
-        function _notice_id(notice){
-            return 'notice-' + notice.id
+        function _notice_id(notice, is_reply){
+            if (is_reply)
+                return 'reply-' + notice.id
+            else
+                return 'notice-' + notice.id
         }
         function _notice_direction(notice){
             var notice_direction = ''
@@ -123,7 +126,7 @@ crow_template = {
             }
             return attachments
         }
-        return '<div id="' + _notice_id(notice) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        return '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -146,7 +149,7 @@ crow_template = {
                     <div class="notice_replies"><div>\
                 </div>'
     },
-    notices: function(notices, conversation, prepend, container){
+    notices: function(notices, conversation, prepend, container, is_reply){
         if(!notices.length){
             return false
         }
@@ -161,7 +164,7 @@ crow_template = {
                 continue
             }
 
-            var notice_html = $(crow_template.notice(notice))
+            var notice_html = $(crow_template.notice(notice, is_reply))
             if(conversation){
                 var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
                 var conversation_parent_id = $(conversation_parent).attr('id')
