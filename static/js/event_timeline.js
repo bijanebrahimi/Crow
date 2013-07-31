@@ -29,12 +29,14 @@
 
 $(document).ready(function(){
     // global vars
-    intinite_scroll = false
+    infinite_scroll_timeline = false
+    infinite_scroll_replies = false
     
     // on load
     crow.get_user_info()
     crow.get_server_info()
     crow.get_user_timeline(false)
+    crow.get_user_replies(false)
     
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(e){
@@ -68,8 +70,7 @@ $(document).ready(function(){
             $(textarea).attr('readonly', 'readonly')
             crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
                 'success': function(){
-                    notice_html = $(crow_template.notice(response.notice))
-                    $('#home').prepend(notice_html)
+                    crow_template.notices([response.notice], true, false, $('#home .contents'))
                 },
                 'error': function(){},
                 'fail': function(){},
@@ -187,13 +188,26 @@ $(document).ready(function(){
     })
 
     // Infinite scroll
-    $(window).scroll(function () { 
-        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 500) {
-            if(!intinite_scroll){
-                intinite_scroll = true
-                console.log('loading')
-                crow.get_user_timeline(true)
-            }
-        }
-    });
+    // $(window).scroll(function () { 
+        // if ($(window).scrollTop() >= $(document).height() - $(window).height() - 500) {
+            // var home_page = $('#nav-pages').find('a[href="#home"]').parent().hasClass('active')
+            // if(home_page && !infinite_scroll_timeline){
+                // infinite_scroll_timeline = true
+                // crow.get_user_timeline(true)
+            // }else if(!infinite_scroll_replies){
+                // infinite_scroll_replies = true
+                // crow.get_user_replies(true)
+            // }
+        // }
+    // });
+    $('#replies .well button').click(function(){
+        $('#replies .well button').button('loading')
+        infinite_scroll_replies = true
+        crow.get_user_replies(true)
+    })
+    $('#home .well button').click(function(){
+        $('#home .well button').button('loading')
+        infinite_scroll_timeline = true
+        crow.get_user_timeline(true)
+    })
 })

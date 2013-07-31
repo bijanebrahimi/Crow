@@ -103,7 +103,7 @@ crow_template = {
             }
             return attachments
         }
-        return '<div id="' + _notice_id(notice) + '" class="notice">\
+        return '<div id="' + _notice_id(notice) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -123,18 +123,65 @@ crow_template = {
                         </div>\
                         <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
+                    <div class="notice_replies"><div>\
                 </div>'
     },
-    notices: function(notices){
-        if(!notices.length)
+    notices: function(notices, conversation, prepend, container){
+        if(!notices.length){
             return false
-        var html = $('<div></div>')
-        for (var i=0; i<notices.length ; i++) {
-            var notice = notices[i]
-            var notice_html = $(crow_template.notice(notice))
-            $(notice_html).appendTo(html)
         }
-        return html
+        if(!container){
+            var container = $('<div>1</div>')
+        }
+        for (var i=notices.length-1; i>=0 ; i--) {
+            var notice = notices[i]
+
+            // Skip already existing notices
+            if($(container).find('#notice-' + notice.id).length){
+                continue
+            }
+
+            var notice_html = $(crow_template.notice(notice))
+            if(conversation){
+                var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
+                var conversation_parent_id = $(conversation_parent).attr('id')
+                if(conversation_parent_id){
+                    var conversation_parent_id = parseInt(conversation_parent_id.replace('notice-', ''))
+                    if(parseInt(conversation_parent_id)>parseInt(notice.id)){
+                        conersation_clone = $(conversation_parent).clone()
+                        var tmp_array = conersation_clone.find('.notice')
+                        $(conversation_parent).children('.notice_replies').html('')
+                        tmp_array.push($(conversation_parent).clone())
+                        tmp_array = tmp_array.sort(crow.sort_notices)
+                        
+                        $(conversation_parent).replaceWith($(notice_html))
+                        for(var j=0; j<tmp_array.length; j++){
+                            $(notice_html).children('.notice_replies').append(tmp_array[j])
+                        }
+                    }else{
+                        conersation_clone = $(conversation_parent).clone()
+                        var tmp_array = conersation_clone.find('.notice')
+                        tmp_array.push(notice_html)
+                        tmp_array = tmp_array.sort(crow.sort_notices)
+                        $(conversation_parent).children('.notice_replies').html('')
+                        for(var j=0; j<tmp_array.length; j++){
+                            $(conversation_parent).children('.notice_replies').append(tmp_array[j])
+                        }
+                    }
+                }else{
+                    if(prepend)
+                        $(notice_html).prependTo(container)
+                    else
+                        $(notice_html).appendTo(container)
+                }
+            }else{
+                if(prepend)
+                    $(notice_html).prependTo(container)
+                else
+                    $(notice_html).appendTo(container)
+            }
+        }
+        return container
     },
     
 }

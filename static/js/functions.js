@@ -41,7 +41,6 @@ crow = {
                 response = response.replace(/^\?/, '')
                 data = eval('(' + response + ')')
                 if(data.status_code==200){
-                    console.log(data)
                     short_url = data.data.url
                     return data.data.url
                 }else if(callable_error){
@@ -116,6 +115,13 @@ crow = {
         })
     },
 
+    sort_notices: function(notice_a, notice_b){
+        notice_a_id = parseInt($(notice_a).attr('id').replace('notice-', ''))
+        notice_b_id = parseInt($(notice_b).attr('id').replace('notice-', ''))
+        
+        return notice_a_id - notice_b_id
+    },
+
     get_user_info: function(){
         crow.ajax_get('/user/info', {}, {
             'success': function(response){
@@ -133,26 +139,48 @@ crow = {
         var previous_page = previous_page ? true : false
         crow.ajax_get('/user/timeline', {'previous_page': previous_page}, {
             'success': function(response){
-                crow.user_notices = response.notices
-                html=crow_template.notices(crow.user_notices)
-                console.log(response)
+                crow.user_replies = response.notices
                 if(response.previous_page){
-                    console.log('old')
-                    $($(html).children('div')).appendTo('#home')
-                    intinite_scroll = false
-                    // setTimeout(crow.get_user_timeline(true), 20000)
+                    var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'))
+                    infinite_scroll_timeline = false
                 }else{
-                    console.log('new')
-                    $($(html).children('div')).prependTo('#home')
+                    var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'))
+                    $($(html).children('div')).prependTo('#home .contents')
                     setTimeout(crow.get_user_timeline, 20000)
                 }
             },
             'error': function(response){},
             'fail': function(){},
             'always': function(){
-                $('#loading').hide()
-                // if(!fetch_olds)
-                    // setTimeout('crow.get_user_timeline(fetch_olds)', 20000)
+                if(previous_page)
+                    $('#home .well button').button('reset')
+                else
+                    $('#loading').hide()
+            },
+        })
+    },
+    get_user_replies: function(previous_page){
+        $('#loading').show()
+        var previous_page = previous_page ? true : false
+        crow.ajax_get('/user/replies', {'previous_page': previous_page}, {
+            'success': function(response){
+                crow.user_replies = response.notices
+                if(response.previous_page){
+                    var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'))
+                    infinite_scroll_replies = false
+                }else{
+                    var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'))
+                    $($(html).children('div')).prependTo('#replies .contents')
+                    setTimeout(crow.get_user_replies, 20000)
+                }
+            },
+            'error': function(response){},
+            'fail': function(){},
+            'always': function(){
+                if(previous_page)
+                    $('#replies .well button').button('reset')
+                else    
+                    $('#loading').hide()
             },
         })
     },

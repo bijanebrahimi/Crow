@@ -15,6 +15,7 @@ ROUTS = [
     (r"/user/login", engine.UserLoginHandler),
     (r"/user/info", engine.UserInfoHandler),
     (r"/user/timeline", engine.UserTimelineHandler),
+    (r"/user/replies", engine.UserRepliesHandler),
     (r"/server/info", engine.ServerInfoHandler),
     (r"/notice/send", engine.NoticeSendHandler),
     (r"/notice/repeat", engine.NoticeRepeatHandler),

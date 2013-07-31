@@ -34,8 +34,18 @@
                 </div>
                 <script> document.write(crow_template.navbar()) </script>
                 <div class="tab-content">
-                    <div class="tab-pane active" id="home"></div>
-                    <div class="tab-pane" id="replies"></div>
+                    <div class="tab-pane active" id="home">
+                        <div class='contents'></div>
+                        <div class="well" >
+                            <button class="btn" data-loading-text="Loading...">Load previous Timeline</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="replies">
+                        <div class='contents'></div>
+                        <div class="well">
+                            <button class="btn" data-loading-text="Loading...">Load previous Replies</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -62,34 +62,72 @@ class UserTimelineHandler(tornado.web.RequestHandler):
         except:
             previous_page = None
 
-        # try:
+        try:
             # instance_refresh()
-        home_timeline = []
-        
-        if previous_page == 'true':
-            print 'paging max_id: ' + str(core.SN.get('first_id'))
-            home_timeline = core.SN['sn'].statuses_home_timeline(max_id=core.SN.get('first_id')-1, count=20, page=1)
-            core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-            response['previous_page'] = True
-        elif core.SN.get('last_id'):
-            print 'last_id: ' + str(core.SN.get('last_id'))
-            home_timeline = core.SN['sn'].statuses_home_timeline(since_id=core.SN['last_id'], count=20)
-        else:
-            print 'fresh '
-            home_timeline = core.SN['sn'].statuses_home_timeline(count=20)
+            home_timeline = []
+            
+            if previous_page == 'true' and core.SN.get('first_id') is not None:
+                print 'paging max_id: ' + str(core.SN.get('first_id'))
+                home_timeline = core.SN['sn'].statuses_home_timeline(max_id=core.SN.get('first_id')-1, count=20, page=1)
+                core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+                response['previous_page'] = True
+            elif core.SN.get('last_id'):
+                print 'last_id: ' + str(core.SN.get('last_id'))
+                home_timeline = core.SN['sn'].statuses_home_timeline(since_id=core.SN['last_id'], count=20)
+            else:
+                print 'fresh '
+                home_timeline = core.SN['sn'].statuses_home_timeline(count=20)
 
-        if home_timeline and not response['previous_page']:
-            core.SN['last_id'] = int(home_timeline[0]['id'])
-            print 'last_id = ' + str(core.SN['last_id'])
+            if home_timeline and not response['previous_page']:
+                core.SN['last_id'] = int(home_timeline[0]['id'])
+                print 'last_id = ' + str(core.SN['last_id'])
 
-        if core.SN.get('first_id') is None:
-            core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-            print 'first_id = ' + str(core.SN['first_id'])
-        response['notices'] = home_timeline
-        response['success'] = True
-        print '--------------'
-        # except:
-            # response['error'] = 'Failed to get home timeline'
+            if core.SN.get('first_id') is None:
+                core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+                print 'first_id = ' + str(core.SN['first_id'])
+            response['notices'] = home_timeline
+            response['success'] = True
+            print '--------------'
+        except:
+            response['error'] = 'Failed to get home timeline'
+        self.write(json.dumps(response))
+
+class UserRepliesHandler(tornado.web.RequestHandler):
+    def get(self):
+        response = {'success': False, 'notices': {}, 'previous_page': False, 'error': ''}
+        try:
+            previous_page = self.get_argument("previous_page")
+        except:
+            previous_page = None
+
+        try:
+            # instance_refresh()
+            home_timeline = []
+            
+            if previous_page == 'true' and core.SN.get('replies_first_id') is not None:
+                print 'paging replies_max_id: ' + str(core.SN.get('replies_first_id'))
+                home_timeline = core.SN['sn'].statuses_replies(max_id=core.SN.get('replies_first_id')-1, count=20, page=1)
+                core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+                response['previous_page'] = True
+            elif core.SN.get('replies_last_id'):
+                print 'replies_last_id: ' + str(core.SN.get('replies_last_id'))
+                home_timeline = core.SN['sn'].statuses_replies(since_id=core.SN['replies_last_id'], count=20)
+            else:
+                print 'fresh '
+                home_timeline = core.SN['sn'].statuses_replies(count=20)
+
+            if home_timeline and not response['previous_page']:
+                core.SN['replies_last_id'] = int(home_timeline[0]['id'])
+                print 'replies_last_id = ' + str(core.SN['replies_last_id'])
+
+            if core.SN.get('replies_first_id') is None:
+                core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+                print 'replies_first_id = ' + str(core.SN['replies_first_id'])
+            response['notices'] = home_timeline
+            response['success'] = True
+            print '--------------'
+        except:
+            response['error'] = 'Failed to get home timeline'
         self.write(json.dumps(response))
 
 class ServerInfoHandler(tornado.web.RequestHandler):
