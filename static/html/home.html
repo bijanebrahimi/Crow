@@ -3,11 +3,6 @@
     <head>
         <title>Crow :: Statusnet client</title>
         <meta name="viewport" content="width=480, initial-scale=1.0">
-        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<!--
-        <link href="/static/css/main.css" rel="stylesheet" media="screen">
--->
-        <link href="/static/css/jquery.mentionsInput.css" rel="stylesheet" media="screen">
         <link rel="shortcut icon" href="/static/img/favicon.png" />
         
         <!-- CSS Style -->
@@ -19,8 +14,15 @@
         <script src="/static/js/livestamp.min.js"></script>
         
         <!-- Twiter Bootstrap -->
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         
+        <!-- Mentions Input -->
+        <link href="/static/css/jquery.mentionsInput.css" rel="stylesheet" media="screen">
+        <script src="/static/js/underscore-min.js"></script>
+        <script src="/static/js/jquery.elastic.js"></script>
+        <script src="/static/js/jquery.mentionsInput.js"></script>
+
         <!-- Crow -->
         <script src="/static/js/functions.js"></script>
         <script src="/static/js/templates.js"></script>
@@ -73,31 +75,5 @@
             var windowSpy = null
             CROW = {'max_length': 0}
         </script>
-        <script src="/static/js/underscore-min.js"></script>
-        <script src="/static/js/jquery.elastic.js"></script>
-        <script src="/static/js/jquery.mentionsInput.js"></script>
-        
-        <script src="/static/js/espy.js"></script>
-        
-        
-        
-<!--
-        <script src="/static/js/bootstrap-contextmenu.js"></script>
--->
-        
-<!--
-        <script src="/static/js/template.js"></script>
-        <script src="/static/js/core.js"></script>
-        <script src="/static/js/events.js"></script>
--->
-        <!-- Context Menu -->
-        <!--
-        <div id="context-menu-app">
-            <ul class="dropdown-menu" role="menu">
-                <li><a tabindex="-1" href="#">copy link location</a></li>
-                <li><a tabindex="-1" href="#">copy link text</a></li>
-            </ul>
-        </div>
-        -->
     </body>
 </html>

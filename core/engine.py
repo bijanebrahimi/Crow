@@ -48,7 +48,11 @@ class UserInfoHandler(tornado.web.RequestHandler):
             # instance_refresh()
             user_info = core.SN['sn'].users_show()
             core.SN['user_info'] = user_info
-            response['user'] = user_info
+            friends = core.SN['sn'].statuses_friends(user_id=user_info['id'])
+            core.SN['user_info']['friends'] = []
+            for friend in friends:
+                core.SN['user_info']['friends'].append({'name': friend['screen_name'], 'id': friend['id'], 'type': 'friend', 'avatar': friend['profile_image_url']})
+            response['user'] = core.SN['user_info']
             response['success'] = True
         except:
             response['error'] = 'failed to get info'

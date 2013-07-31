@@ -82,6 +82,20 @@ $(document).ready(function(){
             })
         }
     })
+    $(document).on('focus', 'textarea', function(){
+        if(!$(this).attr('data-mentions-input')){
+            var value = $(this).val()
+            $(this).mentionsInput({
+                onDataRequest:function (mode, query, callback) {
+                    // var data = SETTINGS['info']['user']['friends_list']
+                    var data = crow.user_info.friends
+                    data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                    callback.call(this, data);
+                }
+            });
+            $(this).val(value)
+        }
+    })
     
     // on short url button
     $(document).on('click', '.btn_status_length', function(){
