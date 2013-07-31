@@ -35,6 +35,9 @@
 .status_form.exceeded .btn-toolbar .btn-group .btn.btn_status_length{
     color: #F74400;
 }
+.status_form .btn-toolbar .btn-group .btn.btn_status_short_url i{
+    background: url(/static/img/bitly.png) no-repeat;
+}
 
 /* Navbar */
 .navbar.subnav-fixed {

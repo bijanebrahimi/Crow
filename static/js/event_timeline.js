@@ -96,6 +96,9 @@ $(document).ready(function(){
         var status = status.replace(/(http:\/\/[^ ]+)/g, crow.get_short_url)
         $(textarea).val(status)
     })
+    $(document).on('click', '.btn_status_upload', function(){
+        alert('sorry, not implemented yet')
+    })
 
     // navbar tabs
     $('#nav-pages li a').click(function(e){

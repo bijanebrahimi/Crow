@@ -47,6 +47,7 @@ class UserInfoHandler(tornado.web.RequestHandler):
         try:
             # instance_refresh()
             user_info = core.SN['sn'].users_show()
+            core.SN['user_info'] = user_info
             response['user'] = user_info
             response['success'] = True
         except:
@@ -60,6 +61,13 @@ class UserTimelineHandler(tornado.web.RequestHandler):
             previous_page = self.get_argument("previous_page")
         except:
             previous_page = None
+
+        notify_enabled = False
+        try:
+            import pynotify
+            notify_enabled = True
+        except:
+            pass
 
         try:
             # instance_refresh()
@@ -79,6 +87,21 @@ class UserTimelineHandler(tornado.web.RequestHandler):
 
             if core.SN.get('first_id') is None:
                 core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+
+            if notify_enabled and home_timeline:
+                if len(home_timeline) < 10:
+                    pynotify.init("Crow")
+                    notification = None
+                    for notice in home_timeline:
+                        notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                        # if notice['text'] and notification:
+                        if core.SN.get('user_info'):
+                            if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                                notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                            # TODO: prevent from notification flooding
+                        notification.show()
+                
+                
             response['notices'] = home_timeline
             response['success'] = True
         except:

@@ -3,12 +3,12 @@ crow_template = {
         return '<div class="status_form">\
                     <div class="btn-toolbar">\
                         <div class="btn-group">\
-                            <button class="btn btn-small btn_status_ltr active" title="indicates status is left to right"><i class="icon icon-align-left"></i></button>\
-                            <button class="btn btn-small btn_status_length" title="click to tries shorten text">0</button>\
-                            <button class="btn btn-small btn_status_rtl" title="indicates status is right to left"><i class="icon icon-align-right"></i></button>\
+                            <button class="btn btn-small btn_status_ltr active" title="text LTR indicator"><i class="icon icon-align-left"></i></button>\
+                            <button class="btn btn-small btn_status_length" title="shorten text">0</button>\
+                            <button class="btn btn-small btn_status_rtl" title="text RTL indicator"><i class="icon icon-align-right"></i></button>\
                         </div>\
                         <div class="btn-group">\
-                            <button class="btn btn-small btn_status_short_url" title="click to shorten all urls"><i class="icon icon-share"></i></button>\
+                            <button class="btn btn-small btn_status_short_url" title="Bitly Short_url"><i class="icon icon-share"></i></button>\
                         </div>\
                         <div class="btn-group">\
                             <button class="btn btn-small btn_status_upload" title="upload image <NOT IMPLEMENTED YET>"><i class="icon  icon-picture"></i></button>\
