@@ -177,6 +177,15 @@
 .tab-content .tab-pane .well button{
     width: 90%;
 }
+
+/* Stream */
+#stream{
+    max-height: 200px;
+    overflow-y: auto;
+    width: 250px;
+    overflow-x: hidden;
+}
+
 /* Icon */
 .icon.icon-ajax{
     background: url('/static/img/ajax.gif') !important;

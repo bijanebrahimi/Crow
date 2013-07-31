@@ -70,7 +70,7 @@ $(document).ready(function(){
             $(textarea).attr('readonly', 'readonly')
             crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
                 'success': function(){
-                    crow_template.notices([response.notice], true, false, $('#home .contents'))
+                    crow_template.notices([response.notice], true, true, $('#home .contents'))
                 },
                 'error': function(){},
                 'fail': function(){},
@@ -187,19 +187,6 @@ $(document).ready(function(){
         $('body').animate({scrollTop: 0}, '500', 'swing')
     })
 
-    // Infinite scroll
-    // $(window).scroll(function () { 
-        // if ($(window).scrollTop() >= $(document).height() - $(window).height() - 500) {
-            // var home_page = $('#nav-pages').find('a[href="#home"]').parent().hasClass('active')
-            // if(home_page && !infinite_scroll_timeline){
-                // infinite_scroll_timeline = true
-                // crow.get_user_timeline(true)
-            // }else if(!infinite_scroll_replies){
-                // infinite_scroll_replies = true
-                // crow.get_user_replies(true)
-            // }
-        // }
-    // });
     $('#replies .well button').click(function(){
         $('#replies .well button').button('loading')
         infinite_scroll_replies = true
@@ -209,5 +196,18 @@ $(document).ready(function(){
         $('#home .well button').button('loading')
         infinite_scroll_timeline = true
         crow.get_user_timeline(true)
+    })
+
+    // Stream
+    $(document).on('click', '#stream li a', function(e){
+        e.preventDefault()
+        e.stopPropagation()
+        crow.stream_remove($(this))
+    })
+    $(document).on('mouseenter', '.notice .notice_body', function(){
+        var notice_id = $(this).parent().attr('id').replace('notice-', '')
+        var stream_item = $('.stream-item a[href="#notice-' + notice_id + '"]')
+        if(stream_item.length)
+            crow.stream_remove(stream_item, true)
     })
 })

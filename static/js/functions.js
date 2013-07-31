@@ -122,6 +122,42 @@ crow = {
         return notice_a_id - notice_b_id
     },
 
+    stream_update: function(notice){
+        streams_count = $('#stream li').length - 2
+        $('#notice-streams > a').html('<b class="icon icon-comment"></b> ' + streams_count + '')
+    },
+    stream_add: function(notices, prepend){
+        if(notices.length>0){
+            for (var i=notices.length-1; i>=0 ; i--){
+                stream_html = crow_template.stream(notices[i])
+                if(prepend)
+                    $(stream_html).insertAfter('#stream .divider')
+                else
+                    $(stream_html).appendTo('#stream')
+            }
+            crow.stream_update()
+        }
+    },
+    stream_remove: function(stream_element, stay){
+        if($(stream_element).hasClass('empty')){
+            $('#stream li.stream-item').remove()
+            crow.stream_update()
+        }else{
+            if(!stay){
+                var element_id = $(stream_element).attr('href')
+                var element_top = $(element_id).offset().top - 50
+                $(document).scrollTop(element_top)
+                
+                $(element_id).animate({opacity: 0.3}, 500, function(){
+                    $(this).css('opacity', 1)
+                })
+            }
+            $(stream_element).parent().remove()
+            crow.stream_update()
+        }
+    },
+    
+
     get_user_info: function(){
         crow.ajax_get('/user/info', {}, {
             'success': function(response){
@@ -143,7 +179,12 @@ crow = {
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'))
                     infinite_scroll_timeline = false
+                    
+                    crow.stream_add(crow.user_replies, false)
                 }else{
+                    // crow_template.streams(crow.user_replies)
+                    crow.stream_add(crow.user_replies, true)
+                    
                     var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'))
                     $($(html).children('div')).prependTo('#home .contents')
                     setTimeout(crow.get_user_timeline, 20000)

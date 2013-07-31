@@ -34,14 +34,13 @@ crow_template = {
                                         <img id="loading" src="/static/img/ajax.gif">\
                                     </a>\
                                 </li>\
-                                <li class="dropdown" id="status-streams">\
+                                <li class="dropdown" id="notice-streams">\
                                     <a href="#" role="button" class="app-link dropdown-toggle" data-toggle="dropdown">\
                                         <b class="icon icon-comment"></b>\
-                                        <i></i>\
                                     </a>\
-                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">\
-                                        <li class="divider"></li>\
+                                    <ul id="stream" class="dropdown-menu" role="menu" aria-labelledby="drop3">\
                                         <li><a class="app-link empty" tabindex="-1" href="#"><i class="icon icon-trash"></i>Empty</a></li>\
+                                        <li class="divider"></li>\
                                     </ul>\
                                 </li>\
                             </ul>\
@@ -52,6 +51,26 @@ crow_template = {
 
     alert: function(type, text){
         return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
+    },
+
+    stream: function(notice){
+        function _time(notice){
+            var notice_timestamp = Date.parse(notice.created_at) / 1000
+            return '<span class="time" data-livestamp="' + notice_timestamp + '"></span> '
+        }
+        return '<li class="stream-item">\
+                    <a class="app-link" tabindex="-1" href="#notice-' + notice.id + '" title="' + crow.escape_quotes(notice.text) + '">\
+                        <img class="icon" src="' + notice.user.profile_image_url + '" width=24px>\
+                        ' + notice.user.screen_name + ', ' + _time(notice) + '\
+                    </a>\
+                </li>'
+    },
+    streams: function(notices){
+        if(notices.length>0)
+            for (var i=notices.length-1; i>=0 ; i--){
+                stream_html = crow_template.stream(notices[i])
+                $('#stream').prepend(stream_html)
+            }
     },
 
     notice: function(notice){
@@ -82,7 +101,8 @@ crow_template = {
             return '<button title="Repeat this notice" class="btn btn-mini repeat"><i class="icon icon-white icon-refresh"></i></button>\
                     <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
                     <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
-                    <button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
+                    '
+            // <button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
         }
         function _notice_html_content(notice){
             return notice.statusnet_html
