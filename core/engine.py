@@ -3,12 +3,15 @@
 # from python
 import json
 import tornado.web
-# import pynotify
 
 # from application
 import core
 import config
 from libs import StatusNet
+
+class StaticFileHandlerCustomized(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header("Cache-control", "no-cache")
 
 class UserLoginHandler(tornado.web.RequestHandler):
     def initialize(self):

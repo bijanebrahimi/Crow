@@ -22,23 +22,7 @@ ROUTS = [
     (r"/notice/fav", engine.NoticeFavHandler),
     (r"/notice/attachment", engine.NoticeAttachmentHandler),
     (r"/notice/conversation", engine.NoticeConversationHandler),
-    
-    # (r'/', statusnet.HomeHandler),
-    # (r'/statuses/conversation', statusnet.ConversationHandler),
-    # (r'/statuses/update', statusnet.UpdateHandler),
-    # 
-    # (r'/statuses/repeat', statusnet.RepeatHandler),
-    # (r'/statuses/reply', statusnet.ReplyHandler),
-    # (r'/statuses/favorite', statusnet.FavoriteHandler),
-    # 
-    # (r'/statuses/read', statusnet.ReadHandler),
-    # 
-    # (r'/attachment/text_html', statusnet.AttachmentHandler),
-    # 
-    # (r'/plugins/short_url', statusnet.PluginShorturl),
-    # (r'/plugins/force_rtl', statusnet.PluginForceRTL),
-    
-    (r"/static/(.*)", tornado.web.StaticFileHandler, dict(path=SETTINGS['static_path'])),
+    (r"/static/(.*)", engine.StaticFileHandlerCustomized, dict(path=SETTINGS['static_path'])),
 ]
 
 APPLICATION = {'source': 'Crow'}
