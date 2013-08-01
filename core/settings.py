@@ -27,13 +27,4 @@ ROUTS = [
 
 APPLICATION = {'source': 'Crow'}
 
-INSTANCE = {'conn': None,
-            'username': '',
-            'password': '',
-            'history': {'home_timeline': {'last_id': None,
-                                           'first_id': None},
-                         'info': {'user': {},
-                                  'server': {}},
-                         'notices': []}}
-
 SN = {}

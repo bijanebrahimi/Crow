@@ -1,1 +1,1 @@
-from core.settings import SN, APPLICATION, ROUTS, SETTINGS, INSTANCE
+from core.settings import SN, APPLICATION, ROUTS, SETTINGS

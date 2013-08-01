@@ -29,6 +29,9 @@ class UserLoginHandler(tornado.web.RequestHandler):
 
     def post(self):
         try:
+            if core.SN.get('sn') is not None:
+                self.redirect("/")
+                return True
             username = self.get_argument("username")
             password = self.get_argument("password")
             if username == '':
