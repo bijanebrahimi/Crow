@@ -56,9 +56,9 @@ $(document).ready(function(){
         $(this).parents('.status_form').children('.btn-toolbar').children('.btn-group').children('.btn_status_length').html(status.length)
         if(crow.server_info.length_limit>0){
             if(status.length>crow.server_info.length_limit)
-                $(this).parents('.status_form').parent('.btn-toolbar').addClass('exceeded')
+                $(this).parents('.status_form').addClass('exceeded')
             else
-                $(this).parents('.status_form').parent('.btn-toolbar').removeClass('exceeded')
+                $(this).parents('.status_form').removeClass('exceeded')
         }
     })
     $(document).on('keypress', 'textarea', function(e){
