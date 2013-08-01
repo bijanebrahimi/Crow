@@ -35,8 +35,6 @@ $(document).ready(function(){
     // on load
     crow.get_user_info()
     crow.get_server_info()
-    crow.get_user_timeline(false)
-    crow.get_user_replies(false)
     
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(e){
@@ -80,20 +78,6 @@ $(document).ready(function(){
                         $(textarea).parents('.notice_body').children('.notice_form').toggle()
                 },
             })
-        }
-    })
-    $(document).on('focus', 'textarea', function(){
-        if(!$(this).attr('data-mentions-input')){
-            var value = $(this).val()
-            $(this).mentionsInput({
-                onDataRequest:function (mode, query, callback) {
-                    // var data = SETTINGS['info']['user']['friends_list']
-                    var data = crow.user_info.friends
-                    data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-                    callback.call(this, data);
-                }
-            });
-            $(this).val(value)
         }
     })
     

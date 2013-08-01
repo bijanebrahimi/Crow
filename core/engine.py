@@ -51,7 +51,7 @@ class UserInfoHandler(tornado.web.RequestHandler):
             friends = core.SN['sn'].statuses_friends(user_id=user_info['id'])
             core.SN['user_info']['friends'] = []
             for friend in friends:
-                core.SN['user_info']['friends'].append({'name': friend['screen_name'], 'id': friend['id'], 'type': 'friend', 'avatar': friend['profile_image_url']})
+                core.SN['user_info']['friends'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
             response['user'] = core.SN['user_info']
             response['success'] = True
         except:

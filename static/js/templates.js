@@ -132,7 +132,7 @@ crow_template = {
             }
             return attachments
         }
-        return '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -154,6 +154,9 @@ crow_template = {
                     </div>\
                     <div class="notice_replies"><div>\
                 </div>'
+        notice_element = $(notice_html)
+        crow.plugin_mention($(notice_element).find('textarea'))
+        return notice_element
     },
     notices: function(notices, conversation, prepend, container, is_reply){
         if(!notices.length){
@@ -172,7 +175,19 @@ crow_template = {
                 continue
             }
 
-            var notice_html = $(crow_template.notice(notice, is_reply))
+            // var notice_html = $(crow_template.notice(notice, is_reply))
+            var notice_html = crow_template.notice(notice, is_reply)
+            // console.log($(notice_html))
+            // console.log($(notice_html).find('textrea'))
+            // $(notice_html).find('textrea').css('background', 'blue')
+            // .mentionsInput({
+                // onDataRequest:function (mode, query, callback) {
+                    // var data = crow.user_info.friends
+                    // data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                    // callback.call(this, data);
+                // }
+            // });
+            
             if(conversation){
                 var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
                 var conversation_parent_id = $(conversation_parent).attr('id')

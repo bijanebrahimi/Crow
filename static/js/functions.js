@@ -64,6 +64,19 @@ crow = {
         return 
     },
     
+    plugin_mention: function(element){
+        $(element).mention({
+            delimiter: '@',
+            emptyQuery: true,
+            sensitive : true,
+            queryBy: ['username'],
+            typeaheadOpts: {
+                items: 10 // Max number of items you want to show
+            },
+            users: crow.user_info.friends
+        });
+    },
+    
     ajax_post: function(url, data, callbacks){
         data['is_ajax'] = true
         var jqxhr = $.post(url, data, function(text_response){
@@ -158,18 +171,6 @@ crow = {
     },
     
 
-    get_user_info: function(){
-        crow.ajax_get('/user/info', {}, {
-            'success': function(response){
-                crow.user_info = response.user
-                $('#avatar').attr('src', crow.user_info.profile_image_url)
-                $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-            },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){},
-        })
-    },
     get_user_timeline: function(previous_page){
         $('#loading').show()
         var previous_page = previous_page ? true : false
@@ -223,6 +224,22 @@ crow = {
                 else    
                     $('#loading').hide()
             },
+        })
+    },
+    get_user_info: function(){
+        crow.ajax_get('/user/info', {}, {
+            'success': function(response){
+                crow.user_info = response.user
+                $('#avatar').attr('src', crow.user_info.profile_image_url)
+                $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
+                crow.plugin_mention($('textarea'))
+                
+                crow.get_user_timeline(false)
+                crow.get_user_replies(false)
+            },
+            'error': function(response){},
+            'fail': function(){},
+            'always': function(){},
         })
     },
     
