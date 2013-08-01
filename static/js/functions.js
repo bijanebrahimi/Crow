@@ -12,12 +12,13 @@ crow = {
         if(!text)
             return false
         var rtl_regex = new RegExp('^[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]'),
+            ltr_regex = new RegExp('^[A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF'+'\u2C00-\uFB1C\uFDFE-\uFE6F\uFEFD-\uFFFF]'),
             rtl_char_count = 0,
             ltr_char_count = 0;
         for(i=text.length-1; i>=0; i--){
             if(rtl_regex.test(text[i]))
                 rtl_char_count += 1
-            else
+            else if(ltr_regex.test(text[i]))
                 ltr_char_count += 1
         }
         return (rtl_char_count>ltr_char_count)
