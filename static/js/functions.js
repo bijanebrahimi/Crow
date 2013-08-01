@@ -51,7 +51,7 @@ crow = {
         return short_url
     },
     shorten_text: function(text){
-        text = text.replace(/http:\/\//g, '')
+        text = text.replace(/https?:\/\//g, '')
         return text
     },
     shorten_html_link: function(html){
