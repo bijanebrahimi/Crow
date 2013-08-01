@@ -142,6 +142,10 @@ crow = {
     stream_add: function(notices, prepend){
         if(notices.length>0){
             for (var i=notices.length-1; i>=0 ; i--){
+                if(notices[i].user.id==crow.user_info.id){
+                    // Skip self posted dents in stream
+                    continue
+                }
                 stream_html = crow_template.stream(notices[i])
                 if(prepend)
                     $(stream_html).insertAfter('#stream .divider')

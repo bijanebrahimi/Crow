@@ -103,6 +103,9 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                     pynotify.init("Crow")
                     notification = None
                     for notice in home_timeline:
+                        if notice['user']['id'] == core.SN['user_info']['id']:
+                            # Skip self posted dents
+                            continue
                         notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
                         # if notice['text'] and notification:
                         if core.SN.get('user_info'):
