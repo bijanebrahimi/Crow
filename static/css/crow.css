@@ -158,10 +158,17 @@
 
 .notice .notice_replies{
     float: left;
-    width: 90%;
-    margin-left: 10%;
-    padding: 10px;
+    width: 95%;
+    margin-left: 4%;
+    padding: 1%;
     margin-top: 5px;
+    background: #FFF0D7;
+    -webkit-border-radius: 10px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 10px;
+    border-top-left-radius: 0;
 }
 .notice .notice_replies:empty{
     display: none;

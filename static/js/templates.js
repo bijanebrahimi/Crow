@@ -152,7 +152,7 @@ crow_template = {
                         </div>\
                         <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
-                    <div class="notice_replies"><div>\
+                    <div class="notice_replies"></div>\
                 </div>'
         notice_element = $(notice_html)
         crow.plugin_mention($(notice_element).find('textarea'))
@@ -175,18 +175,7 @@ crow_template = {
                 continue
             }
 
-            // var notice_html = $(crow_template.notice(notice, is_reply))
             var notice_html = crow_template.notice(notice, is_reply)
-            // console.log($(notice_html))
-            // console.log($(notice_html).find('textrea'))
-            // $(notice_html).find('textrea').css('background', 'blue')
-            // .mentionsInput({
-                // onDataRequest:function (mode, query, callback) {
-                    // var data = crow.user_info.friends
-                    // data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-                    // callback.call(this, data);
-                // }
-            // });
             
             if(conversation){
                 var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
@@ -194,8 +183,6 @@ crow_template = {
                 if(conversation_parent_id){
                     var conversation_parent_id = parseInt(conversation_parent_id.replace('notice-', ''))
                     if(parseInt(conversation_parent_id)>parseInt(notice.id)){
-                        // conersation_clone = $(conversation_parent).clone()
-                        // var tmp_array = conersation_clone.find('.notice')
                         var tmp_array = conversation_parent.find('.notice')
                         $(conversation_parent).children('.notice_replies').html('')
                         tmp_array.push($(conversation_parent))
@@ -206,8 +193,6 @@ crow_template = {
                             $(notice_html).children('.notice_replies').append(tmp_array[j])
                         }
                     }else{
-                        // conersation_clone = $(conversation_parent).clone()
-                        // var tmp_array = conersation_clone.find('.notice')
                         var tmp_array = conversation_parent.find('.notice')
                         tmp_array.push(notice_html)
                         tmp_array = tmp_array.sort(crow.sort_notices)
