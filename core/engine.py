@@ -185,7 +185,7 @@ class NoticeRepeatHandler(tornado.web.RequestHandler):
         try:
             # instance_refresh()
             notice_id = self.get_argument("id")
-            repeated = core.SN['sn'].statuses_retweet(notice_id, source="Crow")
+            repeated = core.SN['sn'].statuses_retweet(notice_id, source=core.APPLICATION['source'])
             response['notice'] = repeated
             response['success'] = True
         except:
@@ -200,7 +200,7 @@ class NoticeSendHandler(tornado.web.RequestHandler):
             # server_info = {'length_limit': core.SN['sn'].length_limit}
             notice_status = self.get_argument("status")
             notice_id = self.get_argument("id")
-            update = core.SN['sn'].statuses_update(notice_status, source='Crow', in_reply_to_status_id=notice_id, long_dent="truncate")
+            update = core.SN['sn'].statuses_update(notice_status, source=core.APPLICATION['source'], in_reply_to_status_id=notice_id, long_dent="truncate")
             response['notice'] = update
             response['success'] = True
         except:

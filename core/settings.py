@@ -25,6 +25,6 @@ ROUTS = [
     (r"/static/(.*)", engine.StaticFileHandlerCustomized, dict(path=SETTINGS['static_path'])),
 ]
 
-APPLICATION = {'source': 'Crow'}
+APPLICATION = {'source': '<a href="http://github.com/bijanebrahimi/crow">Crow</a>'}
 
 SN = {}
