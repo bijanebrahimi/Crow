@@ -189,13 +189,13 @@ $(document).ready(function(){
         $('body').animate({scrollTop: 0}, '500', 'swing')
     })
 
-    $('#replies .well button').click(function(){
-        $('#replies .well button').button('loading')
+    $('#replies .pager button').click(function(){
+        $('#replies .pager button').button('loading')
         infinite_scroll_replies = true
         crow.get_user_replies(true)
     })
-    $('#home .well button').click(function(){
-        $('#home .well button').button('loading')
+    $('#home .pager button').click(function(){
+        $('#home .pager button').button('loading')
         infinite_scroll_timeline = true
         crow.get_user_timeline(true)
     })

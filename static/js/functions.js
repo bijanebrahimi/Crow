@@ -195,7 +195,7 @@ crow = {
             'fail': function(){},
             'always': function(){
                 if(previous_page)
-                    $('#home .well button').button('reset')
+                    $('#home .pager button').button('reset')
                 else
                     $('#loading').hide()
             },
@@ -220,7 +220,7 @@ crow = {
             'fail': function(){},
             'always': function(){
                 if(previous_page)
-                    $('#replies .well button').button('reset')
+                    $('#replies .pager button').button('reset')
                 else    
                     $('#loading').hide()
             },

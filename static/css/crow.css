@@ -69,7 +69,7 @@
 
 /* Tab Content */
 .tab-content{
-    overflow: hidden;
+    overflow-x: hidden !important;
 }
 
 /* Notice */
@@ -78,6 +78,7 @@
     margin-bottom: 5px;
     float: left;
     width: 96%;
+    word-break: break-word;
 }
 .notice .notice_body{
     float: left;
@@ -171,15 +172,18 @@
     width: 100%;
     float: left;
 }
-.tab-content .tab-pane .well{
-    width: 90%;
+.tab-content .tab-pane .pager{
+    width: 100%;
     text-align: center;
     float: left;
+    padding: 0px;
+    margin: 0px;
     padding-top: 8px;
     padding-bottom: 8px;
+    
 }
-.tab-content .tab-pane .well button{
-    width: 100%;
+.tab-content .tab-pane .pager button{
+    width: 80%;
 }
 
 /* Stream */
