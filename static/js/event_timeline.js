@@ -61,9 +61,11 @@ $(document).ready(function(){
     })
     $(document).on('keypress', 'textarea', function(e){
         // Send
+        var textarea = $(this)
+        var status = $(this).val()
         if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
-            var textarea = $(this)
-            var status = $(this).val()
+            if(status.length==0)
+                return false
             var notice_id = $(textarea).attr('data-notice')
             $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_length').button('loading')
             crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
