@@ -160,7 +160,9 @@ $(document).ready(function(){
         var status = $(textarea).val()
         var screen_name = $(textarea).attr('data-screen-name')
         $(notice_form).toggle()
-        $(textarea).val('@' + screen_name + ' ')
+        if(status.length==0)
+            status = '@' + screen_name + ' '
+        $(textarea).focus().val('').val(status)
     })
 
     // Notice content
