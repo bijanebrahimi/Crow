@@ -196,8 +196,10 @@ crow = {
             'always': function(){
                 if(previous_page)
                     $('#home .pager button').button('reset')
-                else
+                else{
                     $('#loading').hide()
+                    $('#home .pager button').show()
+                }
             },
         })
     },
@@ -221,8 +223,10 @@ crow = {
             'always': function(){
                 if(previous_page)
                     $('#replies .pager button').button('reset')
-                else    
+                else{    
+                    $('#replies .pager button').show()
                     $('#loading').hide()
+                }
             },
         })
     },

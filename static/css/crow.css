@@ -97,6 +97,7 @@
 .notice .notice_body .notice_content p{
     margin-bottom: 0px;
     float: left;
+    word-break: break-word;
 }
 .notice .notice_body .notice_content p.rtl{
     direction: rtl;
@@ -191,6 +192,7 @@
 }
 .tab-content .tab-pane .pager button{
     width: 80%;
+    display: none;
 }
 
 /* Stream */
