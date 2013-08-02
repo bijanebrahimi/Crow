@@ -33,3 +33,4 @@ version 0.0.5
     - added new plugin for friends suggestion (Bootstrap Mention.js)
     - improved python notifications/web streams
     - many UserInterface functionality improvements
+    - fixed duplicated posted dent's and repeats

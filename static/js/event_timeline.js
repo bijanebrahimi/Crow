@@ -129,8 +129,7 @@ $(document).ready(function(){
         $(button).children('i').removeClass('icon-refresh').addClass('icon-ajax')
         crow.ajax_post('/notice/repeat', {'id': notice_id},{
             'success': function(response){
-                notice_html = $(crow_template.notice(response.notice))
-                $('#home').prepend(notice_html)
+                crow_template.notices([response.notice], true, true, $('#home .contents'))
             },
             'error': function(response){},
             'fail': function(){},
