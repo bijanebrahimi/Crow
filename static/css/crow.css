@@ -248,3 +248,6 @@ body {
 .icon.icon-ajax{
     background: url('/static/img/ajax.gif') !important;
 }
+.icon.icon-white.icon-ajax{
+    background: url('/static/img/ajax-white.gif') !important;
+}
