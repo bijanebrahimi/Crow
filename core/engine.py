@@ -39,8 +39,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
                 content = content_file.read()
             self.write(content)
         except:
-            # TODO: send HTTP Specific Error
-            self.write('failed')
+            raise tornado.web.HTTPError(404)
 
     def post(self):
         try:
@@ -59,7 +58,6 @@ class UserLoginHandler(tornado.web.RequestHandler):
                 # core.INSTANCE['password'] = password
                 self.write(json.dumps({'success': True, 'redirect': '/'}))
         except:
-            # TODO: send HTTP Specific Error
             self.write(json.dumps({'success': False, 'error': 'Failed to login'}))
 
 class UserInfoHandler(tornado.web.RequestHandler):
@@ -272,13 +270,11 @@ class HomeHandler(tornado.web.RequestHandler):
         content = ''
         if core.SN.get('sn') is None:
             self.redirect("/user/login")
-            return True
-
-        try:
-            with open(core.SETTINGS['static_path'] + '/html/home.html', 'r') as content_file:
-                content = content_file.read()
-            self.write(content)
-        except:
-            # TODO: send HTTP Specific Error
-            self.write('home failed')
+        else:
+            try:
+                with open(core.SETTINGS['static_path'] + '/html/home.html', 'r') as content_file:
+                    content = content_file.read()
+                self.write(content)
+            except:
+                raise tornado.web.HTTPError(404)
 
