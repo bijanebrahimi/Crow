@@ -157,6 +157,7 @@ body {
     background: #E79E40;
 }
 .notice .notice_body .notice_content img.thumbnails{
+    min-width: 50px;
     max-width: 200px;
     margin-bottom: 10px;
     display: block;
