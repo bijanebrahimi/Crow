@@ -9,8 +9,11 @@
     <body>
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="span12 well" style="margin-top: 20px;">
-                    <legend>Please Sign In</legend>
+                <div class="span12" style="margin-top: 20px;">
+                    <legend>
+                        <img src="/static/img/favicon.png">
+                        Please Sign In
+                    </legend>
                     <div id='login-form'>
                         <input type="text" id="username" class="span12" name="username" placeholder="Username">
                         <input type="password" id="password" class="span12" name="password" placeholder="Password">
@@ -19,9 +22,6 @@
                 </div>
             </div>
         </div>
-        <script>
-            var SETTINGS = { 'api': {'login': '/account/login'}}
-        </script>
         <script src="/static/js/jquery-2.0.3.min.js"></script>
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         <script src="/static/js/functions.js"></script>
