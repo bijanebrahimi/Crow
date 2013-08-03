@@ -5,7 +5,7 @@ also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.ht
 
 Current Version
 ---------------
-0.0.4
+0.1
 
 Install
 ---------------
@@ -14,27 +14,47 @@ Install
 
 crow contains a small web server written in *python 2.7+* and the reset is HTML and Javascript.
 
-#### Debian & Ubuntu Friends
+#### Linux: Debian & Ubuntu Friends
 
         sudo apt-get install python-pip python-notify
         sudo pip install tornado
 
-#### Fedora
+#### Linux: Fedora
 
         sudo yum install python-pip python-notify
         sudo python-pip install tornado
 
-* installing `python-notify` is optional since it only get loaded when available
+#### Windows
 
-Run
+1. Get Python 2.x from Phython.org and install it
+2. Get distribute from http://python-distribute.org/distribute_setup.py and install it by executing it.
+3. Get pip from https://raw.github.com/pypa/pip/master/contrib/get-pip.py and istall it like distribute.
+4. Install tornado using 
+
+        $ pip install tornado
+
+**Note**: installing `python-notify` is optional since it only get loaded when available
+
+Download the code
 ---------------
 
-download the latest version from [here](https://github.com/bijanebrahimi/Crow)
+### stable version
+
+download the latest stable version from [here](https://github.com/bijanebrahimi/Crow)
 or clone the code:
 
         mkdir crow
         cd crow
         git clone git@github.com:bijanebrahimi/Crow.git ./
+
+### latest version
+
+latest version is not as robust as stable version but is more current and have more bugfixes.
+you can find the latest version in [develop branch](https://github.com/bijanebrahimi/Crow/tree/develope/)
+
+
+Run
+---------------
 
 crows uses html as GUI so you need to run it on your browser. 
 first you need to run the server.
@@ -70,9 +90,11 @@ Todo List
 
 Known Issues
 ---------------
-this is an alpha version so there are (/should be) a lot of issues but they
-needed to be documented. please submitt any issue [here](https://github.com/bijanebrahimi/Crow/issues).
+this is an beta version so there are (/should be) a lot of issues but they
+needed to be documented to get fixed. please submitt any issues [here](https://github.com/bijanebrahimi/Crow/issues).
 
 License
 ---------------
-GPL v3.0 or later
+Crow is made from lots of different parts that putting them together makes it caw :)
+the main code of **Crow is licensed under GPL v3.0** but every 3rd party library may has it's own license (like `Twitter Bootstrap` or `jQuery`).
+you may need to read the header of each file to see the license information.

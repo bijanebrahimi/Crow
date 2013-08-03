@@ -1,3 +1,19 @@
+// This file is part of Crow.
+// Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+// 
+// Crow is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Crow is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Crow.  If not, see <http://www.gnu.org/licenses/>.
+
 crow_template = {
     status_form: function(notice_id, screen_name){
         return '<div class="status_form">\
@@ -132,7 +148,7 @@ crow_template = {
             }
             return attachments
         }
-        return '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -152,8 +168,11 @@ crow_template = {
                         </div>\
                         <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
-                    <div class="notice_replies"><div>\
+                    <div class="notice_replies"></div>\
                 </div>'
+        notice_element = $(notice_html)
+        crow.plugin_mention($(notice_element).find('textarea'))
+        return notice_element
     },
     notices: function(notices, conversation, prepend, container, is_reply){
         if(!notices.length){
@@ -172,15 +191,14 @@ crow_template = {
                 continue
             }
 
-            var notice_html = $(crow_template.notice(notice, is_reply))
+            var notice_html = crow_template.notice(notice, is_reply)
+            
             if(conversation){
                 var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
                 var conversation_parent_id = $(conversation_parent).attr('id')
                 if(conversation_parent_id){
                     var conversation_parent_id = parseInt(conversation_parent_id.replace('notice-', ''))
                     if(parseInt(conversation_parent_id)>parseInt(notice.id)){
-                        // conersation_clone = $(conversation_parent).clone()
-                        // var tmp_array = conersation_clone.find('.notice')
                         var tmp_array = conversation_parent.find('.notice')
                         $(conversation_parent).children('.notice_replies').html('')
                         tmp_array.push($(conversation_parent))
@@ -191,8 +209,6 @@ crow_template = {
                             $(notice_html).children('.notice_replies').append(tmp_array[j])
                         }
                     }else{
-                        // conersation_clone = $(conversation_parent).clone()
-                        // var tmp_array = conersation_clone.find('.notice')
                         var tmp_array = conversation_parent.find('.notice')
                         tmp_array.push(notice_html)
                         tmp_array = tmp_array.sort(crow.sort_notices)

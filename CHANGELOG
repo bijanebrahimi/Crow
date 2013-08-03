@@ -28,3 +28,9 @@ version 0.0.4
     - added Text shorten (for now just removes http:// to shorten text)
     - javascript text direction added
     - a lot of code clean ups & refactoring
+
+version 0.0.5
+    - added new plugin for friends suggestion (Bootstrap Mention.js)
+    - improved python notifications/web streams
+    - many UserInterface functionality improvements
+    - fixed duplicated posted dent's and repeats

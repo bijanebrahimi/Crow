@@ -1,14 +1,32 @@
 # -*- coding: UTF-8 -*-
+# This file is part of Crow.
+# Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+# 
+# Crow is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Crow is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 # from python
 import json
 import tornado.web
-# import pynotify
 
 # from application
 import core
 import config
 from libs import StatusNet
+
+class StaticFileHandlerCustomized(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header("Cache-control", "no-cache")
 
 class UserLoginHandler(tornado.web.RequestHandler):
     def initialize(self):
@@ -26,6 +44,9 @@ class UserLoginHandler(tornado.web.RequestHandler):
 
     def post(self):
         try:
+            if core.SN.get('sn') is not None:
+                self.redirect("/")
+                return True
             username = self.get_argument("username")
             password = self.get_argument("password")
             if username == '':
@@ -51,7 +72,7 @@ class UserInfoHandler(tornado.web.RequestHandler):
             friends = core.SN['sn'].statuses_friends(user_id=user_info['id'])
             core.SN['user_info']['friends'] = []
             for friend in friends:
-                core.SN['user_info']['friends'].append({'name': friend['screen_name'], 'id': friend['id'], 'type': 'friend', 'avatar': friend['profile_image_url']})
+                core.SN['user_info']['friends'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
             response['user'] = core.SN['user_info']
             response['success'] = True
         except:
@@ -65,6 +86,13 @@ class UserTimelineHandler(tornado.web.RequestHandler):
             previous_page = self.get_argument("previous_page")
         except:
             previous_page = None
+
+        try:
+            fresh_results = self.get_argument("fresh_results")
+            core.SN['first_id'] = None
+            core.SN['last_id'] = None
+        except:
+            pass
 
         notify_enabled = False
         try:
@@ -97,6 +125,9 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                     pynotify.init("Crow")
                     notification = None
                     for notice in home_timeline:
+                        if notice['user']['id'] == core.SN['user_info']['id']:
+                            # Skip self posted dents
+                            continue
                         notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
                         # if notice['text'] and notification:
                         if core.SN.get('user_info'):
@@ -119,6 +150,13 @@ class UserRepliesHandler(tornado.web.RequestHandler):
             previous_page = self.get_argument("previous_page")
         except:
             previous_page = None
+
+        try:
+            fresh_results = self.get_argument("fresh_results")
+            core.SN['replies_first_id'] = None
+            core.SN['replies_last_id'] = None
+        except:
+            pass
 
         try:
             # instance_refresh()
@@ -179,7 +217,7 @@ class NoticeRepeatHandler(tornado.web.RequestHandler):
         try:
             # instance_refresh()
             notice_id = self.get_argument("id")
-            repeated = core.SN['sn'].statuses_retweet(notice_id, source="Crow")
+            repeated = core.SN['sn'].statuses_retweet(notice_id, source=core.APPLICATION['source'])
             response['notice'] = repeated
             response['success'] = True
         except:
@@ -194,7 +232,7 @@ class NoticeSendHandler(tornado.web.RequestHandler):
             # server_info = {'length_limit': core.SN['sn'].length_limit}
             notice_status = self.get_argument("status")
             notice_id = self.get_argument("id")
-            update = core.SN['sn'].statuses_update(notice_status, source='Crow', in_reply_to_status_id=notice_id, long_dent="truncate")
+            update = core.SN['sn'].statuses_update(notice_status, source=core.APPLICATION['source'], in_reply_to_status_id=notice_id, long_dent="truncate")
             response['notice'] = update
             response['success'] = True
         except:

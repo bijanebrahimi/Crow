@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!--
+            This file is part of Crow.
+            Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+
+            Crow is free software: you can redistribute it and/or modify
+            it under the terms of the GNU General Public License as published by
+            the Free Software Foundation, either version 3 of the License, or
+            (at your option) any later version.
+
+            Crow is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+            GNU General Public License for more details.
+
+            You should have received a copy of the GNU General Public License
+            along with Crow.  If not, see <http://www.gnu.org/licenses/>.
+        -->
         <title>Crow :: Statusnet client</title>
         <meta name="viewport" content="width=480, initial-scale=1.0">
         <link rel="shortcut icon" href="/static/img/favicon.png" />
@@ -16,13 +33,10 @@
         <!-- Twiter Bootstrap -->
         <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/static/bootstrap/js/bootstrap-typeahead.js"></script>
+        <script src="/static/bootstrap/js/mention.js"></script>
+        <link href="/static/bootstrap/css/mention.css" rel="stylesheet" media="screen">
         
-        <!-- Mentions Input -->
-        <link href="/static/css/jquery.mentionsInput.css" rel="stylesheet" media="screen">
-        <script src="/static/js/underscore-min.js"></script>
-        <script src="/static/js/jquery.elastic.js"></script>
-        <script src="/static/js/jquery.mentionsInput.js"></script>
-
         <!-- Crow -->
         <script src="/static/js/functions.js"></script>
         <script src="/static/js/templates.js"></script>
@@ -38,42 +52,18 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="home">
                         <div class='contents'></div>
-                        <div class="well" >
+                        <div class="pager">
                             <button class="btn" data-loading-text="Loading...">Load previous Timeline</button>
                         </div>
                     </div>
                     <div class="tab-pane" id="replies">
                         <div class='contents'></div>
-                        <div class="well">
+                        <div class="pager">
                             <button class="btn" data-loading-text="Loading...">Load previous Replies</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            var DEBUG = []
-            var GLOBAL = []
-            var SETTINGS = {'api': {'login': '/account/login',
-                                    'info': '/account/info',
-                                    'home': '/',
-                                    'conversation': '/statuses/conversation',
-                                    'update': '/statuses/update',
-                                    'repeat': '/statuses/repeat',
-                                    'reply': '/statuses/reply',
-                                    'favorite': '/statuses/favorite',
-                                    'read': '/statuses/read',
-                                    
-                                    'attachment_text_html': '/attachment/text_html',
-                                    
-                                    'plugin_short_url': '/plugins/short_url',
-                                    'plugin_force_url': '/plugins/force_rtl'},
-                            'info': {'user':{}, 'server':{}},
-                            'status_length_limit': 0,
-                            'stream_count': 0,
-                            'app': { 'title': 'Crow :: Statusnet client'}}
-            var windowSpy = null
-            CROW = {'max_length': 0}
-        </script>
     </body>
 </html>

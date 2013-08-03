@@ -1,3 +1,51 @@
+/*
+This file is part of Crow.
+Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+
+Crow is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Crow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Crow.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* webkit Scroller */
+html {
+}
+body {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    bottom: 5px;
+    right: 5px;
+    padding: 0px; 
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3); 
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: rgba(50, 50, 50, 0.8); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(134, 134, 134, 0.4); 
+}
+
 /* Status Form */
 #status-form-container{
     padding-top: 0px;
@@ -7,6 +55,7 @@
 }
 .status_form textarea{
     width: 96%;
+    height: 80px;
 }
 .status_form textarea:focus{
     border-color: rgba(53, 139, 82, 0.8);
@@ -56,6 +105,10 @@
     box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false); /* IE6-9 */
 }
+.navbar.subnav-fixed .navbar-inner{
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
 .navbar .navbar-inner a.brand{
     padding: 4px 10px 4px 4px;
 }
@@ -69,7 +122,7 @@
 
 /* Tab Content */
 .tab-content{
-    overflow: hidden;
+    overflow-x: hidden !important;
 }
 
 /* Notice */
@@ -78,6 +131,7 @@
     margin-bottom: 5px;
     float: left;
     width: 96%;
+    word-break: break-word;
 }
 .notice .notice_body{
     float: left;
@@ -96,6 +150,7 @@
 .notice .notice_body .notice_content p{
     margin-bottom: 0px;
     float: left;
+    word-break: break-word;
 }
 .notice .notice_body .notice_content p.rtl{
     direction: rtl;
@@ -120,8 +175,12 @@
     background: #E79E40;
 }
 .notice .notice_body .notice_content img.thumbnails{
+    min-width: 50px;
     max-width: 200px;
     margin-bottom: 10px;
+    display: block;
+    float: left;
+    margin-top: 5px;
 }
 .notice .notice_body .notice_meta{
     float: left;
@@ -157,10 +216,17 @@
 
 .notice .notice_replies{
     float: left;
-    width: 90%;
-    margin-left: 10%;
-    padding: 10px;
+    width: 95%;
+    margin-left: 4%;
+    padding: 1%;
     margin-top: 5px;
+    background: #FFF0D7;
+    -webkit-border-radius: 10px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 10px;
+    border-top-left-radius: 0;
 }
 .notice .notice_replies:empty{
     display: none;
@@ -171,15 +237,19 @@
     width: 100%;
     float: left;
 }
-.tab-content .tab-pane .well{
-    width: 90%;
+.tab-content .tab-pane .pager{
+    width: 100%;
     text-align: center;
     float: left;
+    padding: 0px;
+    margin: 0px;
     padding-top: 8px;
     padding-bottom: 8px;
+    
 }
-.tab-content .tab-pane .well button{
-    width: 100%;
+.tab-content .tab-pane .pager button{
+    width: 80%;
+    display: none;
 }
 
 /* Stream */
@@ -196,4 +266,7 @@
 /* Icon */
 .icon.icon-ajax{
     background: url('/static/img/ajax.gif') !important;
+}
+.icon.icon-white.icon-ajax{
+    background: url('/static/img/ajax-white.gif') !important;
 }

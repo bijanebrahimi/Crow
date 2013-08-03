@@ -1,3 +1,19 @@
+# This file is part of Crow.
+# Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+# 
+# Crow is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Crow is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Crow.  If not, see <http://www.gnu.org/licenses/>.
+
 # from python
 import os
 import tornado.web
@@ -7,7 +23,7 @@ from core import engine
 
 # Tornado application setting
 SETTINGS = {"static_path": os.path.join(os.path.dirname(__file__) + '/../', "static"),
-            "debug": True}
+            "debug": False}
 
 # Tornado application URL
 ROUTS = [
@@ -22,34 +38,9 @@ ROUTS = [
     (r"/notice/fav", engine.NoticeFavHandler),
     (r"/notice/attachment", engine.NoticeAttachmentHandler),
     (r"/notice/conversation", engine.NoticeConversationHandler),
-    
-    # (r'/', statusnet.HomeHandler),
-    # (r'/statuses/conversation', statusnet.ConversationHandler),
-    # (r'/statuses/update', statusnet.UpdateHandler),
-    # 
-    # (r'/statuses/repeat', statusnet.RepeatHandler),
-    # (r'/statuses/reply', statusnet.ReplyHandler),
-    # (r'/statuses/favorite', statusnet.FavoriteHandler),
-    # 
-    # (r'/statuses/read', statusnet.ReadHandler),
-    # 
-    # (r'/attachment/text_html', statusnet.AttachmentHandler),
-    # 
-    # (r'/plugins/short_url', statusnet.PluginShorturl),
-    # (r'/plugins/force_rtl', statusnet.PluginForceRTL),
-    
-    (r"/static/(.*)", tornado.web.StaticFileHandler, dict(path=SETTINGS['static_path'])),
+    (r"/static/(.*)", engine.StaticFileHandlerCustomized, dict(path=SETTINGS['static_path'])),
 ]
 
 APPLICATION = {'source': 'Crow'}
-
-INSTANCE = {'conn': None,
-            'username': '',
-            'password': '',
-            'history': {'home_timeline': {'last_id': None,
-                                           'first_id': None},
-                         'info': {'user': {},
-                                  'server': {}},
-                         'notices': []}}
 
 SN = {}
