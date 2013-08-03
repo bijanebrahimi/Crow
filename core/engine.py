@@ -72,6 +72,13 @@ class UserTimelineHandler(tornado.web.RequestHandler):
         except:
             previous_page = None
 
+        try:
+            fresh_results = self.get_argument("fresh_results")
+            core.SN['first_id'] = None
+            core.SN['last_id'] = None
+        except:
+            pass
+
         notify_enabled = False
         try:
             import pynotify
@@ -128,6 +135,13 @@ class UserRepliesHandler(tornado.web.RequestHandler):
             previous_page = self.get_argument("previous_page")
         except:
             previous_page = None
+
+        try:
+            fresh_results = self.get_argument("fresh_results")
+            core.SN['replies_first_id'] = None
+            core.SN['replies_last_id'] = None
+        except:
+            pass
 
         try:
             # instance_refresh()

@@ -176,10 +176,10 @@ crow = {
     },
     
 
-    get_user_timeline: function(previous_page){
+    get_user_timeline: function(previous_page, fresh_results){
         $('#loading').show()
         var previous_page = previous_page ? true : false
-        crow.ajax_get('/user/timeline', {'previous_page': previous_page}, {
+        crow.ajax_get('/user/timeline', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
                 crow.user_replies = response.notices
                 if(response.previous_page){
@@ -208,10 +208,10 @@ crow = {
             },
         })
     },
-    get_user_replies: function(previous_page){
+    get_user_replies: function(previous_page, fresh_results){
         $('#loading').show()
         var previous_page = previous_page ? true : false
-        crow.ajax_get('/user/replies', {'previous_page': previous_page}, {
+        crow.ajax_get('/user/replies', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
                 crow.user_replies = response.notices
                 if(response.previous_page){
@@ -243,8 +243,8 @@ crow = {
                 $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
                 crow.plugin_mention($('textarea'))
                 
-                crow.get_user_timeline(false)
-                crow.get_user_replies(false)
+                crow.get_user_timeline(false, true)
+                crow.get_user_replies(false, true)
             },
             'error': function(response){},
             'fail': function(){},
