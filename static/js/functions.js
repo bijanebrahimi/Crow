@@ -166,7 +166,7 @@ crow = {
                 var element_top = $(element_id).offset().top - 50
                 $(document).scrollTop(element_top)
                 
-                $(element_id).animate({opacity: 0.3}, 500, function(){
+                $(element_id).children('.notice_body').animate({opacity: 0.3}, 500, function(){
                     $(this).css('opacity', 1)
                 })
             }
