@@ -191,6 +191,9 @@ crow_template = {
                 continue
             }
 
+            // Add new profiles to friend list
+            crow.friend_add(notice.user)
+
             var notice_html = crow_template.notice(notice, is_reply)
             
             if(conversation){
