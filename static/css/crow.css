@@ -159,6 +159,9 @@ body {
 .notice .notice_body .notice_content img.thumbnails{
     max-width: 200px;
     margin-bottom: 10px;
+    display: block;
+    float: left;
+    margin-top: 5px;
 }
 .notice .notice_body .notice_meta{
     float: left;
