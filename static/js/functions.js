@@ -151,6 +151,14 @@ crow = {
         
         return notice_a_id - notice_b_id
     },
+    friend_by_username: function(friend_username){
+        return $.grep(crow.user_info.friends, function(e){ return e.username == friend_username; })
+    },
+    friend_add: function (user){
+        if(!crow.friend_by_username(user.screen_name)){
+            crow.user_info.friends.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
+        }
+    },
 
     stream_update: function(notice){
         streams_count = $('#stream li').length - 2

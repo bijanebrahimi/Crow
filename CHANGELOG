@@ -29,8 +29,11 @@ version 0.0.4
     - javascript text direction added
     - a lot of code clean ups & refactoring
 
-version 0.0.5
+version 0.1
     - added new plugin for friends suggestion (Bootstrap Mention.js)
     - improved python notifications/web streams
     - many UserInterface functionality improvements
     - fixed duplicated posted dent's and repeats
+
+version 0.1.1
+    - HOTFIX: tries to search for json data when api result is not in jason format (probably because of server dumping errors)

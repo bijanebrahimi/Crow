@@ -3,9 +3,9 @@ Crow
 Crow is a small client for Free and OpenSource microblogging platform, StatusNet.
 also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.html).
 
-Current Version
+Version
 ---------------
-0.1
+0.1.1
 
 Install
 ---------------
