@@ -214,6 +214,7 @@ crow = {
 
     get_user_timeline: function(previous_page, fresh_results){
         var previous_page = previous_page ? true : false
+        $('#link-home i').addClass('icon-ajax')
         crow.ajax_get('/user/timeline', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
                 crow.user_replies = response.notices
@@ -223,7 +224,6 @@ crow = {
                     
                     crow.stream_add(crow.user_replies, false)
                 }else{
-                    // crow_template.streams(crow.user_replies)
                     crow.stream_add(crow.user_replies, true)
                     
                     var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'), false)
@@ -234,6 +234,7 @@ crow = {
             'error': function(response){},
             'fail': function(){},
             'always': function(){
+                $('#link-home i').removeClass('icon-ajax')
                 if(previous_page)
                     $('#home .pager button').button('reset')
                 else{
@@ -244,6 +245,7 @@ crow = {
     },
     get_user_replies: function(previous_page, fresh_results){
         var previous_page = previous_page ? true : false
+        $('#link-replies i').addClass('icon-ajax')
         crow.ajax_get('/user/replies', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
                 crow.user_replies = response.notices
@@ -259,6 +261,7 @@ crow = {
             'error': function(response){},
             'fail': function(){},
             'always': function(){
+                $('#link-replies i').removeClass('icon-ajax')
                 if(previous_page)
                     $('#replies .pager button').button('reset')
                 else{    

@@ -41,8 +41,18 @@ crow_template = {
                                 <img id="avatar" class="thumbnail" src="/static/img/favicon.png">\
                             </a>\
                             <ul class="nav" id="nav-pages">\
-                                <li class="active"><a class="app-link" href="#home">home</a></li>\
-                                <li class=""><a class="app-link" href="#replies">replies</a></li>\
+                                <li class="active">\
+                                    <a class="app-link" href="#home" id="link-home">\
+                                        <i class="icon icon-home"></i>\
+                                        home\
+                                    </a>\
+                                </li>\
+                                <li class="">\
+                                    <a class="app-link" href="#replies" id="link-replies">\
+                                        <i class="icon icon-share-alt"></i>\
+                                        replies\
+                                    </a>\
+                                </li>\
                             </ul>\
                         </div>\
                     </div>\
