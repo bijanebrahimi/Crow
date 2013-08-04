@@ -120,6 +120,11 @@ body {
     display: none;
 }
 
+#link-home i.loading,
+#link-replies i.loading{
+    background: url(/static/img/ajax.gif) no-repeat center center;
+}
+
 /* Tab Content */
 .tab-content{
     overflow-x: hidden !important;
