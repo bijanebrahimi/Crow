@@ -103,13 +103,13 @@ $(document).ready(function(){
     $(document).on('click', '.btn_status_length', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
         var status = $(textarea).val()
-        $(textarea).val(crow.shorten_text(status))
+        $(textarea).val(crow.shorten_text(status)).trigger('propertychange')
     })
     $(document).on('click', '.btn_status_short_url', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
         var status = $(textarea).val()
         var status = status.replace(/(https?:\/\/[^ ]+)/g, crow.get_short_url)
-        $(textarea).val(status)
+        $(textarea).val(status).trigger('propertychange')
     })
     $(document).on('click', '.btn_status_upload', function(){
         alert('sorry, not implemented yet')
