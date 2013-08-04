@@ -191,7 +191,15 @@ class StatusNet(object):
     
         try:
             return json.loads(content)
-        except ValueError:  # it wasn't JSON data, return it raw
+        except ValueError:  # it wasn't JSON data
+            pass
+
+        try:
+            # find the json text in case of junk data dumped in top of content
+            json_contents = re.search(r'({".*}$)', content)
+            json_content = json_contents.groups()[0]
+            return json.loads(json_content)
+        except:
             return content
 
     def __checkconn(self):
