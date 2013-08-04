@@ -37,28 +37,12 @@ crow_template = {
         return '<div class="navbar">\
                     <div class="navbar-inner">\
                         <div class="container">\
-                            <a class="app-link brand" href="#">\
+                            <a id="avatar-link" class="app-link brand" href="#">\
                                 <img id="avatar" class="thumbnail" src="/static/img/favicon.png">\
                             </a>\
                             <ul class="nav" id="nav-pages">\
                                 <li class="active"><a class="app-link" href="#home">home</a></li>\
                                 <li class=""><a class="app-link" href="#replies">replies</a></li>\
-                            </ul>\
-                            <ul class="nav pull-right">\
-                                <li>\
-                                    <a class="app-link" href="#">\
-                                        <img id="loading" src="/static/img/ajax.gif">\
-                                    </a>\
-                                </li>\
-                                <li class="dropdown" id="notice-streams">\
-                                    <a href="#" role="button" class="app-link dropdown-toggle" data-toggle="dropdown">\
-                                        <b class="icon icon-comment"></b>\
-                                    </a>\
-                                    <ul id="stream" class="dropdown-menu" role="menu" aria-labelledby="drop3">\
-                                        <li><a class="app-link empty" tabindex="-1" href="#"><i class="icon icon-trash"></i>Empty</a></li>\
-                                        <li class="divider"></li>\
-                                    </ul>\
-                                </li>\
                             </ul>\
                         </div>\
                     </div>\
