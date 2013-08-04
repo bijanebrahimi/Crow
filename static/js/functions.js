@@ -69,13 +69,16 @@ crow = {
     },
     shorten_text: function(text){
         text = text.trim()
-        text = text.replace(/ {2,}/g, ' ')   // removes extra spaces
-        text = text.replace(/\.{3,}/g, '…')  // &#x2026;
-        text = text.replace(/\?{2,}/g, '⁇')  // &#x2047;
-        text = text.replace(/\?+\!+/g, '⁈')  // &#x2048;
-        text = text.replace(/\!+\?+/g, '⁉')  // &#x2049;
-        text = text.replace(/\!+/g, '!')     // removes duplicated exclamation marks
-        text = text.replace(/\?+/g, '?')     // removes duplicated question marks
+        text = text.replace(/ {2,}/g, ' ')          // removes extra spaces
+        text = text.replace(/\.{2,}/g, '…')         // &#x2026;
+        text = text.replace(/\?{2,}/g, '⁇')         // &#x2047;
+        text = text.replace(/\?+\!+/g, '⁈')         // &#x2048;
+        text = text.replace(/\!+\?+/g, '⁉')         // &#x2049;
+        text = text.replace(/\!+/g, '!')            // removes duplicated exclamation marks
+        text = text.replace(/\?+/g, '?')            // removes duplicated question marks
+        text = text.replace(/https?\:\/\//g, '')    // removes http:// https://
+        text = text.replace(/ +([\.\)\]])/g, '$1')  // 
+        text = text.replace(/([\(\[]) +/g, '$1')  // 
         return text
     },
     shorten_html_link: function(html){
