@@ -201,7 +201,7 @@ $(document).ready(function(){
     })
 
     // Visual effects
-    $('a.brand').click(function(e){
+    $('#avatar-link').click(function(e){
         e.preventDefault()
         $('body').animate({scrollTop: 0}, '500', 'swing')
     })
