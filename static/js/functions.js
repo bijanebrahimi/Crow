@@ -173,6 +173,8 @@ crow = {
     stream_update: function(notice){
         streams_count = $('#stream li').length - 2
         $('#navbar-footer a.brand').html('<img id="logo brand" class="thumbnail" src="/static/img/favicon.png"> ' + (streams_count ? streams_count : ''))
+        document.title = 'Crow :: Statusnet client ' + (streams_count ? '(' + streams_count + ')' : '')
+        
     },
     stream_add: function(notices, prepend){
         if(notices.length>0){
