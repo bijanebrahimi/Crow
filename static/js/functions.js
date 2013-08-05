@@ -306,6 +306,9 @@ crow = {
             'success': function(){
                 crow_template.notices([response.notice], true, true, $('#home .contents'))
                 $(textarea).parents('#status-form').hide()
+                
+                $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
+                $('.btn_status_reply').remove()
             },
             'error': function(){},
             'fail': function(){},
