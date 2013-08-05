@@ -64,10 +64,10 @@ $(document).ready(function(){
     })
     
     // on short url button
-    $(document).on('click', '.btn_status_length', function(){
+    $(document).on('click', '.btn_status_squeeze', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
         var status = $(textarea).val()
-        $(textarea).val(crow.shorten_text(status)).trigger('propertychange')
+        $(textarea).focus().val('').val(crow.shorten_text(status)).trigger('propertychange')
     })
     $(document).on('click', '.btn_status_short_url', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
