@@ -15,33 +15,33 @@
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 // Crow navbar scroll
-(function ($) {
-    $(function(){
-        var $win = $(window),
-        $body = $('body'),
-        $nav = $('.navbar'),
-        navHeight = $('.navbar').first().height(),
-        subnavHeight = $('.navbar').first().height(),
-        subnavTop = $('.navbar').length && $('.navbar').offset().top - navHeight,
-        marginTop = parseInt($body.css('margin-top'), 10);
-        isFixed = 0;
-
-        processScroll();
-        $win.on('scroll', processScroll);
-        function processScroll() {
-            var i, scrollTop = $win.scrollTop();
-            if (scrollTop >= subnavTop && !isFixed) {
-                isFixed = 1;
-                $nav.addClass('subnav-fixed');
-                $body.css('margin-top', marginTop + subnavHeight + 'px');
-            } else if (scrollTop <= subnavTop && isFixed) {
-                isFixed = 0;
-                $nav.removeClass('subnav-fixed');
-                $body.css('margin-top', marginTop + 'px');
-            }
-        }
-    });
-})(window.jQuery);
+// (function ($) {
+    // $(function(){
+        // var $win = $(window),
+        // $body = $('body'),
+        // $nav = $('.navbar'),
+        // navHeight = $('.navbar').first().height(),
+        // subnavHeight = $('.navbar').first().height(),
+        // subnavTop = $('.navbar').length && $('.navbar').offset().top - navHeight,
+        // marginTop = parseInt($body.css('margin-top'), 10);
+        // isFixed = 0;
+// 
+        // processScroll();
+        // $win.on('scroll', processScroll);
+        // function processScroll() {
+            // var i, scrollTop = $win.scrollTop();
+            // if (scrollTop >= subnavTop && !isFixed) {
+                // isFixed = 1;
+                // $nav.addClass('subnav-fixed');
+                // $body.css('margin-top', marginTop + subnavHeight + 'px');
+            // } else if (scrollTop <= subnavTop && isFixed) {
+                // isFixed = 0;
+                // $nav.removeClass('subnav-fixed');
+                // $body.css('margin-top', marginTop + 'px');
+            // }
+        // }
+    // });
+// })(window.jQuery);
 
 $(document).ready(function(){
     // global vars
@@ -82,7 +82,7 @@ $(document).ready(function(){
         if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
             if(status.length==0)
                 return false
-            var notice_id = $(textarea).attr('data-notice')
+            var notice_id = $(textarea).parents('#status-form').attr('data-notice')
             $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_length').button('loading')
             crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
                 'success': function(){
@@ -92,8 +92,6 @@ $(document).ready(function(){
                 'fail': function(){},
                 'always': function(){
                     $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_length').button('reset')
-                    if(notice_id>0)
-                        $(textarea).parents('.notice_body').children('.notice_form').toggle()
                 },
             })
         }
@@ -170,14 +168,24 @@ $(document).ready(function(){
         })
     })
     $(document).on('click', '.notice_action .reply', function(){
-        var notice_form = $(this).parents('.notice_body').children('.notice_form')
-        var textarea = $(notice_form).children('.status_form').find('textarea')
-        var status = $(textarea).val()
-        var screen_name = $(textarea).attr('data-screen-name')
-        $(notice_form).toggle()
-        if(status.length==0)
-            status = '@' + screen_name + ' '
-        $(textarea).focus().val('').val(status)
+        var notice = $(this).parents('.notice')
+        var notice_id = $(notice).attr('id').replace(/[^0-9]+/, '')
+        var notice_user = $(notice).attr('data-screenname')
+        if(notice_id==$('#status-form').attr('data-notice'))
+            $('#status-form').toggle()
+        else
+            $('#status-form').attr('data-notice', notice_id).show()
+        
+        var textarea = $('#status-form').find('textarea')
+        $(textarea).focus().val('').val('@' + notice_user +' ').trigger('propertychange')
+    })
+    $('#avatar-link').click(function(e){
+        e.preventDefault()
+        if($('#status-form').attr('data-notice'))
+            $('#status-form').show()
+        else
+            $('#status-form').toggle()
+        $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
     })
 
     // Notice content
@@ -198,12 +206,6 @@ $(document).ready(function(){
                 button.button('reset')
             },
         })
-    })
-
-    // Visual effects
-    $('#avatar-link').click(function(e){
-        e.preventDefault()
-        $('body').animate({scrollTop: 0}, '500', 'swing')
     })
 
     $('#replies .pager button').click(function(){

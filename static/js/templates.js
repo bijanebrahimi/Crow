@@ -33,31 +33,6 @@ crow_template = {
                     <textarea data-notice="' + notice_id + '" data-screen-name="' + (screen_name ? screen_name : '') + '" placeholder="Your Status"></textarea>\
                 </div>'
     },
-    navbar: function(){
-        return '<div class="navbar">\
-                    <div class="navbar-inner">\
-                        <div class="container">\
-                            <a id="avatar-link" class="app-link brand" href="#">\
-                                <img id="avatar" class="thumbnail" src="/static/img/favicon.png">\
-                            </a>\
-                            <ul class="nav" id="nav-pages">\
-                                <li class="active">\
-                                    <a class="app-link" href="#home" id="link-home">\
-                                        <i class="icon icon-home"></i>\
-                                        home\
-                                    </a>\
-                                </li>\
-                                <li class="">\
-                                    <a class="app-link" href="#replies" id="link-replies">\
-                                        <i class="icon icon-share-alt"></i>\
-                                        replies\
-                                    </a>\
-                                </li>\
-                            </ul>\
-                        </div>\
-                    </div>\
-                </div>'
-    },
 
     alert: function(type, text){
         return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
@@ -142,7 +117,7 @@ crow_template = {
             }
             return attachments
         }
-        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" data-screenname="' + notice.user.screen_name + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -160,10 +135,10 @@ crow_template = {
                         <div class="notice_action">\
                             ' + _notice_actions(notice) + '\
                         </div>\
-                        <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
                     <div class="notice_replies"></div>\
                 </div>'
+                        // <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>
         notice_element = $(notice_html)
         crow.plugin_mention($(notice_element).find('textarea'))
         return notice_element
