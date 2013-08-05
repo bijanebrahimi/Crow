@@ -43,8 +43,13 @@ $(document).ready(function(){
         }
     })
     $(document).on('keypress', '#status-textarea', function(e){
-        if (e.keyCode == 13 && $('.typeahead').css('display') != 'block' && !$(this).parents('.status_form').hasClass('exceeded')) {
-            crow.send_status()
+        if(e.keyCode == 13){
+            console.log($('.typeahead').css('display'))
+            console.log(!$(this).parents('.status_form').hasClass('exceeded'))
+            if ($('.typeahead').css('display') != 'block' && !$(this).parents('.status_form').hasClass('exceeded')) {
+                crow.send_status()
+            }
+            return false
         }
     })
     $(document).on('click', '.btn_status_send', function(){
