@@ -43,7 +43,7 @@ $(document).ready(function(){
         }
     })
     $(document).on('keypress', '#status-textarea', function(e){
-        if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
+        if (e.keyCode == 13 && $('.typeahead').css('display') == 'none' && !$(this).parents('.status_form').hasClass('exceeded')) {
             crow.send_status()
         }
     })
@@ -183,5 +183,14 @@ $(document).ready(function(){
         var stream_item = $('.stream-item a[href="#notice-' + notice_id + '"]')
         if(stream_item.length)
             crow.stream_remove(stream_item, true)
+    })
+    
+    // Links
+    $(document).on('click', 'a', function(e){
+        if(!$(this).hasClass('app-link') && !$(this).hasClass('attachment') && !$(this).hasClass('more')){
+            e.preventDefault()
+            var href = $(this).attr('href')
+            window.open(href, '_blank')
+        }
     })
 })
