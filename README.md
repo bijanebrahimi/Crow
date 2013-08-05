@@ -5,7 +5,7 @@ also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.ht
 
 Version
 ---------------
-0.1.1
+developing version
 
 Install
 ---------------
