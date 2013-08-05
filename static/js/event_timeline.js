@@ -14,40 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
-// Crow navbar scroll
-// (function ($) {
-    // $(function(){
-        // var $win = $(window),
-        // $body = $('body'),
-        // $nav = $('.navbar'),
-        // navHeight = $('.navbar').first().height(),
-        // subnavHeight = $('.navbar').first().height(),
-        // subnavTop = $('.navbar').length && $('.navbar').offset().top - navHeight,
-        // marginTop = parseInt($body.css('margin-top'), 10);
-        // isFixed = 0;
-// 
-        // processScroll();
-        // $win.on('scroll', processScroll);
-        // function processScroll() {
-            // var i, scrollTop = $win.scrollTop();
-            // if (scrollTop >= subnavTop && !isFixed) {
-                // isFixed = 1;
-                // $nav.addClass('subnav-fixed');
-                // $body.css('margin-top', marginTop + subnavHeight + 'px');
-            // } else if (scrollTop <= subnavTop && isFixed) {
-                // isFixed = 0;
-                // $nav.removeClass('subnav-fixed');
-                // $body.css('margin-top', marginTop + 'px');
-            // }
-        // }
-    // });
-// })(window.jQuery);
-
 $(document).ready(function(){
-    // global vars
-    infinite_scroll_timeline = false
-    infinite_scroll_replies = false
-    
     // on load
     crow.get_user_info()
     crow.get_server_info()
@@ -210,12 +177,10 @@ $(document).ready(function(){
 
     $('#replies .pager button').click(function(){
         $('#replies .pager button').button('loading')
-        infinite_scroll_replies = true
         crow.get_user_replies(true)
     })
     $('#home .pager button').click(function(){
         $('#home .pager button').button('loading')
-        infinite_scroll_timeline = true
         crow.get_user_timeline(true)
     })
 

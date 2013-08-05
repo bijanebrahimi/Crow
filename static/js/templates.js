@@ -15,25 +15,6 @@
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 crow_template = {
-    status_form: function(notice_id, screen_name){
-        return '<div class="status_form">\
-                    <div class="btn-toolbar">\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_ltr active" title="text LTR indicator"><i class="icon icon-align-left"></i></button>\
-                            <button class="btn btn-small btn_status_length" title="click and it tries to squeeze your status as much as possible" data-loading-text="sending">0</button>\
-                            <button class="btn btn-small btn_status_rtl" title="text RTL indicator"><i class="icon icon-align-right"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_short_url" title="Bitly Short_url"><i class="icon icon-share"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_upload" title="upload image <NOT IMPLEMENTED YET>"><i class="icon  icon-picture"></i></button>\
-                        </div>\
-                    </div>\
-                    <textarea data-notice="' + notice_id + '" data-screen-name="' + (screen_name ? screen_name : '') + '" placeholder="Your Status"></textarea>\
-                </div>'
-    },
-
     alert: function(type, text){
         return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
     },

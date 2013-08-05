@@ -220,8 +220,6 @@ crow = {
                 crow.user_replies = response.notices
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'), false)
-                    infinite_scroll_timeline = false
-                    
                     crow.stream_add(crow.user_replies, false)
                 }else{
                     crow.stream_add(crow.user_replies, true)
@@ -251,7 +249,6 @@ crow = {
                 crow.user_replies = response.notices
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'), true)
-                    infinite_scroll_replies = false
                 }else{
                     var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'), true)
                     $($(html).children('div')).prependTo('#replies .contents')
@@ -277,8 +274,7 @@ crow = {
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
                 $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-                crow.plugin_mention($('textarea'))
-                
+                crow.plugin_mention($('textarea:first'))
                 crow.get_user_timeline(false, true)
                 crow.get_user_replies(false, true)
             },
