@@ -234,7 +234,7 @@ class NoticeSendHandler(tornado.web.RequestHandler):
             response['notice'] = update
             response['success'] = True
         except:
-            response['error'] = 'failed to get info'
+            response['error'] = 'failed to send status'
         self.write(json.dumps(response))
 
 class NoticeConversationHandler(tornado.web.RequestHandler):

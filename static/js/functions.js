@@ -301,6 +301,8 @@ crow = {
         if(status.length==0)
             return false
         var notice_id = $(textarea).parents('#status-form').attr('data-notice')
+        if (!notice_id)
+            notice_id = 0
         $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_send').button('loading')
         crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
             'success': function(){
