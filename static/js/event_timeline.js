@@ -42,25 +42,32 @@ $(document).ready(function(){
                 $(this).parents('.status_form').removeClass('exceeded')
         }
     })
-    $(document).on('keypress', 'textarea', function(e){
+    $(document).on('keypress', '#status-textarea', function(e){
         // Send
-        var textarea = $(this)
-        var status = $(this).val()
+        // var textarea = $(this)
+        // var status = $(this).val()
         if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
-            if(status.length==0)
-                return false
-            var notice_id = $(textarea).parents('#status-form').attr('data-notice')
-            $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_length').button('loading')
-            crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
-                'success': function(){
-                    crow_template.notices([response.notice], true, true, $('#home .contents'))
-                },
-                'error': function(){},
-                'fail': function(){},
-                'always': function(){
-                    $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_length').button('reset')
-                },
-            })
+            crow.send_status()
+            // if(status.length==0)
+                // return false
+            // var notice_id = $(textarea).parents('#status-form').attr('data-notice')
+            // $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_length').button('loading')
+            // crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
+                // 'success': function(){
+                    // crow_template.notices([response.notice], true, true, $('#home .contents'))
+                    // $(textarea).parents('#status-form').hide()
+                // },
+                // 'error': function(){},
+                // 'fail': function(){},
+                // 'always': function(){
+                    // $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_length').button('reset')
+                // },
+            // })
+        }
+    })
+    $(document).on('click', '.btn_status_send', function(){
+        if (!$('#status-textarea').parents('.status_form').hasClass('exceeded')) {
+            crow.send_status()
         }
     })
     
@@ -75,9 +82,6 @@ $(document).ready(function(){
         var status = $(textarea).val()
         var status = status.replace(/(https?:\/\/[^ ]+)/g, crow.get_short_url)
         $(textarea).val(status).trigger('propertychange')
-    })
-    $(document).on('click', '.btn_status_upload', function(){
-        alert('sorry, not implemented yet')
     })
 
     // navbar tabs

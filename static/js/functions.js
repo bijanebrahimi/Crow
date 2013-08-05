@@ -295,6 +295,25 @@ crow = {
         })
     },
     
+    send_status: function(){
+        var textarea = $('#status-textarea')
+        var status = $(textarea).val()
+        if(status.length==0)
+            return false
+        var notice_id = $(textarea).parents('#status-form').attr('data-notice')
+        $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_send').button('loading')
+        crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
+            'success': function(){
+                crow_template.notices([response.notice], true, true, $('#home .contents'))
+                $(textarea).parents('#status-form').hide()
+            },
+            'error': function(){},
+            'fail': function(){},
+            'always': function(){
+                $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_send').button('reset')
+            },
+        })
+    },
     
     server_info: {'length_limit': 0},
     user_info: {},
