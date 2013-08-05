@@ -220,8 +220,6 @@ crow = {
                 crow.user_replies = response.notices
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'), false)
-                    infinite_scroll_timeline = false
-                    
                     crow.stream_add(crow.user_replies, false)
                 }else{
                     crow.stream_add(crow.user_replies, true)
@@ -251,7 +249,6 @@ crow = {
                 crow.user_replies = response.notices
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'), true)
-                    infinite_scroll_replies = false
                 }else{
                     var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'), true)
                     $($(html).children('div')).prependTo('#replies .contents')
@@ -277,8 +274,7 @@ crow = {
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
                 $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-                crow.plugin_mention($('textarea'))
-                
+                crow.plugin_mention($('textarea:first'))
                 crow.get_user_timeline(false, true)
                 crow.get_user_replies(false, true)
             },
@@ -299,6 +295,25 @@ crow = {
         })
     },
     
+    send_status: function(){
+        var textarea = $('#status-textarea')
+        var status = $(textarea).val()
+        if(status.length==0)
+            return false
+        var notice_id = $(textarea).parents('#status-form').attr('data-notice')
+        $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_send').button('loading')
+        crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
+            'success': function(){
+                crow_template.notices([response.notice], true, true, $('#home .contents'))
+                $(textarea).parents('#status-form').hide()
+            },
+            'error': function(){},
+            'fail': function(){},
+            'always': function(){
+                $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_send').button('reset')
+            },
+        })
+    },
     
     server_info: {'length_limit': 0},
     user_info: {},

@@ -53,6 +53,15 @@ body {
     margin-top: 15px;
     margin-bottom: 5px;
 }
+#status-form{
+    display: none;
+    top: 31px;
+    left: 0px;
+    min-width: 92%;
+}
+#status-form .arrow{
+    left: 20px;
+}
 .status_form textarea{
     width: 96%;
     height: 80px;
@@ -80,6 +89,7 @@ body {
 }
 .status_form .btn-toolbar .btn-group .btn.btn_status_length{
     color: #358B52;
+    text-align: center;
 }
 .status_form.exceeded .btn-toolbar .btn-group .btn.btn_status_length{
     color: #F74400;
@@ -128,6 +138,26 @@ body {
 /* Tab Content */
 .tab-content{
     overflow-x: hidden !important;
+    margin-bottom: 60px;
+    margin-top: 60px;
+}
+.tab-content .tab-pane .contents{
+    width: 100%;
+    float: left;
+}
+.tab-content .tab-pane .pager{
+    width: 100%;
+    text-align: center;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    
+}
+.tab-content .tab-pane .pager button{
+    width: 80%;
+    display: none;
 }
 
 /* Notice */
@@ -234,29 +264,6 @@ body {
     border-top-left-radius: 0;
 }
 .notice .notice_replies:empty{
-    display: none;
-}
-
-/* Previous Page */
-.tab-content{
-    margin-bottom: 60px;
-}
-.tab-content .tab-pane .contents{
-    width: 100%;
-    float: left;
-}
-.tab-content .tab-pane .pager{
-    width: 100%;
-    text-align: center;
-    float: left;
-    padding: 0px;
-    margin: 0px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    
-}
-.tab-content .tab-pane .pager button{
-    width: 80%;
     display: none;
 }
 

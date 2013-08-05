@@ -15,50 +15,6 @@
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 crow_template = {
-    status_form: function(notice_id, screen_name){
-        return '<div class="status_form">\
-                    <div class="btn-toolbar">\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_ltr active" title="text LTR indicator"><i class="icon icon-align-left"></i></button>\
-                            <button class="btn btn-small btn_status_length" title="click and it tries to squeeze your status as much as possible" data-loading-text="sending">0</button>\
-                            <button class="btn btn-small btn_status_rtl" title="text RTL indicator"><i class="icon icon-align-right"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_short_url" title="Bitly Short_url"><i class="icon icon-share"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_upload" title="upload image <NOT IMPLEMENTED YET>"><i class="icon  icon-picture"></i></button>\
-                        </div>\
-                    </div>\
-                    <textarea data-notice="' + notice_id + '" data-screen-name="' + (screen_name ? screen_name : '') + '" placeholder="Your Status"></textarea>\
-                </div>'
-    },
-    navbar: function(){
-        return '<div class="navbar">\
-                    <div class="navbar-inner">\
-                        <div class="container">\
-                            <a id="avatar-link" class="app-link brand" href="#">\
-                                <img id="avatar" class="thumbnail" src="/static/img/favicon.png">\
-                            </a>\
-                            <ul class="nav" id="nav-pages">\
-                                <li class="active">\
-                                    <a class="app-link" href="#home" id="link-home">\
-                                        <i class="icon icon-home"></i>\
-                                        home\
-                                    </a>\
-                                </li>\
-                                <li class="">\
-                                    <a class="app-link" href="#replies" id="link-replies">\
-                                        <i class="icon icon-share-alt"></i>\
-                                        replies\
-                                    </a>\
-                                </li>\
-                            </ul>\
-                        </div>\
-                    </div>\
-                </div>'
-    },
-
     alert: function(type, text){
         return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
     },
@@ -142,7 +98,7 @@ crow_template = {
             }
             return attachments
         }
-        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" data-screenname="' + notice.user.screen_name + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
@@ -160,10 +116,10 @@ crow_template = {
                         <div class="notice_action">\
                             ' + _notice_actions(notice) + '\
                         </div>\
-                        <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
                     <div class="notice_replies"></div>\
                 </div>'
+                        // <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>
         notice_element = $(notice_html)
         crow.plugin_mention($(notice_element).find('textarea'))
         return notice_element
