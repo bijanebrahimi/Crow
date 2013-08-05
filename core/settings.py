@@ -23,7 +23,7 @@ from core import engine
 
 # Tornado application setting
 SETTINGS = {"static_path": os.path.join(os.path.dirname(__file__) + '/../', "static"),
-            "debug": True}
+            "debug": False}
 
 # Tornado application URL
 ROUTS = [
