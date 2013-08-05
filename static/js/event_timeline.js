@@ -43,7 +43,7 @@ $(document).ready(function(){
         }
     })
     $(document).on('keypress', '#status-textarea', function(e){
-        if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
+        if (e.keyCode == 13 && $('.typeahead').css('display') == 'none' && !$(this).parents('.status_form').hasClass('exceeded')) {
             crow.send_status()
         }
     })
