@@ -184,4 +184,13 @@ $(document).ready(function(){
         if(stream_item.length)
             crow.stream_remove(stream_item, true)
     })
+    
+    // Links
+    $(document).on('click', 'a', function(e){
+        if(!$(this).hasClass('app-link') && !$(this).hasClass('attachment') && !$(this).hasClass('more')){
+            e.preventDefault()
+            var href = $(this).attr('href')
+            window.open(href, '_blank')
+        }
+    })
 })
