@@ -5,7 +5,7 @@ also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.ht
 
 Version
 ---------------
-developing version
+developing version. current stable version is [0.1.1](https://github.com/bijanebrahimi/crow/tree/master)
 
 Install
 ---------------
