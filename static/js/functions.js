@@ -168,7 +168,7 @@ crow = {
     },
     friend_add: function (user){
         if(!crow.friend_by_username(user.screen_name)){
-            crow.user_info.friends.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
+            crow.autocompletion.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
         }
     },
 
