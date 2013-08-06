@@ -193,7 +193,10 @@ $(document).ready(function(){
     // Links
     $(document).on('click', 'a', function(e){
         e.preventDefault()
-        if(!$(this).hasClass('app-link') && (!$(this).hasClass('attachment') || !$(this).hasClass('more'))){
+        if( (!$(this).hasClass('app-link') && (!$(this).hasClass('attachment') || !$(this).hasClass('more'))) ||
+            ($(this).hasClass('app-link') && $(this).hasClass('attachments')) ||
+            ($(this).hasClass('app-link') && $(this).attr('target')=='_blank')
+        ){
             var href = $(this).attr('href')
             window.open(href, '_blank')
         }
