@@ -53,7 +53,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
             elif password == '':
                 self.write(json.dumps({'success': False, 'error': 'please enter your password'}))
             else:
-                core.SN['sn'] = StatusNet(config.STATUSNET['api_path'], username, password)
+                core.SN['sn'] = StatusNet(config.API_PATH, username, password)
                 # core.INSTANCE['username'] = username
                 # core.INSTANCE['password'] = password
                 self.write(json.dumps({'success': True, 'redirect': '/'}))
