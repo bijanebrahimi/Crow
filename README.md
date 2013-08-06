@@ -65,7 +65,7 @@ any port number that is open
 
         SRV_PORT = 8888
 
-* `CRW_NOTIFICATION_PUBLIC` which will turn off notification for public notices when **False**
+* `CRW_NOTIFY_PUBLICS` which will turn off notification for public notices when **False**
 
 Run
 ---------------

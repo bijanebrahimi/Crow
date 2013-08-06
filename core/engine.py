@@ -146,21 +146,22 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                 core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
 
             if notify_enabled and home_timeline:
-                if len(home_timeline) < 10:
-                    pynotify.init("Crow")
-                    notification = None
-                    for notice in home_timeline:
-                        if notice['user']['id'] == core.SN['user_info']['id']:
-                            continue
-                        if !config.CRW_NOTIFICATION_PUBLIC and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
-                            continue
-                        notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                pynotify.init("Crow")
+                notification = None
+                
+                for notice in home_timeline:
+                    if notice['user']['id'] == core.SN['user_info']['id']:
+                        continue
+                    print '-----------------------'
+                    print config.CRW_NOTIFY_PUBLICS, core.SN['user_info']['id'], notice['in_reply_to_user_id']
+                    if config.CRW_NOTIFY_PUBLICS == False and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
+                        continue
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
 
-                        if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
-                            notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                        notification.show()
-                
-                
+                    if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                    notification.show()
+
             response['notices'] = home_timeline
             response['success'] = True
         except:
