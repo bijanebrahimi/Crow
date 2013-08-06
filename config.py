@@ -19,3 +19,6 @@ API_PATH = 'http://quitter.se/api/'
 
 # Crow Server
 SRV_PORT = 8888
+
+# Crow Environment (True/False)
+CRW_PUBLIC_NOTIFICATION = False
