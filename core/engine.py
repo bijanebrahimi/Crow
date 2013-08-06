@@ -71,10 +71,37 @@ class UserInfoHandler(tornado.web.RequestHandler):
             core.SN['user_info']['friends'] = []
             for friend in friends:
                 core.SN['user_info']['friends'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+            
+            groups = core.SN['sn'].statusnet_groups_list()
+            for group in groups:
+                core.SN['user_info']['friends'].append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+            
             response['user'] = core.SN['user_info']
             response['success'] = True
         except:
             response['error'] = 'failed to get info'
+        self.write(json.dumps(response))
+
+class UserAutocompletionHandler(tornado.web.RequestHandler):
+    def get(self):
+        response = {'success': False, 'autocompletion': [], 'error': ''}
+        try:
+            # instance_refresh()
+            friends = core.SN['sn'].statuses_friends()
+            for friend in friends:
+                response['autocompletion'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+        except:
+            pass
+
+        try:
+            groups = core.SN['sn'].statusnet_groups_list(count=200)
+            for group in groups:
+                response['autocompletion'].append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+        except:
+            pass
+
+        response['success'] = True
+        # response['error'] = 'failed to get autocompletion list'
         self.write(json.dumps(response))
 
 class UserTimelineHandler(tornado.web.RequestHandler):

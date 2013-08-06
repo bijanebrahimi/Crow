@@ -1,4 +1,42 @@
-/*jslint forin: true */
+// This file is part of Crow.
+// Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+// added optional delimiter value to user's list
+// 
+// Crow is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Crow is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Crow.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// 
+// Original License
+// Copyright (c) 2013 Jacob Kelley
+// 
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ;(function($) {
     $.fn.extend({
@@ -8,7 +46,11 @@
                 delimiter: '@',
                 sensitive: true,
                 emptyQuery: false,
-                queryBy: ['name', 'username'],
+                key: 'screen_name',
+                name: 'name',
+                image: 'image',
+                queryBy: [],
+                
                 typeaheadOpts: {}
             };
 
@@ -35,27 +77,29 @@
                 },
                 _matcher = function(itemProps) {
                     var i;
-                    
                     if(settings.emptyQuery){
 	                    var q = (this.query.toLowerCase()),
 	                    	caratPos = this.$element[0].selectionStart,
-	                    	lastChar = q.slice(caratPos-1,caratPos);
-	                    if(lastChar==settings.delimiter){
-		                    return true;
+	                    	lastChar = q.slice(caratPos-1,caratPos),
+                            current_delimiter = (itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter);
+                        if(lastChar==current_delimiter){
+		                    if(!q.match(new RegExp(current_delimiter + itemProps[settings.key], 'g')))
+                                return true;
 	                    }
                     }
                     
+                    if(!settings.queryBy.length)
+                        settings.queryBy = [settings.key, settings.name]
                     for (i in settings.queryBy) {
                         if (itemProps[settings.queryBy[i]]) {
                             var item = itemProps[settings.queryBy[i]].toLowerCase(),
-                                usernames = (this.query.toLowerCase()).match(new RegExp(settings.delimiter + '\\w+', "g")),
+                                usernames = (this.query.toLowerCase()).match(new RegExp((itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter) + '\\w+', "g")),
                                 j;
                             if ( !! usernames) {
                                 for (j = 0; j < usernames.length; j++) {
                                     var username = (usernames[j].substring(1)).toLowerCase(),
-                                        re = new RegExp(settings.delimiter + item, "g"),
+                                        re = new RegExp((itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter) + item, "g"),
                                         used = ((this.query.toLowerCase()).match(re));
-
                                     if (item.indexOf(username) != -1 && used === null) {
                                         return true;
                                     }
@@ -64,20 +108,20 @@
                         }
                     }
                 },
-                _updater = function(item) {
+                _updater = function(item, delimiter) {
                     var data = this.query,
                         caratPos = this.$element[0].selectionStart,
                         i;
                     
                     for (i = caratPos; i >= 0; i--) {
-                        if (data[i] == settings.delimiter) {
+                        if (data[i] == delimiter) {
                             break;
                         }
                     }
                     var replace = data.substring(i, caratPos),
                     	textBefore = data.substring(0, i),
                     	textAfter = data.substring(caratPos),
-                    	data = textBefore + settings.delimiter + item + textAfter;
+                    	data = textBefore + delimiter + item + textAfter;
                     	
                     this.tempQuery = data;
 
@@ -97,13 +141,13 @@
                             for (i = 0; i < len; i++) {
                                 var currentRes = items[i];
 
-                                if ((currentRes.username[0] == currentUser)) {
+                                if ((currentRes[settings.key][0] == currentUser)) {
                                     priorities.highest.push(currentRes);
                                 }
-                                else if ((currentRes.username[0].toLowerCase() == currentUser.toLowerCase())) {
+                                else if ((currentRes[settings.key][0].toLowerCase() == currentUser.toLowerCase())) {
                                     priorities.high.push(currentRes);
                                 }
-                                else if (currentRes.username.indexOf(currentUser) != -1) {
+                                else if (currentRes[settings.key].indexOf(currentUser) != -1) {
                                     priorities.med.push(currentRes);
                                 }
                                 else {
@@ -125,24 +169,22 @@
                     var that = this;
                     items = $(items).map(function(i, item) {
 
-                        i = $(that.options.item).attr('data-value', item.username);
+                        i = $(that.options.item).attr('data-value', item[settings.key]);
 
                         var _linkHtml = $('<div />');
 
-                        if (item.image) {
-                            _linkHtml.append('<img class="mention_image" src="' + item.image + '">');
+                        if (item[settings.image]) {
+                            _linkHtml.append('<img class="mention_image" src="' + item[settings.image] + '">');
                         }
-                        if (item.name) {
-                            _linkHtml.append('<b class="mention_name">' + item.name + '</b>');
+                        if (item[settings.name]) {
+                            _linkHtml.append('<b class="mention_name">' + item[settings.name] + '</b>');
                         }
-                        if (item.username) {
-                            _linkHtml.append('<span class="mention_username"> ' + settings.delimiter + item.username + '</span>');
+                        if (item[settings.key]) {
+                            _linkHtml.append('<span class="mention_username"> ' + (item['delimiter'] ? item['delimiter'] : settings.delimiter) + item[settings.key] + '</span>');
                         }
-
-                        i.find('a').html(that.highlighter(_linkHtml.html()));
+                        i.find('a').attr('data-delimiter', (item['delimiter'] ? item['delimiter'] : settings.delimiter)).html(that.highlighter(_linkHtml.html()));
                         return i[0];
                     });
-
                     items.first().addClass('active');
                     this.$menu.html(items);
                     return this;

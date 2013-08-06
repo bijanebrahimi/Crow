@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010-2013 Reality <tinmachin3@gmail.com> and Psychedelic Squid <psquid@psquid.net>
+# Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+#     added statusnet_groups_list count parameter
 # 
 # This program is free software: you can redistribute it and/or modify 
 # it under the terms of the GNU General Public License as published by 
@@ -692,12 +694,14 @@ class StatusNet(object):
         else:
             raise Exception("At least one of group_id or nickname must be supplied")
 
-    def statusnet_groups_list(self, user_id=0, screen_name=""):
+    def statusnet_groups_list(self, user_id=0, screen_name="", count=0):
         params = {}
         if not (user_id == 0):
             params['user_id'] = user_id
         if not (screen_name == ""):
             params['screen_name'] = screen_name
+        if not (count == 0):
+            params['count'] = count
         return self.__makerequest("statusnet/groups/list", params)
 
     def statusnet_groups_list_all(self, count=0, page=0):
