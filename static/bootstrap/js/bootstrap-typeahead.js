@@ -3,6 +3,8 @@
  * http://twitter.github.com/bootstrap/javascript.html#typeahead
  * =============================================================
  * Copyright 2012 Twitter, Inc.
+ * Copyright 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+ *      modified select() and update() function to contains delimiter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,14 +46,15 @@
     constructor: Typeahead
 
   , select: function () {
-      var val = this.$menu.find('.active').attr('data-value')
+      var val = this.$menu.find('.active').attr('data-value'),
+          delimiter = this.$menu.find('.active').find('a').attr('data-delimiter')
       this.$element
-        .val(this.updater(val))
+        .val(this.updater(val, delimiter))
         .change()
       return this.hide()
     }
 
-  , updater: function (item) {
+  , updater: function (item, delimiter) {
       return item
     }
 

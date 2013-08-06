@@ -96,6 +96,8 @@ crow = {
             delimiter: '@',
             emptyQuery: true,
             sensitive : true,
+            key: 'username',
+            name: 'name',
             queryBy: ['username'],
             typeaheadOpts: {
                 items: 10 // Max number of items you want to show
