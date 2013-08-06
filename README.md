@@ -1,30 +1,27 @@
 Crow
 ====
-Crow is a small client for Free and OpenSource microblogging platform, StatusNet.
-also you can read crow page at my blog [here](http://routinesexcluded.tk/crow.html).
+[**crow**](https://github.com/bijanebrahimi/crow) is a StatusNet microblogging client. i decided not to stick with [other clients](http://federation.skilledtests.com/Statusnet_clients.html) just because i needed one which can be easy contribute to and fast to grow and lots of crazy features. i choosed `HTML` and `javascript` for it's user interface since it's very flexible and `python` for a small web server which acts as a proxy between the user interface and statusnet federated server. currently it lacks the library to run the interface independently (definitely webkit) so it needs to be run on a web browser like an web application.
 
 Version
 ---------------
-developing version. current stable version is [0.1.1](https://github.com/bijanebrahimi/crow/tree/master)
+you can get [current stable version](https://github.com/bijanebrahimi/crow) or [develop version](https://github.com/bijanebrahimi/crow/tree/develop) which has no version, just the bleeding edge code which i strongly recommend it to use since the entire code is still beta and unstable and developing version contains up to date bug fixes and new features.
 
-Install
+
+Requirements
 ---------------
+crow is written in `python 2.7+` and `javascript` and `HTML`. so you may only need to get some requirement of python. 
 
-### Requirements?
-
-crow contains a small web server written in *python 2.7+* and the reset is HTML and Javascript.
-
-#### Linux: Debian & Ubuntu Friends
+In Debian/Ubuntu friends:
 
         sudo apt-get install python-pip python-notify
         sudo pip install tornado
 
-#### Linux: Fedora
+In Fedora:
 
         sudo yum install python-pip python-notify
         sudo python-pip install tornado
 
-#### Windows
+In Windows; thanks to @[shabgard](http://quitter.se/shabgard):
 
 1. Get Python 2.x from Phython.org and install it
 2. Get distribute from http://python-distribute.org/distribute_setup.py and install it by executing it.
@@ -33,68 +30,59 @@ crow contains a small web server written in *python 2.7+* and the reset is HTML 
 
         $ pip install tornado
 
-**Note**: installing `python-notify` is optional since it only get loaded when available
 
-Download the code
+Get the code
 ---------------
 
-### stable version
+### Download
 
-download the latest stable version from [here](https://github.com/bijanebrahimi/Crow)
-or clone the code:
+to get the latest code, you can download the source code from either the [stable version](https://github.com/bijanebrahimi/crow) or the [developing version](https://github.com/bijanebrahimi/crow/tree/develop).
 
-        mkdir crow
-        cd crow
-        git clone git@github.com:bijanebrahimi/Crow.git ./
+### Git Clone
 
-### latest version
+i suggest you to clone the project on your computer which makes the future updates very easy:
 
-latest version is not as robust as stable version but is more current and have more bugfixes.
-you can find the latest version in [develop branch](https://github.com/bijanebrahimi/Crow/tree/develope/)
+        mkdir crow-src
+        cd crow-src
+        git clone https://github.com/bijanebrahimi/Crow.git ./
+        git checkout develop
 
+the last git command switches to `develop` branch which. to use the stable version you can checkout to `master` anytime. and to update the latest changes:
 
-Run
----------------
-
-crows uses html as GUI so you need to run it on your browser. 
-first you need to run the server.
-
-        chmod +x run.py
-        ./run.py
-
-next, you need to open the URL in you browser. browsers such as `google Chrome` or `firefox`
-(`chromium` and `iceweasel` are the Free versions of these browsers) provids possibility to
-view a web page in an application mode which is ideal for our job. remember not to close
-the server you ran above. in a separated terminal run:
-
-        chromium --app=http://127.0.0.1:8888/
-        iceweasel -chrome http://127.0.0.1:8888/
+        git pull origin
 
 Configuration
 ---------------
 
-the only configuration available right now is the `api_path` which is necessary for statusnet federal instances.
+* `API_PATH` which is necessary for statusnet federal instances.
 edit `config.py` and change the api path to your statusnet instance api path.
 read [this manual](http://status.net/wiki/API_discovery) to find out what your api path should change to.
 
-        STATUSNET = {'api_path': 'http://quitter.se/api/'}
+        API_PATH = 'http://quitter.se/api/'
 
-currently working on
----------------
-* follow/unfollow users
-* user/group profile view
+* `SRV_PORT` which is the port crow will be listening on it. change it to
+any port number that is open
 
-Todo List
----------------
-* you suggest :)
+        SRV_PORT = 8888
 
-Known Issues
+* `CRW_NOTIFICATION_PUBLIC` which will turn off notification for public notices when **False**
+
+Run
 ---------------
-this is an beta version so there are (/should be) a lot of issues but they
-needed to be documented to get fixed. please submitt any issues [here](https://github.com/bijanebrahimi/Crow/issues).
+
+to run Crow, you first need to run the server side program which will listen on TCP port `8888`. you can change the port number in `config.py`.
+
+        chmod +x run.py
+        ./run.py
+
+now you can open the `http://127.0.0.1:8888/` address in yout browser. you can open it in your browser in a tab, pin it or open it as an app. many modern browser support it and it's the best way since they're designed for web application in the first place:
+
+* in google chrome: `chromium --app=http://127.0.0.1:8888/`
+* in firefox: `firefox -P Default --no-remote -width 380 -height 700 -chromehttp://127.0.0.1:8888/`
 
 License
 ---------------
-Crow is made from lots of different parts that putting them together makes it caw :)
-the main code of **Crow is licensed under GPL v3.0** but every 3rd party library may has it's own license (like `Twitter Bootstrap` or `jQuery`).
-you may need to read the header of each file to see the license information.
+crow is published under GPL version 3.0 or later license but the libraries
+used in project may be different, for that you can check the header of each
+library. but basically, crow is a Free and OpenSource software. you can fork
+the project and improve the code as longs as you keep the code Free :)

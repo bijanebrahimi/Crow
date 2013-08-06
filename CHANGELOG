@@ -37,3 +37,15 @@ version 0.1
 
 version 0.1.1
     - HOTFIX: tries to search for json data when api result is not in jason format (probably because of server dumping errors)
+
+develop version
+    - added unified status form
+    - added group auto-completion
+    - added fixed header navigation bar
+    - added fixed footer status bar
+    - added configuration for notification, crow server port number and instance api path
+    - fixed lots of UI bugs
+    - fixed forcing external links to open in new tabs
+    - enhanced auto-completion UI
+    - enhanced squeeze text plugin which tries to shorten status text as much as possible
+    - css improvments
