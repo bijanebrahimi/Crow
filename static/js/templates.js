@@ -103,7 +103,7 @@ crow_template = {
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
                             <p class="' + _notice_direction(notice) + '">\
-                                <img class="avatar" src="' + notice.user.profile_image_url + '">\
+                                <a class="avatar" href="' + notice.user.statusnet_profile_url + '"><img src="' + notice.user.profile_image_url + '"><a/>\
                                 <span>' + _notice_html_content(notice) + '</span>\
                             </p>\
                             ' + _notice_attachments(notice) + '\

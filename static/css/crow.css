@@ -192,10 +192,15 @@ body {
     text-align: right;
     width: 100%;
 }
-.notice .notice_body .notice_content p > img{
+.notice .notice_body .notice_content p a.avatar{
     padding: 5px 5px 0px 0px;
     float: left;
 }
+.notice .notice_body .notice_content p a.avatar img{
+    padding: 5px 5px 0px 0px;
+    float: left;
+}
+
 .notice .notice_body .notice_content p > span{
     color: #424242;
 }
