@@ -151,14 +151,13 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                     notification = None
                     for notice in home_timeline:
                         if notice['user']['id'] == core.SN['user_info']['id']:
-                            # Skip self posted dents
+                            continue
+                        if !config.CRW_NOTIFICATION_PUBLIC and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
                             continue
                         notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-                        # if notice['text'] and notification:
-                        if core.SN.get('user_info'):
-                            if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
-                                notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                            # TODO: prevent from notification flooding
+
+                        if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                            notification.set_urgency(pynotify.URGENCY_CRITICAL)
                         notification.show()
                 
                 
