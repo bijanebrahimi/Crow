@@ -192,8 +192,8 @@ $(document).ready(function(){
     
     // Links
     $(document).on('click', 'a', function(e){
+        e.preventDefault()
         if(!$(this).hasClass('app-link') && !$(this).hasClass('attachment') && !$(this).hasClass('more')){
-            e.preventDefault()
             var href = $(this).attr('href')
             window.open(href, '_blank')
         }
