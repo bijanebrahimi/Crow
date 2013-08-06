@@ -71,6 +71,11 @@ class UserInfoHandler(tornado.web.RequestHandler):
             core.SN['user_info']['friends'] = []
             for friend in friends:
                 core.SN['user_info']['friends'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+            
+            groups = core.SN['sn'].statusnet_groups_list()
+            for group in groups:
+                core.SN['user_info']['friends'].append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+            
             response['user'] = core.SN['user_info']
             response['success'] = True
         except:
