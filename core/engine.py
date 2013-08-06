@@ -82,6 +82,28 @@ class UserInfoHandler(tornado.web.RequestHandler):
             response['error'] = 'failed to get info'
         self.write(json.dumps(response))
 
+class UserAutocompletionHandler(tornado.web.RequestHandler):
+    def get(self):
+        response = {'success': False, 'notices': {}, 'error': ''}
+        try:
+            # instance_refresh()
+            # user_info = core.SN['sn'].users_show()
+            # core.SN['user_info'] = user_info
+            friends = core.SN['sn'].statuses_friends()
+            autocompletion = []
+            for friend in friends:
+                autocompletion.append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+            
+            groups = core.SN['sn'].statusnet_groups_list()
+            for group in groups:
+                autocompletion.append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+            
+            response['autocompletion'] = autocompletion
+            response['success'] = True
+        except:
+            response['error'] = 'failed to get autocompletion list'
+        self.write(json.dumps(response))
+
 class UserTimelineHandler(tornado.web.RequestHandler):
     def get(self):
         response = {'success': False, 'user': {}, 'previous_page': False, 'error': ''}

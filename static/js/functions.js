@@ -102,7 +102,7 @@ crow = {
             typeaheadOpts: {
                 items: 10 // Max number of items you want to show
             },
-            users: crow.user_info.friends
+            users: crow.autocompletion
         });
     },
     
@@ -269,6 +269,28 @@ crow = {
             },
         })
     },
+    get_autocompletion: function(){
+        crow.ajax_get('/user/autocompletion', {}, {
+            'success': function(response){
+                crow.autocompletion  = response.autocompletion
+                $('textarea:first').mention({
+                    delimiter: '@',
+                    emptyQuery: true,
+                    sensitive : true,
+                    key: 'username',
+                    name: 'name',
+                    queryBy: ['username'],
+                    typeaheadOpts: {
+                        items: 10 // Max number of items you want to show
+                    },
+                    users: crow.autocompletion
+                });
+            },
+            'error': function(response){},
+            'fail': function(){},
+            'always': function(){},
+        })
+    },
     get_user_info: function(){
         $('#avatar').attr('src', '/static/img/ajax-logo.gif')
         crow.ajax_get('/user/info', {}, {
@@ -276,7 +298,9 @@ crow = {
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
                 $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-                crow.plugin_mention($('textarea:first'))
+                // crow.plugin_mention($('textarea:first'))
+                // crow.autocompletion 
+                crow.get_autocompletion()
                 crow.get_user_timeline(false, true)
                 crow.get_user_replies(false, true)
             },
