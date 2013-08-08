@@ -154,10 +154,9 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                         continue
                     if config.CRW_NOTIFY_PUBLICS == False and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
                         continue
-                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-
                     if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
-                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                        continue
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
                     notification.show()
 
             response['notices'] = home_timeline
@@ -181,6 +180,13 @@ class UserRepliesHandler(tornado.web.RequestHandler):
         except:
             pass
 
+        notify_enabled = False
+        try:
+            import pynotify
+            notify_enabled = True
+        except:
+            pass
+
         try:
             # instance_refresh()
             home_timeline = []
@@ -199,6 +205,17 @@ class UserRepliesHandler(tornado.web.RequestHandler):
 
             if core.SN.get('replies_first_id') is None:
                 core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+
+            if notify_enabled and home_timeline:
+                pynotify.init("Crow")
+                notification = None
+                for notice in home_timeline:
+                    if notice['user']['id'] == core.SN['user_info']['id']:
+                        continue
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                    notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                    notification.show()
+
             response['notices'] = home_timeline
             response['success'] = True
         except:
