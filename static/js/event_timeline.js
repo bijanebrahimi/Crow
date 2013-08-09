@@ -152,9 +152,14 @@ $(document).ready(function(){
         var button = $(this)
         var notice_content = $(this).parents("span:first")
         var url = $(this).parents('p').siblings('.attachments.text-html:first').attr('href')
+        var type = 'attachment'
+        if(!url){
+            url = $(this).attr('href')
+            type = 'link'
+        }
         
         button.attr('data-loading-text', 'loading').button('loading')
-        crow.ajax_post('/notice/attachment', {'url': url}, {
+        crow.ajax_post('/notice/attachment', {'url': url, 'type': type}, {
             'success': function(response){
                 $(notice_content).replaceWith(response.content)
             },
