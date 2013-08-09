@@ -9,7 +9,7 @@ you can get [current stable version](https://github.com/bijanebrahimi/crow) or [
 
 Requirements
 ---------------
-crow is written in `python 2.7+` and `javascript` and `HTML`. so you may only need to get some requirement of python. 
+Crow contains a small web server written in *python 2.7+* and the rest is HTML and Javascript.
 
 In Debian/Ubuntu friends:
 
@@ -30,6 +30,7 @@ In Windows; thanks to @[shabgard](http://quitter.se/shabgard):
 
         $ pip install tornado
 
+**Note**: installing `python-notify` is optional since it only gets loaded when available
 
 Get the code
 ---------------
@@ -48,6 +49,21 @@ i suggest you to clone the project on your computer which makes the future updat
         git checkout develop
 
 the last git command switches to `develop` branch which. to use the stable version you can checkout to `master` anytime. and to update the latest changes:
+
+
+Run
+---------------
+
+Crow uses html as GUI so you need to run it in your browser. 
+First you need to run the server.
+
+        chmod +x run.py
+        ./run.py
+
+Next, you need to open the URL in your browser. Browsers such as `google Chrome` or `firefox`
+(`chromium` and `iceweasel` are the Free versions of these browsers) provide possibility to
+view a web page in an application mode which is ideal for our job. Remember not to close
+the server you ran above. In a separated terminal run:
 
         git pull origin
 

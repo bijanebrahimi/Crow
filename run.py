@@ -27,6 +27,6 @@ import config
 
 if __name__ == "__main__":
     app = tornado.web.Application(ROUTS, **SETTINGS)
-    app.listen(config.SRV_PORT)
-    print 'please open http://127.0.0.1:%d/ in your browser\n\tit\'s recommended to open it as an app :)' % config.SRV_PORT
+    app.listen(8888, address='127.0.0.1')
+    print 'please open http://127.0.0.1:8888/ in your browser'
     tornado.ioloop.IOLoop.instance().start()
