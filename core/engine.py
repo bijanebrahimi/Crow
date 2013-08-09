@@ -154,9 +154,9 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                         continue
                     if config.CRW_NOTIFY_PUBLICS == False and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
                         continue
-                    if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
-                        continue
                     notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                    if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
                     notification.show()
 
             response['notices'] = home_timeline
