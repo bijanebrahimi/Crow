@@ -5,7 +5,7 @@ Also you can read the Crow page at my blog [here](http://routinesexcluded.tk/cro
 
 Version
 ---------------
-0.1.1
+0.1.2
 
 Install
 ---------------
