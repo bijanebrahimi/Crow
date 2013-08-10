@@ -90,7 +90,14 @@ crow_template = {
                     if (mimetype.match(/^image/)){
                         attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
                     }else if (mimetype.match(/^text/)){
-                        attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                        var link = notice.attachments[j].url
+                        if(link.match(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)?/) && link.match(/v=([^&]+)/)){
+                            var v = link.match(/v=([^&]+)/)[1]
+                            var thumbnail = "http://i" + (Math.ceil(Math.random()*4)) + ".ytimg.com/vi/" + v + "/1.jpg"
+                            attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + thumbnail + '"></a>'
+                        }else{
+                            attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                        }
                     }else{
                         attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
                     }
