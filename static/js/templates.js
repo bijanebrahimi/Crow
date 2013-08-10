@@ -91,8 +91,12 @@ crow_template = {
                         attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
                     }else if (mimetype.match(/^text/)){
                         var link = notice.attachments[j].url
-                        if(link.match(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)?/) && link.match(/v=([^&]+)/)){
-                            var v = link.match(/v=([^&]+)/)[1]
+                        var matched = link.match(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)/)
+                        if(matched){
+                            if(matched[2]=='youtube.com')
+                                var v = link.match(/v=([^&]+)/)[1]
+                            else
+                                var v = link.match(/\/([^\/]*)*$/)[1]
                             var thumbnail = "http://i" + (Math.ceil(Math.random()*4)) + ".ytimg.com/vi/" + v + "/1.jpg"
                             attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + thumbnail + '"></a>'
                         }else{
