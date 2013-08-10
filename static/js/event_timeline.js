@@ -18,6 +18,7 @@ $(document).ready(function(){
     // on load
     crow.get_user_info()
     crow.get_server_info()
+    crow.bind_shortcuts()
     
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(e){
@@ -60,12 +61,6 @@ $(document).ready(function(){
     $(document).on('click', '.btn_status_reply', function(){
         $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
         $(this).remove()
-    })
-    $('#avatar-link').click(function(e){
-        e.preventDefault()
-        var textarea = $('#status-form').toggle().find('textarea')
-        var status = $(textarea).val()
-        $(textarea).focus().val('').val(status).trigger('propertychange')
     })
     
     // on short url button

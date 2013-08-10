@@ -213,6 +213,23 @@ crow = {
         }
     },
     
+    bind_shortcuts: function(){
+        function toggle_form(){
+            var textarea = $('#status-form').toggle().find('textarea')
+            var status = $(textarea).val()
+            $(textarea).focus().val('').val(status).trigger('propertychange')
+        }
+        $('#avatar-link').click(function(e){
+            e.preventDefault()
+            toggle_form()
+        })
+        $(document).bind('keydown', 'esc', function(){
+            toggle_form()
+        });
+        $('textarea').bind('keydown', 'esc', function(){
+            toggle_form()
+        });
+    },
 
     get_user_timeline: function(previous_page, fresh_results){
         var previous_page = previous_page ? true : false
@@ -297,9 +314,7 @@ crow = {
             'success': function(response){
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
-                $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-                // crow.plugin_mention($('textarea:first'))
-                // crow.autocompletion 
+                $('#avatar').parent().attr('title', 'press ESC to toogle the form')
                 crow.get_autocompletion()
                 crow.get_user_timeline(false, true)
                 crow.get_user_replies(false, true)
