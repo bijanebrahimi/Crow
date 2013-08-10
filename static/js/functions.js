@@ -164,10 +164,11 @@ crow = {
         return notice_a_id - notice_b_id
     },
     friend_by_username: function(friend_username){
-        return $.grep(crow.user_info.friends, function(e){ return e.username == friend_username; })
+        return $.grep(crow.autocompletion, function(e){ return e.username == friend_username; })
     },
     friend_add: function (user){
-        if(!crow.friend_by_username(user.screen_name)){
+        result = crow.friend_by_username(user.screen_name)
+        if(!result.length){
             crow.autocompletion.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
         }
     },
@@ -236,14 +237,14 @@ crow = {
         $('#link-home i').addClass('loading')
         crow.ajax_get('/user/timeline', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
-                crow.user_replies = response.notices
+                crow.user_notices = response.notices
                 if(response.previous_page){
-                    var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'), false)
-                    crow.stream_add(crow.user_replies, false)
+                    var html = crow_template.notices(crow.user_notices, true, false, $('#home .contents'), false)
+                    crow.stream_add(crow.user_notices, false)
                 }else{
-                    crow.stream_add(crow.user_replies, true)
+                    crow.stream_add(crow.user_notices, true)
                     
-                    var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'), false)
+                    var html = crow_template.notices(crow.user_notices, true, true, $('#home .contents'), false)
                     $($(html).children('div')).prependTo('#home .contents')
                     setTimeout(crow.get_user_timeline, 20000)
                 }
