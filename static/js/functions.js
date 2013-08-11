@@ -68,7 +68,17 @@ crow = {
         return short_url
     },
     shorten_text: function(text){
-        text = text.replace(/https?:\/\//g, '')
+        text = text.trim()
+        text = text.replace(/ {2,}/g, ' ')          // removes extra spaces
+        text = text.replace(/\.{2,}/g, '…')         // &#x2026;
+        text = text.replace(/\?{2,}/g, '⁇')         // &#x2047;
+        text = text.replace(/\?+\!+/g, '⁈')         // &#x2048;
+        text = text.replace(/\!+\?+/g, '⁉')         // &#x2049;
+        text = text.replace(/\!+/g, '!')            // removes duplicated exclamation marks
+        text = text.replace(/\?+/g, '?')            // removes duplicated question marks
+        text = text.replace(/https?\:\/\//g, '')    // removes http:// https://
+        text = text.replace(/ +([\.\)\]])/g, '$1')  // 
+        text = text.replace(/([\(\[]) +/g, '$1')  // 
         return text
     },
     shorten_html_link: function(html){
@@ -86,11 +96,13 @@ crow = {
             delimiter: '@',
             emptyQuery: true,
             sensitive : true,
+            key: 'username',
+            name: 'name',
             queryBy: ['username'],
             typeaheadOpts: {
                 items: 10 // Max number of items you want to show
             },
-            users: crow.user_info.friends
+            users: crow.autocompletion
         });
     },
     
@@ -152,17 +164,20 @@ crow = {
         return notice_a_id - notice_b_id
     },
     friend_by_username: function(friend_username){
-        return $.grep(crow.user_info.friends, function(e){ return e.username == friend_username; })
+        return $.grep(crow.autocompletion, function(e){ return e.username == friend_username; })
     },
     friend_add: function (user){
-        if(!crow.friend_by_username(user.screen_name)){
-            crow.user_info.friends.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
+        result = crow.friend_by_username(user.screen_name)
+        if(!result.length){
+            crow.autocompletion.push({'username': user.screen_name, 'name': user.name, 'image': user.profile_image_url})
         }
     },
 
     stream_update: function(notice){
         streams_count = $('#stream li').length - 2
-        $('#notice-streams > a').html('<b class="icon icon-comment"></b> ' + streams_count + '')
+        $('#navbar-footer a.brand').html('<img id="logo brand" class="thumbnail" src="/static/img/favicon.png"> ' + (streams_count ? streams_count : ''))
+        document.title = 'Crow :: Statusnet client ' + (streams_count ? '(' + streams_count + ')' : '')
+        
     },
     stream_add: function(notices, prepend){
         if(notices.length>0){
@@ -199,23 +214,37 @@ crow = {
         }
     },
     
+    bind_shortcuts: function(){
+        function toggle_form(){
+            var textarea = $('#status-form').toggle().find('textarea')
+            var status = $(textarea).val()
+            $(textarea).focus().val('').val(status).trigger('propertychange')
+        }
+        $('#avatar-link').click(function(e){
+            e.preventDefault()
+            toggle_form()
+        })
+        $(document).bind('keydown', 'esc', function(){
+            toggle_form()
+        });
+        $('textarea').bind('keydown', 'esc', function(){
+            toggle_form()
+        });
+    },
 
     get_user_timeline: function(previous_page, fresh_results){
-        $('#loading').show()
         var previous_page = previous_page ? true : false
+        $('#link-home i').addClass('loading')
         crow.ajax_get('/user/timeline', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
-                crow.user_replies = response.notices
+                crow.user_notices = response.notices
                 if(response.previous_page){
-                    var html = crow_template.notices(crow.user_replies, true, false, $('#home .contents'), false)
-                    infinite_scroll_timeline = false
-                    
-                    crow.stream_add(crow.user_replies, false)
+                    var html = crow_template.notices(crow.user_notices, true, false, $('#home .contents'), false)
+                    crow.stream_add(crow.user_notices, false)
                 }else{
-                    // crow_template.streams(crow.user_replies)
-                    crow.stream_add(crow.user_replies, true)
+                    crow.stream_add(crow.user_notices, true)
                     
-                    var html = crow_template.notices(crow.user_replies, true, true, $('#home .contents'), false)
+                    var html = crow_template.notices(crow.user_notices, true, true, $('#home .contents'), false)
                     $($(html).children('div')).prependTo('#home .contents')
                     setTimeout(crow.get_user_timeline, 20000)
                 }
@@ -223,24 +252,23 @@ crow = {
             'error': function(response){},
             'fail': function(){},
             'always': function(){
+                $('#link-home i').removeClass('loading')
                 if(previous_page)
                     $('#home .pager button').button('reset')
                 else{
-                    $('#loading').hide()
                     $('#home .pager button').show()
                 }
             },
         })
     },
     get_user_replies: function(previous_page, fresh_results){
-        $('#loading').show()
         var previous_page = previous_page ? true : false
+        $('#link-replies i').addClass('loading')
         crow.ajax_get('/user/replies', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
             'success': function(response){
                 crow.user_replies = response.notices
                 if(response.previous_page){
                     var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'), true)
-                    infinite_scroll_replies = false
                 }else{
                     var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'), true)
                     $($(html).children('div')).prependTo('#replies .contents')
@@ -250,23 +278,45 @@ crow = {
             'error': function(response){},
             'fail': function(){},
             'always': function(){
+                $('#link-replies i').removeClass('loading')
                 if(previous_page)
                     $('#replies .pager button').button('reset')
                 else{    
                     $('#replies .pager button').show()
-                    $('#loading').hide()
                 }
             },
         })
     },
+    get_autocompletion: function(){
+        crow.ajax_get('/user/autocompletion', {}, {
+            'success': function(response){
+                crow.autocompletion  = response.autocompletion
+                $('textarea:first').mention({
+                    delimiter: '@',
+                    emptyQuery: true,
+                    sensitive : true,
+                    key: 'username',
+                    name: 'name',
+                    queryBy: ['username'],
+                    typeaheadOpts: {
+                        items: 10 // Max number of items you want to show
+                    },
+                    users: crow.autocompletion
+                });
+            },
+            'error': function(response){},
+            'fail': function(){},
+            'always': function(){},
+        })
+    },
     get_user_info: function(){
+        $('#avatar').attr('src', '/static/img/ajax-logo.gif')
         crow.ajax_get('/user/info', {}, {
             'success': function(response){
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
-                $('#avatar').parent().attr('title', crow.escape_quotes(crow.user_info.description))
-                crow.plugin_mention($('textarea'))
-                
+                $('#avatar').parent().attr('title', 'press ESC to toogle the form')
+                crow.get_autocompletion()
                 crow.get_user_timeline(false, true)
                 crow.get_user_replies(false, true)
             },
@@ -287,6 +337,30 @@ crow = {
         })
     },
     
+    send_status: function(){
+        var textarea = $('#status-textarea')
+        var status = $(textarea).val()
+        if(status.length==0)
+            return false
+        var notice_id = $(textarea).parents('#status-form').attr('data-notice')
+        if (!notice_id)
+            notice_id = 0
+        $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_send').button('loading')
+        crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
+            'success': function(){
+                crow_template.notices([response.notice], true, true, $('#home .contents'))
+                $(textarea).parents('#status-form').hide()
+                
+                $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
+                $('.btn_status_reply').remove()
+            },
+            'error': function(){},
+            'fail': function(){},
+            'always': function(){
+                $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_send').button('reset')
+            },
+        })
+    },
     
     server_info: {'length_limit': 0},
     user_info: {},

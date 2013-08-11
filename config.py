@@ -14,4 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
-STATUSNET = {'api_path': 'http://quitter.se/api/'}
+# Statusnet API
+API_PATH = 'http://quitter.se/api/'
+
+# Crow Server
+SRV_PORT = 8888
+
+# Crow Environment (True/False)
+CRW_NOTIFY_PUBLICS = False

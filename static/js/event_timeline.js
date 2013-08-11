@@ -14,43 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
-// Crow navbar scroll
-(function ($) {
-    $(function(){
-        var $win = $(window),
-        $body = $('body'),
-        $nav = $('.navbar'),
-        navHeight = $('.navbar').first().height(),
-        subnavHeight = $('.navbar').first().height(),
-        subnavTop = $('.navbar').length && $('.navbar').offset().top - navHeight,
-        marginTop = parseInt($body.css('margin-top'), 10);
-        isFixed = 0;
-
-        processScroll();
-        $win.on('scroll', processScroll);
-        function processScroll() {
-            var i, scrollTop = $win.scrollTop();
-            if (scrollTop >= subnavTop && !isFixed) {
-                isFixed = 1;
-                $nav.addClass('subnav-fixed');
-                $body.css('margin-top', marginTop + subnavHeight + 'px');
-            } else if (scrollTop <= subnavTop && isFixed) {
-                isFixed = 0;
-                $nav.removeClass('subnav-fixed');
-                $body.css('margin-top', marginTop + 'px');
-            }
-        }
-    });
-})(window.jQuery);
-
 $(document).ready(function(){
-    // global vars
-    infinite_scroll_timeline = false
-    infinite_scroll_replies = false
-    
     // on load
     crow.get_user_info()
     crow.get_server_info()
+    crow.bind_shortcuts()
     
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(e){
@@ -75,44 +43,35 @@ $(document).ready(function(){
                 $(this).parents('.status_form').removeClass('exceeded')
         }
     })
-    $(document).on('keypress', 'textarea', function(e){
-        // Send
-        var textarea = $(this)
-        var status = $(this).val()
-        if (e.keyCode == 13 && !$(this).parents('.status_form').hasClass('exceeded')) {
-            if(status.length==0)
-                return false
-            var notice_id = $(textarea).attr('data-notice')
-            $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_length').button('loading')
-            crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
-                'success': function(){
-                    crow_template.notices([response.notice], true, true, $('#home .contents'))
-                },
-                'error': function(){},
-                'fail': function(){},
-                'always': function(){
-                    $(textarea).removeAttr('readonly').val('').trigger('propertychange').parents('.status_form').find('.btn_status_length').button('reset')
-                    if(notice_id>0)
-                        $(textarea).parents('.notice_body').children('.notice_form').toggle()
-                },
-            })
+    $(document).on('keypress', '#status-textarea', function(e){
+        if(e.keyCode == 13 && !e.shiftKey){
+            if ($('.typeahead').css('display') != 'block' && !$(this).parents('.status_form').hasClass('exceeded')) {
+                crow.send_status()
+            }
+            return false
         }
+    })
+    $(document).on('click', '.btn_status_send', function(){
+        if (!$('#status-textarea').parents('.status_form').hasClass('exceeded')) {
+            crow.send_status()
+        }
+    })
+    $(document).on('click', '.btn_status_reply', function(){
+        $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
+        $(this).remove()
     })
     
     // on short url button
-    $(document).on('click', '.btn_status_length', function(){
+    $(document).on('click', '.btn_status_squeeze', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
         var status = $(textarea).val()
-        $(textarea).val(crow.shorten_text(status))
+        $(textarea).focus().val('').val(crow.shorten_text(status)).trigger('propertychange')
     })
     $(document).on('click', '.btn_status_short_url', function(){
         var textarea = $(this).parents('.status_form').find('textarea')
         var status = $(textarea).val()
         var status = status.replace(/(https?:\/\/[^ ]+)/g, crow.get_short_url)
-        $(textarea).val(status)
-    })
-    $(document).on('click', '.btn_status_upload', function(){
-        alert('sorry, not implemented yet')
+        $(textarea).val(status).trigger('propertychange')
     })
 
     // navbar tabs
@@ -156,28 +115,32 @@ $(document).ready(function(){
     })
     $(document).on('click', '.notice_action .conversation', function(){
         var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
-        $(button).children('i').removeClass('icon-eye-open').addClass('icon-ajax')
-        crow.ajax_post('/notice/reply', {'id': notice_id},{
+        var conversation_id = $(button).parents('.notice').attr('data-conversation')
+        var conversation_container = $(button).parents('.notice')
+        console.log('conversation: ' + conversation_id)
+        $(button).children('i').removeClass('icon-comment').addClass('icon-ajax')
+        crow.ajax_post('/notice/conversation', {'conversation_id': conversation_id},{
             'success': function(response){
-                
+                container = $('<div></div>')
+                var html = crow_template.notices(response.notices, true, false, $(container), false)
+                $(conversation_container).replaceWith($(html).html())
             },
             'error': function(response){},
             'fail': function(){},
             'always': function(){
-                $(button).children('i').addClass('icon-eye-open').removeClass('icon-ajax')
+                $(button).children('i').addClass('icon-comment').removeClass('icon-ajax')
             },
         })
     })
     $(document).on('click', '.notice_action .reply', function(){
-        var notice_form = $(this).parents('.notice_body').children('.notice_form')
-        var textarea = $(notice_form).children('.status_form').find('textarea')
-        var status = $(textarea).val()
-        var screen_name = $(textarea).attr('data-screen-name')
-        $(notice_form).toggle()
-        if(status.length==0)
-            status = '@' + screen_name + ' '
-        $(textarea).focus().val('').val(status)
+        var notice = $(this).parents('.notice')
+        var notice_id = $(notice).attr('id').replace(/[^0-9]+/, '')
+        var notice_user = $(notice).attr('data-screenname')
+        $('#status-form').attr('data-notice', notice_id).show()
+        
+        var textarea = $('#status-form').find('textarea')
+        $(textarea).focus().val('').val('@' + notice_user +' ').trigger('propertychange')
+        $('#status-recipient').html('<button class="btn btn-small btn_status_reply active" title="remove recipient">@' + notice_user + '</button>')
     })
 
     // Notice content
@@ -186,9 +149,14 @@ $(document).ready(function(){
         var button = $(this)
         var notice_content = $(this).parents("span:first")
         var url = $(this).parents('p').siblings('.attachments.text-html:first').attr('href')
+        var type = 'attachment'
+        if(!url){
+            url = $(this).attr('href')
+            type = 'link'
+        }
         
         button.attr('data-loading-text', 'loading').button('loading')
-        crow.ajax_post('/notice/attachment', {'url': url}, {
+        crow.ajax_post('/notice/attachment', {'url': url, 'type': type}, {
             'success': function(response){
                 $(notice_content).replaceWith(response.content)
             },
@@ -200,20 +168,12 @@ $(document).ready(function(){
         })
     })
 
-    // Visual effects
-    $('a.brand').click(function(e){
-        e.preventDefault()
-        $('body').animate({scrollTop: 0}, '500', 'swing')
-    })
-
     $('#replies .pager button').click(function(){
         $('#replies .pager button').button('loading')
-        infinite_scroll_replies = true
         crow.get_user_replies(true)
     })
     $('#home .pager button').click(function(){
         $('#home .pager button').button('loading')
-        infinite_scroll_timeline = true
         crow.get_user_timeline(true)
     })
 
@@ -230,5 +190,17 @@ $(document).ready(function(){
         var stream_item = $('.stream-item a[href="#notice-' + notice_id + '"]')
         if(stream_item.length)
             crow.stream_remove(stream_item, true)
+    })
+    
+    // Links
+    $(document).on('click', 'a', function(e){
+        e.preventDefault()
+        if( (!$(this).hasClass('app-link') && (!$(this).hasClass('attachment') || !$(this).hasClass('more'))) ||
+            ($(this).hasClass('app-link') && $(this).hasClass('attachments')) ||
+            ($(this).hasClass('app-link') && $(this).attr('target')=='_blank')
+        ){
+            var href = $(this).attr('href')
+            window.open(href, '_blank')
+        }
     })
 })

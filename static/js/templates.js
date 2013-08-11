@@ -15,56 +15,6 @@
 // along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 crow_template = {
-    status_form: function(notice_id, screen_name){
-        return '<div class="status_form">\
-                    <div class="btn-toolbar">\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_ltr active" title="text LTR indicator"><i class="icon icon-align-left"></i></button>\
-                            <button class="btn btn-small btn_status_length" title="shorten text" data-loading-text="sending">0</button>\
-                            <button class="btn btn-small btn_status_rtl" title="text RTL indicator"><i class="icon icon-align-right"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_short_url" title="Bitly Short_url"><i class="icon icon-share"></i></button>\
-                        </div>\
-                        <div class="btn-group">\
-                            <button class="btn btn-small btn_status_upload" title="upload image <NOT IMPLEMENTED YET>"><i class="icon  icon-picture"></i></button>\
-                        </div>\
-                    </div>\
-                    <textarea data-notice="' + notice_id + '" data-screen-name="' + (screen_name ? screen_name : '') + '" placeholder="Your Status"></textarea>\
-                </div>'
-    },
-    navbar: function(){
-        return '<div class="navbar">\
-                    <div class="navbar-inner">\
-                        <div class="container">\
-                            <a class="app-link brand" href="#">\
-                                <img id="avatar" class="thumbnail" src="/static/img/favicon.png">\
-                            </a>\
-                            <ul class="nav" id="nav-pages">\
-                                <li class="active"><a class="app-link" href="#home">home</a></li>\
-                                <li class=""><a class="app-link" href="#replies">replies</a></li>\
-                            </ul>\
-                            <ul class="nav pull-right">\
-                                <li>\
-                                    <a class="app-link" href="#">\
-                                        <img id="loading" src="/static/img/ajax.gif">\
-                                    </a>\
-                                </li>\
-                                <li class="dropdown" id="notice-streams">\
-                                    <a href="#" role="button" class="app-link dropdown-toggle" data-toggle="dropdown">\
-                                        <b class="icon icon-comment"></b>\
-                                    </a>\
-                                    <ul id="stream" class="dropdown-menu" role="menu" aria-labelledby="drop3">\
-                                        <li><a class="app-link empty" tabindex="-1" href="#"><i class="icon icon-trash"></i>Empty</a></li>\
-                                        <li class="divider"></li>\
-                                    </ul>\
-                                </li>\
-                            </ul>\
-                        </div>\
-                    </div>\
-                </div>'
-    },
-
     alert: function(type, text){
         return '<div class="alert alert-' + type + '"><a class="app-link close" data-dismiss="alert" href="#">x</a>' + text + '</div>'
     },
@@ -122,12 +72,15 @@ crow_template = {
                 return '<br><span class="favorited">you liked it</span>'
             return '';
         }
-        function _notice_actions(notice){
-            return '<button title="Repeat this notice" class="btn btn-mini repeat"><i class="icon icon-white icon-refresh"></i></button>\
-                    <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
-                    <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
-                    '
-            // <button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
+        function _notice_actions(notice, is_reply){
+            var html = '<button title="Repeat this notice" class="btn btn-mini repeat"><i class="icon icon-white icon-refresh"></i></button>\
+                        <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
+                        <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
+                        '
+            if((notice.in_reply_to_status_id||notice.in_reply_to_screen_name||notice.in_reply_to_user_id)&&!is_reply){
+                html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-comment"></i></button>'
+            }
+            return html
         }
         function _notice_html_content(notice){
             return notice.statusnet_html
@@ -140,7 +93,18 @@ crow_template = {
                     if (mimetype.match(/^image/)){
                         attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + notice.attachments[j].url + '"></a>'
                     }else if (mimetype.match(/^text/)){
-                        attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                        var link = notice.attachments[j].url
+                        var matched = link.match(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)/)
+                        if(matched){
+                            if(matched[2]=='youtube.com')
+                                var v = link.match(/v=([^&]+)/)[1]
+                            else
+                                var v = link.match(/\/([^\/]*)*$/)[1]
+                            var thumbnail = "http://i" + (Math.ceil(Math.random()*4)) + ".ytimg.com/vi/" + v + "/1.jpg"
+                            attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + thumbnail + '"></a>'
+                        }else{
+                            attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                        }
                     }else{
                         attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
                     }
@@ -148,12 +112,12 @@ crow_template = {
             }
             return attachments
         }
-        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
+        var notice_html = '<div id="' + _notice_id(notice, is_reply) + '" data-screenname="' + notice.user.screen_name + '" class="notice" data-conversation="' + notice.statusnet_conversation_id + '">\
                     <div class="notice_body">\
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
                             <p class="' + _notice_direction(notice) + '">\
-                                <img class="avatar" src="' + notice.user.profile_image_url + '">\
+                                <a class="avatar" href="' + notice.user.statusnet_profile_url + '"><img src="' + notice.user.profile_image_url + '"><a/>\
                                 <span>' + _notice_html_content(notice) + '</span>\
                             </p>\
                             ' + _notice_attachments(notice) + '\
@@ -164,12 +128,12 @@ crow_template = {
                             ' + _notice_favorited(notice) + '\
                         </div>\
                         <div class="notice_action">\
-                            ' + _notice_actions(notice) + '\
+                            ' + _notice_actions(notice, is_reply) + '\
                         </div>\
-                        <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>\
                     </div>\
                     <div class="notice_replies"></div>\
                 </div>'
+                        // <div class="notice_form">' + crow_template.status_form(notice.id, notice.user.screen_name) + '</div>
         notice_element = $(notice_html)
         crow.plugin_mention($(notice_element).find('textarea'))
         return notice_element
@@ -235,5 +199,4 @@ crow_template = {
         }
         return container
     },
-    
 }

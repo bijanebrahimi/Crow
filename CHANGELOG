@@ -40,3 +40,15 @@ version 0.1.1
 
 version 0.1.2
     - HOTFIX: (high security fix) Crow now listens on localhost (127.0.0.1:8888) now
+
+version 0.2.0
+    - added unified status form with new look
+    - added friends/groups auto-completion
+    - added configuration for notifications, crow server port number and instance api path
+    - added force open in new new tabs for external links
+    - added thumbnails for youtube link-attachments
+    - added conversation load option which load the entire conversation which a dents is in it
+    - added shortcut ESC key to toggle notice form
+    - prevent sending notices by pressing SHIFT+ENTER which now adds new line character
+    - enhanced squeeze text plugin which tries to shorten status text as much as possible by replacing special characters and removing duplicated white spaces
+    - css improvments

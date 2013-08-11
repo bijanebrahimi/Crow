@@ -23,6 +23,7 @@ import tornado.ioloop
 
 # from application
 from core import ROUTS, SETTINGS
+import config
 
 if __name__ == "__main__":
     app = tornado.web.Application(ROUTS, **SETTINGS)

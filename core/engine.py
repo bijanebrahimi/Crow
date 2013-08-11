@@ -53,7 +53,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
             elif password == '':
                 self.write(json.dumps({'success': False, 'error': 'please enter your password'}))
             else:
-                core.SN['sn'] = StatusNet(config.STATUSNET['api_path'], username, password)
+                core.SN['sn'] = StatusNet(config.API_PATH, username, password)
                 # core.INSTANCE['username'] = username
                 # core.INSTANCE['password'] = password
                 self.write(json.dumps({'success': True, 'redirect': '/'}))
@@ -62,7 +62,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
 
 class UserInfoHandler(tornado.web.RequestHandler):
     def get(self):
-        response = {'success': False, 'notices': {}, 'error': ''}
+        response = {'success': False, 'user': {}, 'error': ''}
         try:
             # instance_refresh()
             user_info = core.SN['sn'].users_show()
@@ -71,10 +71,36 @@ class UserInfoHandler(tornado.web.RequestHandler):
             core.SN['user_info']['friends'] = []
             for friend in friends:
                 core.SN['user_info']['friends'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+            
+            groups = core.SN['sn'].statusnet_groups_list()
+            for group in groups:
+                core.SN['user_info']['friends'].append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+            
             response['user'] = core.SN['user_info']
             response['success'] = True
         except:
             response['error'] = 'failed to get info'
+        self.write(json.dumps(response))
+
+class UserAutocompletionHandler(tornado.web.RequestHandler):
+    def get(self):
+        response = {'success': False, 'autocompletion': [], 'error': ''}
+        try:
+            # instance_refresh()
+            friends = core.SN['sn'].statuses_friends()
+            for friend in friends:
+                response['autocompletion'].append({'username': friend['screen_name'], 'name': friend['name'], 'image': friend['profile_image_url']})
+        except:
+            pass
+
+        try:
+            groups = core.SN['sn'].statusnet_groups_list(count=200)
+            for group in groups:
+                response['autocompletion'].append({'delimiter': '!', 'username': group['nickname'], 'name': group['fullname'], 'image': group['mini_logo']})
+        except:
+            pass
+
+        response['success'] = True
         self.write(json.dumps(response))
 
 class UserTimelineHandler(tornado.web.RequestHandler):
@@ -119,22 +145,19 @@ class UserTimelineHandler(tornado.web.RequestHandler):
                 core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
 
             if notify_enabled and home_timeline:
-                if len(home_timeline) < 10:
-                    pynotify.init("Crow")
-                    notification = None
-                    for notice in home_timeline:
-                        if notice['user']['id'] == core.SN['user_info']['id']:
-                            # Skip self posted dents
-                            continue
-                        notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-                        # if notice['text'] and notification:
-                        if core.SN.get('user_info'):
-                            if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
-                                notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                            # TODO: prevent from notification flooding
-                        notification.show()
+                pynotify.init("Crow")
+                notification = None
                 
-                
+                for notice in home_timeline:
+                    if notice['user']['id'] == core.SN['user_info']['id']:
+                        continue
+                    if config.CRW_NOTIFY_PUBLICS == False and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
+                        continue
+                    notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
+                    if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                        notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                    notification.show()
+
             response['notices'] = home_timeline
             response['success'] = True
         except:
@@ -156,6 +179,13 @@ class UserRepliesHandler(tornado.web.RequestHandler):
         except:
             pass
 
+        notify_enabled = False
+        try:
+            import pynotify
+            notify_enabled = True
+        except:
+            pass
+
         try:
             # instance_refresh()
             home_timeline = []
@@ -174,6 +204,7 @@ class UserRepliesHandler(tornado.web.RequestHandler):
 
             if core.SN.get('replies_first_id') is None:
                 core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
+
             response['notices'] = home_timeline
             response['success'] = True
         except:
@@ -234,20 +265,20 @@ class NoticeSendHandler(tornado.web.RequestHandler):
             response['notice'] = update
             response['success'] = True
         except:
-            response['error'] = 'failed to get info'
+            response['error'] = 'failed to send status'
         self.write(json.dumps(response))
 
 class NoticeConversationHandler(tornado.web.RequestHandler):
     def post(self):
-        response = {'success': False, 'notice': {}, 'error': ''}
+        response = {'success': False, 'notices': {}, 'error': ''}
         try:
             # instance_refresh()
-            # server_info = {'length_limit': core.SN['sn'].length_limit}
-            import time
-            time.sleep(2)
+            conversation_id = self.get_argument("conversation_id")
+            conversation = core.SN['sn'].statusnet_conversation(id=conversation_id)
             response['success'] = True
+            response['notices'] = conversation
         except:
-            response['error'] = 'failed to get info'
+            response['error'] = 'failed to get conversation'
         self.write(json.dumps(response))
 
 class NoticeAttachmentHandler(tornado.web.RequestHandler):
@@ -257,8 +288,12 @@ class NoticeAttachmentHandler(tornado.web.RequestHandler):
             import urllib
             import re
             url = self.get_argument("url")
+            type = self.get_argument("type")
             html = urllib.urlopen(url).read()
-            body = re.search(r"<body>(.*)</body>", html).groups()[0]
+            if type == 'attachment':
+                body = re.search(r"<body>(.*)</body>", html).groups()[0]
+            else:
+                body = re.search("entry-content\">(.*)</div>", html).groups()[0]
             response['content'] = body
             response['success'] = True
         except:
