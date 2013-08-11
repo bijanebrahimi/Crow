@@ -38,14 +38,17 @@ version 0.1
 version 0.1.1
     - HOTFIX: tries to search for json data when api result is not in jason format (probably because of server dumping errors)
 
-develop version
-    - added unified status form
-    - added group auto-completion
-    - added fixed header navigation bar
-    - added fixed footer status bar
-    - added configuration for notification, crow server port number and instance api path
-    - fixed lots of UI bugs
-    - fixed forcing external links to open in new tabs
-    - enhanced auto-completion UI
-    - enhanced squeeze text plugin which tries to shorten status text as much as possible
+version 0.1.2
+    - HOTFIX: (high security fix) Crow now listens on localhost (127.0.0.1:8888) now
+
+version 0.2.0
+    - added unified status form with new look
+    - added friends/groups auto-completion
+    - added configuration for notifications, crow server port number and instance api path
+    - added force open in new new tabs for external links
+    - added thumbnails for youtube link-attachments
+    - added conversation load option which load the entire conversation which a dents is in it
+    - added shortcut ESC key to toggle notice form
+    - prevent sending notices by pressing SHIFT+ENTER which now adds new line character
+    - enhanced squeeze text plugin which tries to shorten status text as much as possible by replacing special characters and removing duplicated white spaces
     - css improvments
