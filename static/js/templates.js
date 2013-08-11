@@ -72,12 +72,15 @@ crow_template = {
                 return '<br><span class="favorited">you liked it</span>'
             return '';
         }
-        function _notice_actions(notice){
-            return '<button title="Repeat this notice" class="btn btn-mini repeat"><i class="icon icon-white icon-refresh"></i></button>\
-                    <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
-                    <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
-                    '
-            // <button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
+        function _notice_actions(notice, is_reply){
+            var html = '<button title="Repeat this notice" class="btn btn-mini repeat"><i class="icon icon-white icon-refresh"></i></button>\
+                        <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
+                        <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
+                        '
+            if((notice.in_reply_to_status_id||notice.in_reply_to_screen_name||notice.in_reply_to_user_id)&&!is_reply){
+                html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
+            }
+            return html
         }
         function _notice_html_content(notice){
             return notice.statusnet_html
@@ -125,7 +128,7 @@ crow_template = {
                             ' + _notice_favorited(notice) + '\
                         </div>\
                         <div class="notice_action">\
-                            ' + _notice_actions(notice) + '\
+                            ' + _notice_actions(notice, is_reply) + '\
                         </div>\
                     </div>\
                     <div class="notice_replies"></div>\

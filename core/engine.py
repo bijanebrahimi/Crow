@@ -62,7 +62,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
 
 class UserInfoHandler(tornado.web.RequestHandler):
     def get(self):
-        response = {'success': False, 'notices': {}, 'error': ''}
+        response = {'success': False, 'user': {}, 'error': ''}
         try:
             # instance_refresh()
             user_info = core.SN['sn'].users_show()
@@ -101,7 +101,6 @@ class UserAutocompletionHandler(tornado.web.RequestHandler):
             pass
 
         response['success'] = True
-        # response['error'] = 'failed to get autocompletion list'
         self.write(json.dumps(response))
 
 class UserTimelineHandler(tornado.web.RequestHandler):
@@ -271,15 +270,15 @@ class NoticeSendHandler(tornado.web.RequestHandler):
 
 class NoticeConversationHandler(tornado.web.RequestHandler):
     def post(self):
-        response = {'success': False, 'notice': {}, 'error': ''}
+        response = {'success': False, 'notices': {}, 'error': ''}
         try:
             # instance_refresh()
-            # server_info = {'length_limit': core.SN['sn'].length_limit}
-            import time
-            time.sleep(2)
+            conversation_id = self.get_argument("conversation_id")
+            conversation = core.SN['sn'].statusnet_conversation(id=conversation_id)
             response['success'] = True
+            response['notices'] = conversation
         except:
-            response['error'] = 'failed to get info'
+            response['error'] = 'failed to get conversation'
         self.write(json.dumps(response))
 
 class NoticeAttachmentHandler(tornado.web.RequestHandler):

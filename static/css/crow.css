@@ -247,6 +247,12 @@ body {
 .notice .notice_body .notice_action button.active{
     background: #538A4F;
 }
+.notice .notice_body .notice_action button.conversation{
+    display: none;
+}
+.contents > .notice > .notice_body > .notice_action > button.conversation{
+    display: block !important;
+}
 
 .notice .notice_body .notice_form{
     display: block;

@@ -115,11 +115,15 @@ $(document).ready(function(){
     })
     $(document).on('click', '.notice_action .conversation', function(){
         var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
+        var conversation_id = $(button).parents('.notice').attr('data-conversation')
+        var conversation_container = $(button).parents('.notice')
+        console.log('conversation: ' + conversation_id)
         $(button).children('i').removeClass('icon-eye-open').addClass('icon-ajax')
-        crow.ajax_post('/notice/reply', {'id': notice_id},{
+        crow.ajax_post('/notice/conversation', {'conversation_id': conversation_id},{
             'success': function(response){
-                
+                container = $('<div></div>')
+                var html = crow_template.notices(response.notices, true, false, $(container), false)
+                $(conversation_container).replaceWith($(html).html())
             },
             'error': function(response){},
             'fail': function(){},
