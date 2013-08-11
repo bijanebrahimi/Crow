@@ -44,7 +44,7 @@ $(document).ready(function(){
         }
     })
     $(document).on('keypress', '#status-textarea', function(e){
-        if(e.keyCode == 13){
+        if(e.keyCode == 13 && !e.shiftKey){
             if ($('.typeahead').css('display') != 'block' && !$(this).parents('.status_form').hasClass('exceeded')) {
                 crow.send_status()
             }
@@ -118,7 +118,7 @@ $(document).ready(function(){
         var conversation_id = $(button).parents('.notice').attr('data-conversation')
         var conversation_container = $(button).parents('.notice')
         console.log('conversation: ' + conversation_id)
-        $(button).children('i').removeClass('icon-eye-open').addClass('icon-ajax')
+        $(button).children('i').removeClass('icon-comment').addClass('icon-ajax')
         crow.ajax_post('/notice/conversation', {'conversation_id': conversation_id},{
             'success': function(response){
                 container = $('<div></div>')
@@ -128,7 +128,7 @@ $(document).ready(function(){
             'error': function(response){},
             'fail': function(){},
             'always': function(){
-                $(button).children('i').addClass('icon-eye-open').removeClass('icon-ajax')
+                $(button).children('i').addClass('icon-comment').removeClass('icon-ajax')
             },
         })
     })

@@ -78,7 +78,7 @@ crow_template = {
                         <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
                         '
             if((notice.in_reply_to_status_id||notice.in_reply_to_screen_name||notice.in_reply_to_user_id)&&!is_reply){
-                html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-eye-open"></i></button>'
+                html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-comment"></i></button>'
             }
             return html
         }
