@@ -4,7 +4,8 @@ Crow
 
 Version
 ---------------
-0.2.0
+you can get [current stable version](https://github.com/bijanebrahimi/crow) or [develop version](https://github.com/bijanebrahimi/crow/tree/develop) which has no version, just the bleeding edge code which i strongly recommend it to use since the entire code is still beta and unstable and developing version contains up to date bug fixes and new features.
+
 
 
 Requirements
