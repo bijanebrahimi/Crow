@@ -4,7 +4,10 @@ Crow
 
 Version
 ---------------
-0.2.0
+0.2.0 
+
+* [Crow 0.2.0 released](http://routinesexcluded.tk/crow-02-released.html)
+* [Crow](http://routinesexcluded.tk/crow.html)
 
 Requirements
 ---------------
