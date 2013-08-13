@@ -1,23 +1,9 @@
-// This file is part of Crow.
-// Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
-// added optional delimiter value to user's list
-// 
-// Crow is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// Crow is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Crow.  If not, see <http://www.gnu.org/licenses/>.
-// 
-// 
-// Original License
 // Copyright (c) 2013 Jacob Kelley
+// Copyright (C) 2013 Bijan Ebrahimi <bijanebrahimi@lavabit.com>
+//      overriding delimiter
+//      optional key/name/image object variable name 
+//      removed already mentions objects from emptyQuery result
+//      fixed unclosed mention menu bug
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,13 +30,13 @@
             this.opts = {
                 users: [],
                 delimiter: '@',
+                delimiters: '',
                 sensitive: true,
                 emptyQuery: false,
-                key: 'screen_name',
+                key: 'username',
                 name: 'name',
                 image: 'image',
                 queryBy: [],
-                
                 typeaheadOpts: {}
             };
 
@@ -67,8 +53,7 @@
                     return true;
                 },
                 _extractCurrentQuery = function(query, caratPos) {
-                    var i;
-                    for (i = caratPos; i >= 0; i--) {
+                    for (var i = caratPos; i >= 0; i--) {
                         if (query[i] == settings.delimiter) {
                             break;
                         }
@@ -76,33 +61,46 @@
                     return query.substring(i, caratPos);
                 },
                 _matcher = function(itemProps) {
-                    var i;
+                    // default value for queryBy is [settings.key], 
+                    if(settings.queryBy.length == 0)
+                        settings.queryBy = [settings.key]
+                    
+                    // local variable
+                    var current_delimiter = (itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter),
+                        itemKey = itemProps[settings.key].toLowerCase(),
+                        q = (this.query.toLowerCase()),
+                        caratPos = this.$element[0].selectionStart,
+                        lastChar = q.slice(caratPos-1,caratPos);
+                    
+                    // list all the usernames already in text (in lower case)
+                    var usernames = (q.toLowerCase().match(new RegExp(current_delimiter + '\\w+', "g"))||[]).map(function(b){ return b.toLowerCase(); })
+
+                    // query only the word between cursor and the first space/delimiter behind it
+                    var q = (q.substring(0, caratPos).match(new RegExp('([^ '+settings.delimiters+']+)$')) || [''])[0]
+                    
+                    // in emptyQuery, try to list all but those already selected
                     if(settings.emptyQuery){
-	                    var q = (this.query.toLowerCase()),
-	                    	caratPos = this.$element[0].selectionStart,
-	                    	lastChar = q.slice(caratPos-1,caratPos),
-                            current_delimiter = (itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter);
                         if(lastChar==current_delimiter){
-		                    if(!q.match(new RegExp(current_delimiter + itemProps[settings.key], 'g')))
-                                return true;
+		                    if (usernames.indexOf(current_delimiter+itemKey)==-1)
+                                return true
 	                    }
                     }
                     
-                    if(!settings.queryBy.length)
-                        settings.queryBy = [settings.key, settings.name]
-                    for (i in settings.queryBy) {
+                    // at this moment, don't bother to search empty query
+                    if(q == '') return false
+                    
+                    // list possible answers
+                    for (var i in settings.queryBy) {
                         if (itemProps[settings.queryBy[i]]) {
-                            var item = itemProps[settings.queryBy[i]].toLowerCase(),
-                                usernames = (this.query.toLowerCase()).match(new RegExp((itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter) + '\\w+', "g")),
-                                j;
-                            if ( !! usernames) {
-                                for (j = 0; j < usernames.length; j++) {
-                                    var username = (usernames[j].substring(1)).toLowerCase(),
-                                        re = new RegExp((itemProps['delimiter'] ? itemProps['delimiter'] : settings.delimiter) + item, "g"),
-                                        used = ((this.query.toLowerCase()).match(re));
-                                    if (item.indexOf(username) != -1 && used === null) {
-                                        return true;
-                                    }
+                            var item = itemProps[settings.queryBy[i]].toLowerCase()
+                            if(q.trim().toLowerCase().substring(1)==itemProps[settings.key].toLowerCase())
+                                return false
+                            for (var j = 0; j < usernames.length; j++) {
+                                var username = (usernames[j].substring(1)).toLowerCase(),
+                                    re = new RegExp(current_delimiter + item, "g"),
+                                    used = ((q.toLowerCase()).match(re));
+                                if (item.indexOf(username) != -1 && used === null && usernames.indexOf(current_delimiter+itemProps[settings.key].toLowerCase()) == -1) {
+                                    return true;
                                 }
                             }
                         }
@@ -190,7 +188,28 @@
                     return this;
                 };
 
+            // fill settings.delimiters if empty
+            if(settings.delimiters.length==0){
+                settings.delimiters = settings.delimiter
+                for(var i=0; i<settings.users.length; i++){
+                    if(settings.users[i].delimiter)
+                        if(settings.delimiters.indexOf(settings.users[i].delimiter)==-1)
+                            settings.delimiters += settings.users[i].delimiter
+                }
+            }
+
             $.fn.typeahead.Constructor.prototype.render = _render;
+            $.fn.typeahead.Constructor.prototype.select = function () {
+                var val = this.$menu.find('.active').attr('data-value'),
+                delimiter = this.$menu.find('.active').find('a').attr('data-delimiter')
+                this.$element
+                    .val(this.updater(val, delimiter))
+                    .change()
+                return this.hide()
+            }
+            $.fn.typeahead.Constructor.prototype.updater = function (item, delimiter) {
+                return item
+            }
 
             return this.each(function() {
                 var _this = $(this);
