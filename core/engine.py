@@ -293,7 +293,7 @@ class NoticeAttachmentHandler(tornado.web.RequestHandler):
             if type == 'attachment':
                 body = re.search(r"<body>(.*)</body>", html).groups()[0]
             else:
-                body = re.search("entry-content\">(.*)</div>", html).groups()[0]
+                body = re.search("entry-content\">(.*)\s*</div>", html).groups()[0]
             response['content'] = body
             response['success'] = True
         except:
