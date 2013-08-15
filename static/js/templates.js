@@ -77,8 +77,11 @@ crow_template = {
                         <button title="Reply to this notice" class="btn btn-mini reply"><i class="icon icon-white icon-share-alt"></i></button>\
                         <button title="Favorite this notice" class="btn btn-mini favorite ' + (notice.favorited ? 'active' : '') + '"><i class="icon icon-white icon-star"></i></button>\
                         '
-            if((notice.in_reply_to_status_id||notice.in_reply_to_screen_name||notice.in_reply_to_user_id)&&!is_reply){
-                html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-comment"></i></button>'
+            if(notice.in_reply_to_status_id||notice.in_reply_to_screen_name||notice.in_reply_to_user_id){
+                if(!is_reply)
+                    html += '<button title="Load this conversation" class="btn btn-mini conversation"><i class="icon icon-white icon-comment"></i></button>'
+                else
+                    html += '<button title="Go to this notice" class="btn btn-mini conversation conversation_reply"><i class="icon icon-white icon-chevron-left"></i></button>'
             }
             return html
         }

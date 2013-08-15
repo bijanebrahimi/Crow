@@ -115,15 +115,30 @@ $(document).ready(function(){
     })
     $(document).on('click', '.notice_action .conversation', function(){
         var button = $(this)
+        if($(button).hasClass('conversation_reply')){
+            var notice_id = '#notice-'+($(button).parents('.notice').attr('id').replace(/[^0-9]+/, ''))
+            // var notice = $(notice_id)
+            if($(notice_id).length){
+                $('#link-home').trigger('click')
+                $(document).scrollTop($(notice_id).offset().top-50)
+                return null
+            }
+        }
         var conversation_id = $(button).parents('.notice').attr('data-conversation')
         var conversation_container = $(button).parents('.notice')
-        console.log('conversation: ' + conversation_id)
         $(button).children('i').removeClass('icon-comment').addClass('icon-ajax')
         crow.ajax_post('/notice/conversation', {'conversation_id': conversation_id},{
             'success': function(response){
-                container = $('<div></div>')
-                var html = crow_template.notices(response.notices, true, false, $(container), false)
-                $(conversation_container).replaceWith($(html).html())
+                if($(button).hasClass('conversation_reply')){
+                    container = $('#home .contents')
+                    var html = crow_template.notices(response.notices, true, false, $(container), false)
+                    $('#link-home').trigger('click')
+                    $(document).scrollTop($(notice_id).offset().top-50)
+                }else{
+                    container = $('<div></div>')
+                    var html = crow_template.notices(response.notices, true, false, $(container), false)
+                    $(conversation_container).replaceWith($(html).html())
+                }
             },
             'error': function(response){},
             'fail': function(){},
@@ -182,6 +197,9 @@ $(document).ready(function(){
         e.preventDefault()
         if(!$(this).hasClass('empty')){
             e.stopPropagation()
+        }
+        if(!$('#link-home').parent().hasClass('active')){
+            $('#link-home').trigger('click')
         }
         crow.stream_remove($(this))
     })
