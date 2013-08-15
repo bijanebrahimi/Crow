@@ -94,6 +94,7 @@ crow = {
     plugin_mention: function(element){
         $(element).mention({
             delimiter: '@',
+            delimiters: '!@',
             emptyQuery: true,
             sensitive : true,
             key: 'username',
@@ -293,8 +294,9 @@ crow = {
                 crow.autocompletion  = response.autocompletion
                 $('textarea:first').mention({
                     delimiter: '@',
+                    delimiters: '!@',
                     emptyQuery: true,
-                    sensitive : true,
+                    sensitive : false,
                     key: 'username',
                     name: 'name',
                     queryBy: ['username'],
