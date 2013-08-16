@@ -16,9 +16,9 @@
 
 $(document).ready(function(){
     // on load
-    // crow.get_user_info()
-    // crow.get_server_info()
-    // crow.bind_shortcuts()
+    crow.get_user_info()
+    crow.get_server_info()
+    crow.bind_shortcuts()
     crow.version_check()
     
     // on every textarea value change
