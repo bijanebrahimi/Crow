@@ -364,6 +364,59 @@ crow = {
         })
     },
     
+    version_check_latest: function(){
+        console.log('checking')
+        $('#update-notifier .modal-body .latest_version').html('Loading...')
+        crow.ajax_get(crow.current_version.latest_version_url, {}, {
+            'success': function(data){
+                $('#update-notifier .modal-body .latest_version').html(data.version.text)
+                var html = ''
+                var list = ''
+                var code = '<pre><code>' + data.version.code + '</code></pre>'
+                for(var i=0; i<data.version.changelog.length; i++){
+                    var type = data.version.changelog[i].type
+                    if(type=='bugfix'){
+                        type_html = '<label class="label label-warning">BugFix</label>'
+                    }else if(type=='feature'){
+                        type_html = '<label class="label label-info">Feature</label>'
+                    }else if(type=='hotfix'){
+                        type_html = '<label class="label label-important">HotFix</label>'
+                    }else if(type=='release'){
+                        type_html = '<label class="label label-success">Release</label>'
+                    }else{
+                        type_html = '<label class="label">' + data.version.changelog[i].type + '</label>'
+                    }
+                    list += '<li>' + type_html + ' ' + data.version.changelog[i].text + '</li>'
+                }
+                html = '<ul>' + list + code +'</ul>'
+                $('#update-notifier .modal-body .whats_new').html(html)
+                
+                if(crow.current_version.major<data.version.major || crow.current_version.minor<data.version.minor || crow.current_version.fix<data.version.fix){
+                    // we have a new version
+                    console.log('we have a new version')
+                    $('#update-notifier').modal('show')
+                }
+                setTimeout(crow.version_check_latest, 5000)
+            }, 'error': function(){
+                $('#update-notifier .modal-body .latest_version').html('failed')
+            }, 'fail': function(){
+                $('#update-notifier .modal-body .latest_version').html('failed')
+            }, 'always': function(){}
+        })
+    },
+    version_check: function(){
+        $('#update-notifier .modal-body .current_version').html('Loading...')
+        crow.ajax_get("/static/VERSION", {}, {
+            'success': function(data){
+                $('#update-notifier .modal-body .current_version').html(data.version.text)
+                crow.current_version = data.version
+                crow.version_check_latest()
+            }, 'error': function(){
+            }, 'fail': function(){
+            }, 'always': function(){
+            }
+        })
+    },
     server_info: {'length_limit': 0},
     user_info: {},
     user_notices: [],

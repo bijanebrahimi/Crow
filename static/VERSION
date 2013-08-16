@@ -1,0 +1,16 @@
+{
+    "success": true,
+    "version": {
+        "major": 0,
+        "minor": 2,
+        "branch": "develop",
+        "fix": 7,
+        "text": "0.2.develop-7",
+        "changelog": [
+            {"type": "bugfix", "text": "auto-completion query improved"},
+            {"type": "feature", "text": "Load original Feature in replies"}
+        ],
+        "code": "git pull origin\ngit checkout develop",
+        "latest_version_url": "https://raw.github.com/bijanebrahimi/Crow/develop/VERSION"
+    }
+}
