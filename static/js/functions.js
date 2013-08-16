@@ -365,7 +365,6 @@ crow = {
     },
     
     version_check_latest: function(){
-        console.log('checking')
         $('#update-notifier .modal-body .latest_version').html('Loading...')
         crow.ajax_get(crow.current_version.latest_version_url, {}, {
             'success': function(data){
@@ -393,10 +392,9 @@ crow = {
                 
                 if(crow.current_version.major<data.version.major || crow.current_version.minor<data.version.minor || crow.current_version.fix<data.version.fix){
                     // we have a new version
-                    console.log('we have a new version')
                     $('#update-notifier').modal('show')
                 }
-                setTimeout(crow.version_check_latest, 5000)
+                setTimeout(crow.version_check_latest, 1800000)
             }, 'error': function(){
                 $('#update-notifier .modal-body .latest_version').html('failed')
             }, 'fail': function(){
