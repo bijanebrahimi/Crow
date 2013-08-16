@@ -9,7 +9,6 @@
         "changelog": [
             {"type": "feature", "text": "Update Notifier added"}
         ],
-        "code": "git pull origin\ngit checkout develop",
-        "latest_version_url": "https://raw.github.com/bijanebrahimi/Crow/develop/static/VERSION"
+        "code": "git pull origin\ngit checkout develop"
     }
 }

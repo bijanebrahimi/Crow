@@ -176,7 +176,7 @@ crow = {
 
     stream_update: function(notice){
         streams_count = $('#stream li').length - 2
-        $('#navbar-footer a.brand').html('<img id="logo brand" class="thumbnail" src="/static/img/favicon.png"> ' + (streams_count ? streams_count : ''))
+        $('#navbar-footer a.brand:first').html('<img id="logo brand" class="thumbnail" src="/static/img/favicon.png"> ' + (streams_count ? streams_count : ''))
         document.title = 'Crow :: Statusnet client ' + (streams_count ? '(' + streams_count + ')' : '')
         
     },
@@ -366,7 +366,7 @@ crow = {
     
     version_check_latest: function(){
         $('#update-notifier .modal-body .latest_version').html('Loading...')
-        crow.ajax_get(crow.current_version.latest_version_url, {}, {
+        crow.ajax_get('/check/update', {}, {
             'success': function(data){
                 $('#update-notifier .modal-body .latest_version').html(data.version.text)
                 var html = ''

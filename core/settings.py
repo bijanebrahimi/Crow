@@ -39,6 +39,7 @@ ROUTS = [
     (r"/notice/fav", engine.NoticeFavHandler),
     (r"/notice/attachment", engine.NoticeAttachmentHandler),
     (r"/notice/conversation", engine.NoticeConversationHandler),
+    (r"/check/update", engine.CheckUpdate),
     (r"/static/(.*)", engine.StaticFileHandlerCustomized, dict(path=SETTINGS['static_path'])),
 ]
 

@@ -17,6 +17,7 @@
 
 # from python
 import json
+import urllib
 import tornado.web
 
 # from application
@@ -313,3 +314,10 @@ class HomeHandler(tornado.web.RequestHandler):
             except:
                 raise tornado.web.HTTPError(404)
 
+class CheckUpdate(tornado.web.RequestHandler):
+    def get(self):
+        try:
+            version = urllib.urlopen(config.CRW_UPSTREAM_VERSION).read()
+        except:
+            version = "{'success': false}"
+        self.write(version)

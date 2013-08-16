@@ -22,3 +22,4 @@ SRV_PORT = 8888
 
 # Crow Environment (True/False)
 CRW_NOTIFY_PUBLICS = False
+CRW_UPSTREAM_VERSION = 'https://raw.github.com/bijanebrahimi/Crow/develop/static/VERSION'
