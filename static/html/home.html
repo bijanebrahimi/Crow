@@ -113,20 +113,54 @@
                 </div>
                 <div class="navbar" id="navbar-footer"> 
                     <div class="navbar-inner">
-                        <a class="app-link brand dropdown-toggle" data-toggle="dropdown" href="#" title="unread statuses">
-                            <img src="/static/img/favicon.png">
-                        </a>
-                        <ul class="dropdown-menu" id="stream">
-                            <li>
-                                <a class="app-link empty" tabindex="-1" href="#">
-                                    <i class="icon icon-eye-open"></i> mark all as read
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                        </ul>
+                        <div class='menu-left'>
+                            <a class="app-link brand dropdown-toggle" data-toggle="dropdown" href="#" title="unread statuses">
+                                <img src="/static/img/favicon.png">
+                            </a>
+                            <ul class="dropdown-menu" id="stream">
+                                <li>
+                                    <a class="app-link empty" tabindex="-1" href="#">
+                                        <i class="icon icon-eye-open"></i> mark all as read
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                            </ul>
+                        </div><div class='menu-right'>
+                            <a class="app-link brand dropdown-toggle" data-toggle="dropdown" href="#" title="unread statuses" style="
+        float: right;
+        margin-right: 0px !important;
+        padding-right: 0px !important;
+    "><img id="logo brand" class="thumbnail" src="/static/img/settings.png"></a>
+                            <ul class="dropdown-menu" id="setting">
+                                <li>
+                                    <a href="#update-notifier" class="app-link" data-toggle="modal">
+                                        Check Version
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Update Notifier Modal -->
+        <div class="modal hide fade" id="update-notifier" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Update Notifier</h3>
+            </div>
+            <div class="modal-body">
+                <strong>Current Version:</strong>
+                <p class='current_version'></p>
+                <strong>Latest Version</strong>
+                <p class='latest_version'></p>
+                <strong>What's New?</strong>
+                <p class='whats_new'></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+        <!--  -->
     </body>
 </html>

@@ -1,0 +1,15 @@
+{
+    "success": true,
+    "version": {
+        "major": 0,
+        "minor": 2,
+        "branch": "develop",
+        "fix": 6,
+        "text": "0.2.develop-6",
+        "changelog": [
+            {"type": "feature", "text": "Update Notifier added"}
+        ],
+        "code": "git pull origin\ngit checkout develop",
+        "latest_version_url": "https://raw.github.com/bijanebrahimi/Crow/develop/VERSION"
+    }
+}

@@ -318,7 +318,17 @@ body {
     border-radius: 0px;
     -webkit-border-radius: 0px;
 }
-#navbar-footer .navbar-inner.open .dropdown-menu{
+#navbar-footer .navbar-inner .menu-left.open .dropdown-menu,
+#navbar-footer .navbar-inner .menu-right.open .dropdown-menu{
     bottom: 100%;
     top: auto;
+}
+#navbar-footer .navbar-inner .menu-right.open .dropdown-menu{
+    right: 0px;
+    left: auto;
+}
+
+#update-notifier{
+    width: 90%;
+    margin-left: -45%;
 }
