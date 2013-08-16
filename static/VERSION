@@ -8,6 +8,7 @@
         "text": "0.2.develop-6",
         "changelog": [
             {"type": "feature", "text": "Update Notifier added"}
+            {"type": "feature", "text": "added Versioning for develop branch"}
         ],
         "code": "git pull origin\ngit checkout develop"
     }
