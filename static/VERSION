@@ -8,10 +8,10 @@
         "text": "0.3.develop-2",
         "changelog": [
             {"type": "feature", "text": "added Public/Profile/Group Timeline (Experimental)"},
-            {"type": "feature", "text": "ignore already notified notices on page load"}
-            {"type": "feature", "text": "confirmation before Repeating/favoriting a notice"}
-            {"type": "feature", "text": "added `CRW_NOTIFY_MAXIMUM` config variable limitting number of notifies at a time"}
-            {"bugfix": "feature", "text": "Youtube thumbnails fixed for youtu.be links"}
+            {"type": "feature", "text": "ignore already notified notices on page load"},
+            {"type": "feature", "text": "confirmation before Repeating/favoriting a notice"},
+            {"type": "feature", "text": "added `CRW_NOTIFY_MAXIMUM` config variable limitting number of notifies at a time"},
+            {"bugfix": "feature", "text": "Youtube thumbnails fixed for youtu.be links"},
             {"bugfix": "feature", "text": "stop notify once it found new version"}
         ],
         "code": "git pull origin\ngit checkout develop"
