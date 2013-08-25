@@ -2,13 +2,17 @@
     "success": true,
     "version": {
         "major": 0,
-        "minor": 2,
+        "minor": 3,
         "branch": "develop",
-        "fix": 6,
-        "text": "0.2.develop-6",
+        "fix": 2,
+        "text": "0.3.develop-2",
         "changelog": [
-            {"type": "feature", "text": "Update Notifier added"},
-            {"type": "feature", "text": "added Versioning for develop branch"}
+            {"type": "feature", "text": "added Public/Profile/Group Timeline (Experimental)"},
+            {"type": "feature", "text": "ignore already notified notices on page load"}
+            {"type": "feature", "text": "confirmation before Repeating/favoriting a notice"}
+            {"type": "feature", "text": "added `CRW_NOTIFY_MAXIMUM` config variable limitting number of notifies at a time"}
+            {"bugfix": "feature", "text": "Youtube thumbnails fixed for youtu.be links"}
+            {"bugfix": "feature", "text": "stop notify once it found new version"}
         ],
         "code": "git pull origin\ngit checkout develop"
     }

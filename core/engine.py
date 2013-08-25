@@ -16,6 +16,7 @@
 # along with Crow.  If not, see <http://www.gnu.org/licenses/>.
 
 # from python
+import re
 import json
 import urllib
 import tornado.web
@@ -55,7 +56,7 @@ class UserLoginHandler(tornado.web.RequestHandler):
                 self.write(json.dumps({'success': False, 'error': 'please enter your password'}))
             else:
                 core.SN['sn'] = StatusNet(config.API_PATH, username, password)
-                # core.INSTANCE['username'] = username
+                core.SN['username'] = username
                 # core.INSTANCE['password'] = password
                 self.write(json.dumps({'success': True, 'redirect': '/'}))
         except:
@@ -104,20 +105,12 @@ class UserAutocompletionHandler(tornado.web.RequestHandler):
         response['success'] = True
         self.write(json.dumps(response))
 
-class UserTimelineHandler(tornado.web.RequestHandler):
+class NoticeHandler(tornado.web.RequestHandler):
     def get(self):
-        response = {'success': False, 'user': {}, 'previous_page': False, 'error': ''}
-        try:
-            previous_page = self.get_argument("previous_page")
-        except:
-            previous_page = None
-
-        try:
-            fresh_results = self.get_argument("fresh_results")
-            core.SN['first_id'] = None
-            core.SN['last_id'] = None
-        except:
-            pass
+        response = {'success': False, 'notices': {}, 'olders': False, 'error': ''}
+        MAX_NOTICES = 20
+        sn = core.SN['sn']
+        params = dict(count=MAX_NOTICES)
 
         notify_enabled = False
         try:
@@ -125,91 +118,100 @@ class UserTimelineHandler(tornado.web.RequestHandler):
             notify_enabled = True
         except:
             pass
-
         try:
-            # instance_refresh()
-            home_timeline = []
-            
-            if previous_page == 'true' and core.SN.get('first_id') is not None:
-                home_timeline = core.SN['sn'].statuses_home_timeline(max_id=core.SN.get('first_id')-1, count=20, page=1)
-                core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-                response['previous_page'] = True
-            elif core.SN.get('last_id'):
-                home_timeline = core.SN['sn'].statuses_home_timeline(since_id=core.SN['last_id'], count=20)
+            response['olders'] = self.get_argument("olders") == 'true'
+        except:
+            response['olders'] = False
+        try:
+            req_type = self.get_argument("type")
+        except:
+            req_type = 'home'
+        try:
+            req_value = self.get_argument("value")
+        except:
+            req_value = None
+        try:
+            req_first = int(self.get_argument("first_id"))
+        except:
+            req_first = None
+        try:
+            req_last = int(self.get_argument("last_id"))
+        except:
+            req_last = None
+        
+        try:
+            if req_type == 'home':
+                if response['olders'] == True and req_first:
+                    home_timeline = sn.statuses_home_timeline(max_id=req_first, count=MAX_NOTICES)
+                elif req_last:
+                    home_timeline = sn.statuses_home_timeline(since_id=req_last, count=MAX_NOTICES)
+                else:
+                    home_timeline = sn.statuses_home_timeline(count=MAX_NOTICES)
+            elif req_type == 'replies':
+                if response['olders'] == True and req_first:
+                    home_timeline = sn.statuses_replies(max_id=req_first, count=MAX_NOTICES)
+                elif req_last:
+                    home_timeline = sn.statuses_replies(since_id=req_last, count=MAX_NOTICES)
+                else:
+                    home_timeline = sn.statuses_replies(count=MAX_NOTICES)
+            elif req_type == 'public':
+                # TODO: implement public timeline
+                if response['olders'] == True and req_first:
+                    home_timeline = sn.statuses_public_timeline(max_id=req_first, count=MAX_NOTICES)
+                elif req_last:
+                    home_timeline = sn.statuses_public_timeline(since_id=req_last, count=MAX_NOTICES)
+                else:
+                    home_timeline = sn.statuses_public_timeline(count=MAX_NOTICES)
+                pass
+            elif req_type == 'group':
+                if req_value.isdigit():
+                    params['group_id'] = int(req_value)
+                elif len(req_value) > 0:
+                    params['nickname'] = req_value
+                if response['olders'] == True and req_first:
+                    params['max_id'] = req_first
+                elif req_last:
+                    params['since_id'] = req_last
+                home_timeline = sn.statusnet_groups_timeline(**params)
             else:
-                home_timeline = core.SN['sn'].statuses_home_timeline(count=20)
+                # That would be `profile`
+                if req_value.isdigit():
+                    params['user_id'] = int(req_value)
+                elif len(req_value) > 0:
+                    params['screen_name'] = req_value
+                if response['olders'] == True and req_first:
+                    params['max_id'] = req_first
+                elif req_last:
+                    params['since_id'] = req_last
+                home_timeline = sn.statuses_user_timeline(**params)
 
-            if home_timeline and not response['previous_page']:
-                core.SN['last_id'] = int(home_timeline[0]['id'])
-
-            if core.SN.get('first_id') is None:
-                core.SN['first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-
-            if notify_enabled and home_timeline:
+            if response['olders'] == False and notify_enabled and home_timeline:
                 pynotify.init("Crow")
                 notification = None
-                
+                notification_count = 0
                 for notice in home_timeline:
-                    if notice['user']['id'] == core.SN['user_info']['id']:
-                        continue
-                    if config.CRW_NOTIFY_PUBLICS == False and core.SN['user_info']['id'] != notice['in_reply_to_user_id']:
+                    if core.SN.get('notified') is None:
+                        core.SN['notified'] = []
+                    if notice['id'] in core.SN['notified']:
+                        # Skipped already notified notices
                         continue
                     notification = pynotify.Notification(notice['user']['screen_name'], notice['text'], core.SETTINGS['static_path'] + '/img/favicon.png')
-                    if core.SN['user_info']['id'] == notice['in_reply_to_user_id']:
+                    # if core.SN['user_info'] and core.SN.get['user_info']['id'] == notice['in_reply_to_user_id']:
+                        # notification.set_urgency(pynotify.URGENCY_CRITICAL)
+                    # el
+                    if re.search('(\W|^)(@%s)(\W|$)' % core.SN['username'], notice['text']):
                         notification.set_urgency(pynotify.URGENCY_CRITICAL)
-                    notification.show()
-
-            response['notices'] = home_timeline
+                    elif config.CRW_NOTIFY_PUBLICS == False:
+                        continue
+                    if config.CRW_NOTIFY_MAXIMUM == 0 or notification_count <= config.CRW_NOTIFY_MAXIMUM:
+                        notification.show()
+                        notification_count += 1
+                    core.SN['notified'].append(notice['id'])
+                        
             response['success'] = True
-        except:
-            response['error'] = 'Failed to get home timeline'
-        self.write(json.dumps(response))
-
-class UserRepliesHandler(tornado.web.RequestHandler):
-    def get(self):
-        response = {'success': False, 'notices': {}, 'previous_page': False, 'error': ''}
-        try:
-            previous_page = self.get_argument("previous_page")
-        except:
-            previous_page = None
-
-        try:
-            fresh_results = self.get_argument("fresh_results")
-            core.SN['replies_first_id'] = None
-            core.SN['replies_last_id'] = None
-        except:
-            pass
-
-        notify_enabled = False
-        try:
-            import pynotify
-            notify_enabled = True
-        except:
-            pass
-
-        try:
-            # instance_refresh()
-            home_timeline = []
-            
-            if previous_page == 'true' and core.SN.get('replies_first_id') is not None:
-                home_timeline = core.SN['sn'].statuses_replies(max_id=core.SN.get('replies_first_id')-1, count=20, page=1)
-                core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-                response['previous_page'] = True
-            elif core.SN.get('replies_last_id'):
-                home_timeline = core.SN['sn'].statuses_replies(since_id=core.SN['replies_last_id'], count=20)
-            else:
-                home_timeline = core.SN['sn'].statuses_replies(count=20)
-
-            if home_timeline and not response['previous_page']:
-                core.SN['replies_last_id'] = int(home_timeline[0]['id'])
-
-            if core.SN.get('replies_first_id') is None:
-                core.SN['replies_first_id'] = int(home_timeline[len(home_timeline)-1]['id'])
-
             response['notices'] = home_timeline
-            response['success'] = True
-        except:
-            response['error'] = 'Failed to get home timeline'
+        except Exception as e:
+            response['error'] = '%s' % e.message
         self.write(json.dumps(response))
 
 class ServerInfoHandler(tornado.web.RequestHandler):
@@ -217,7 +219,8 @@ class ServerInfoHandler(tornado.web.RequestHandler):
         response = {'success': False, 'server': {}, 'error': ''}
         try:
             # instance_refresh()
-            server_info = {'length_limit': core.SN['sn'].length_limit}
+            server_info = {'length_limit': core.SN['sn'].length_limit,
+                           'triggered_text': ['@%s' % core.SN['username']]}
             response['server'] = server_info
             response['success'] = True
         except:

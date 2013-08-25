@@ -109,7 +109,7 @@ crow = {
     
     ajax_post: function(url, data, callbacks){
         data['is_ajax'] = true
-        var jqxhr = $.post(url, data, function(text_response){
+        $.post(url, data, function(text_response){
             response = eval('(' + text_response + ')')
             if(response.success == true){
                 if (callbacks['success'])
@@ -131,7 +131,7 @@ crow = {
         });
     },
     ajax_get: function(url, data, callbacks){
-        jQuery.ajax({
+        return jQuery.ajax({
                 url: url,
                 data: data,
                 type: 'GET',
@@ -180,18 +180,23 @@ crow = {
         document.title = 'Crow :: Statusnet client ' + (streams_count ? '(' + streams_count + ')' : '')
         
     },
-    stream_add: function(notices, prepend){
+    stream_add: function(notices, olders){
         if(notices.length>0){
-            for (var i=notices.length-1; i>=0 ; i--){
-                if(notices[i].user.id==crow.user_info.id){
-                    // Skip self posted dents in stream
+            for (var i=0; i<=notices.length-1 ; i++){
+                if(crow.user_info.id)
+                    if(notices[i].user.id==crow.user_info.id){
+                        // Skip self posted dents in stream
+                        continue
+                    }
+                if( $('#stream .stream-item[data-id=' + notices[i].id + ']').length )
                     continue
-                }
                 stream_html = crow_template.stream(notices[i])
-                if(prepend)
+                
+                if(notices[i].id > parseInt($('#stream .stream-item:first').attr('data-id'))){
                     $(stream_html).insertAfter('#stream .divider')
-                else
+                }else{
                     $(stream_html).appendTo('#stream')
+                }
             }
             crow.stream_update()
         }
@@ -225,68 +230,29 @@ crow = {
             e.preventDefault()
             toggle_form()
         })
-        $(document).bind('keydown', 'esc', function(){
+        shortcut.add("Alt+u",function() {
+            img = "<i class='icon-user'></i>"
+            value = prompt("Please enter LOCAL profile nickname (without @)","")
+            if(value == null || value == ""){
+                return null
+            }
+            $('#nav-pages li').removeClass('active')
+            $('#nav-pages li.profile_timeline').addClass('active').attr('data-value', value).find('a').html(img)
+            crow.change_view('profile', value)
+        });
+        shortcut.add("Alt+g",function() {
+            img = "<i class='icon-th-large'></i>"
+            value = prompt("Please enter LOCAL group nickname (without !)","")
+            if(value == null || value == ""){
+                return null
+            }
+            $('#nav-pages li').removeClass('active')
+            $('#nav-pages li.group_timeline').addClass('active').attr('data-value', value).find('a').html(img)
+            crow.change_view('group', value)
+        });
+        shortcut.add("Esc",function() {
             toggle_form()
         });
-        $('textarea').bind('keydown', 'esc', function(){
-            toggle_form()
-        });
-    },
-
-    get_user_timeline: function(previous_page, fresh_results){
-        var previous_page = previous_page ? true : false
-        $('#link-home i').addClass('loading')
-        crow.ajax_get('/user/timeline', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
-            'success': function(response){
-                crow.user_notices = response.notices
-                if(response.previous_page){
-                    var html = crow_template.notices(crow.user_notices, true, false, $('#home .contents'), false)
-                    crow.stream_add(crow.user_notices, false)
-                }else{
-                    crow.stream_add(crow.user_notices, true)
-                    
-                    var html = crow_template.notices(crow.user_notices, true, true, $('#home .contents'), false)
-                    $($(html).children('div')).prependTo('#home .contents')
-                    setTimeout(crow.get_user_timeline, 20000)
-                }
-            },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){
-                $('#link-home i').removeClass('loading')
-                if(previous_page)
-                    $('#home .pager button').button('reset')
-                else{
-                    $('#home .pager button').show()
-                }
-            },
-        })
-    },
-    get_user_replies: function(previous_page, fresh_results){
-        var previous_page = previous_page ? true : false
-        $('#link-replies i').addClass('loading')
-        crow.ajax_get('/user/replies', {'previous_page': previous_page, 'fresh_results': fresh_results}, {
-            'success': function(response){
-                crow.user_replies = response.notices
-                if(response.previous_page){
-                    var html = crow_template.notices(crow.user_replies, false, false, $('#replies .contents'), true)
-                }else{
-                    var html = crow_template.notices(crow.user_replies, false, true, $('#replies .contents'), true)
-                    $($(html).children('div')).prependTo('#replies .contents')
-                    setTimeout(crow.get_user_replies, 20000)
-                }
-            },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){
-                $('#link-replies i').removeClass('loading')
-                if(previous_page)
-                    $('#replies .pager button').button('reset')
-                else{    
-                    $('#replies .pager button').show()
-                }
-            },
-        })
     },
     get_autocompletion: function(){
         crow.ajax_get('/user/autocompletion', {}, {
@@ -308,7 +274,73 @@ crow = {
             },
             'error': function(response){},
             'fail': function(){},
-            'always': function(){},
+            'always': function(){
+                // TODO: run it periodically after 30Min or so
+            },
+        })
+    },
+    
+    change_view: function(type, value){
+        if (crow.jqxhr)
+            crow.jqxhr.abort()
+        // TODO: comment it sice it's now done in load_view
+        if (crow.timer)
+            clearTimeout(crow.timer);
+        $('#timeline .contents').html('')
+        crow.view.type = type
+        crow.view.value = (value ? value : null)
+        crow.view.last_id = 0
+        crow.view.first_id = 0
+        // TODO: stop current ajax call [view load ONLY]
+        $('#timeline .pager button').show().button('loading')
+        crow.load_view()
+        crow.stream_remove($('#stream li a:first'))
+    },
+    load_view: function(load_olders){
+        if (crow.timer){
+            clearTimeout(crow.timer);
+            crow.timer = null
+        }
+        var repeat = load_olders ? false : true
+        crow.jqxhr = crow.ajax_get('/notice/load', {'olders': load_olders ? true : false,
+                                     'type': crow.view.type,
+                                     'value': crow.view.value,
+                                     'first_id': crow.view.first_id,
+                                     'last_id': crow.view.last_id}, {
+            'success': function(response){
+                if(response.notices.length){
+                    if (!response.load_olders)
+                        crow.view.last_id = response.notices[0].id
+                    if (crow.view.first_id == 0 || response.olders)
+                        crow.view.first_id = response.notices[response.notices.length-1].id
+                }
+                // crow.user_notices = response.notices
+                // response.notices = response.notices
+                if(response.olders){
+                    // var html = crow_template.notices(respose.notices, true, false, $('#timeline .contents'), false)
+                    // FIXME: fix streams later
+                    var html = crow_template.notices(response.notices, $('#timeline .contents'), true)
+                }else{
+                    // FIXME: fix streams later
+                    // crow.stream_add(response.notices, false)
+                    
+                    var html = crow_template.notices(response.notices, $('#timeline .contents'), false)
+                    // $($(html).children('div')).prependTo('#timeline .contents')
+                }
+                crow.stream_add(response.notices, response.olders)
+                $('#timeline .pager button').show()
+            },
+            'error': function(response){
+                console.log('ERROR', response.error)
+            },
+            'fail': function(){
+                console.log('ERROR', 'Network Failed')
+            },
+            'always': function(){
+                if (repeat && !crow.timer)
+                    crow.timer = setTimeout(function(){ crow.load_view(false) }, 10000)
+                $('#timeline .pager button').button('reset').show()
+            },
         })
     },
     get_user_info: function(){
@@ -318,9 +350,6 @@ crow = {
                 crow.user_info = response.user
                 $('#avatar').attr('src', crow.user_info.profile_image_url)
                 $('#avatar').parent().attr('title', 'press ESC to toogle the form')
-                crow.get_autocompletion()
-                crow.get_user_timeline(false, true)
-                crow.get_user_replies(false, true)
             },
             'error': function(response){},
             'fail': function(){},
@@ -333,9 +362,17 @@ crow = {
             'success': function(response){
                 crow.server_info = response.server
             },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){},
+            'error': function(response){
+                // TODO: do something
+            },
+            'fail': function(){
+                // TODO: do something
+            },
+            'always': function(){
+                crow.get_autocompletion()
+                crow.version_check()
+                crow.change_view(crow.view.type, crow.view.value)
+            },
         })
     },
     
@@ -350,7 +387,7 @@ crow = {
         $(textarea).attr('readonly', 'readonly').parents('.status_form').find('.btn_status_send').button('loading')
         crow.ajax_post('/notice/send', {'status': status, 'id': notice_id}, {
             'success': function(){
-                crow_template.notices([response.notice], true, true, $('#home .contents'))
+                crow_template.notices([response.notice], $('#timeline .contents'), false)
                 $(textarea).parents('#status-form').hide()
                 
                 $('#status-form').attr('data-notice', '').find('textarea').focus().val('').trigger('propertychange')
@@ -393,8 +430,10 @@ crow = {
                 if(crow.current_version.major<data.version.major || crow.current_version.minor<data.version.minor || crow.current_version.fix<data.version.fix){
                     // we have a new version
                     $('#update-notifier').modal('show')
+                }else{
+                    // Try again in an hour
+                    setTimeout(crow.version_check_latest, 3600000)
                 }
-                setTimeout(crow.version_check_latest, 1800000)
             }, 'error': function(){
                 $('#update-notifier .modal-body .latest_version').html('failed')
             }, 'fail': function(){
@@ -418,6 +457,8 @@ crow = {
     server_info: {'length_limit': 0},
     user_info: {},
     user_notices: [],
+    view: {'type': 'home', 'value': '', 'first_id': 0, 'last_id': 0},
+    jqxhr: null
 }
 
 

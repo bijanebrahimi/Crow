@@ -19,7 +19,26 @@ $(document).ready(function(){
     crow.get_user_info()
     crow.get_server_info()
     crow.bind_shortcuts()
-    crow.version_check()
+
+    // View
+    $(document).on('click', '.avatar', function(e){
+        e.preventDefault()
+        e.stopPropagation()
+        value = $(this).attr('data-value')
+        img_src = $(this).children('img').attr('src')
+        $('#nav-pages li').removeClass('active')
+        $('#nav-pages li.profile_timeline').addClass('active').attr('data-value', value).find('a').html('<img src="' + img_src + '" style="width: 24px;">')
+        crow.change_view('profile', value)
+    })
+    
+    $(document).on('click', '#nav-pages li a', function(e){
+        $(this).tab('show')
+        var parent = $(this).parent()
+        view = $(parent).attr('data-view')
+        value = $(parent).attr('data-value')
+        $(parent).addClass('active').siblings().removeClass('active')
+        crow.change_view(view, value)
+    })
     
     // on every textarea value change
     $(document).on('input propertychange', 'textarea', function(e){
@@ -76,68 +95,62 @@ $(document).ready(function(){
     })
 
     // navbar tabs
-    $('#nav-pages li a').click(function(e){
-        e.preventDefault()
-        $(this).tab('show')
-    })
+    // $('#nav-pages li a').click(function(e){
+        // e.preventDefault()
+        // $(this).tab('show')
+    // })
 
     // Notice's action
     $(document).on('click', '.notice_action .favorite', function(){
-        var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
-        var notice_action = $(button).hasClass('active') ? 'destroy' : 'create'
-        $(button).children('i').removeClass('icon-star').addClass('icon-ajax')
-        crow.ajax_post('/notice/fav', {'id': notice_id, 'action': notice_action},{
-            'success': function(response){
-                notice_html = $(crow_template.notice(response.notice))
-                $(button).parents('.notice_body').replaceWith($(notice_html).children('.notice_body'))
-            },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){
-                $(button).children('i').addClass('icon-star').removeClass('icon-ajax')
-            },
-        })
+        if(confirm("Do you want to Favorite this notice?")){
+            var button = $(this)
+            var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
+            var notice_action = $(button).hasClass('active') ? 'destroy' : 'create'
+            $(button).children('i').removeClass('icon-star').addClass('icon-ajax')
+            crow.ajax_post('/notice/fav', {'id': notice_id, 'action': notice_action},{
+                'success': function(response){
+                    notice_html = $(crow_template.notice(response.notice))
+                    $(button).parents('.notice_body').replaceWith($(notice_html).children('.notice_body'))
+                },
+                'error': function(response){},
+                'fail': function(){},
+                'always': function(){
+                    $(button).children('i').addClass('icon-star').removeClass('icon-ajax')
+                },
+            })
+        }
     })
     $(document).on('click', '.notice_action .repeat', function(){
-        var button = $(this)
-        var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
-        $(button).children('i').removeClass('icon-refresh').addClass('icon-ajax')
-        crow.ajax_post('/notice/repeat', {'id': notice_id},{
-            'success': function(response){
-                crow_template.notices([response.notice], true, true, $('#home .contents'))
-            },
-            'error': function(response){},
-            'fail': function(){},
-            'always': function(){
-                $(button).children('i').addClass('icon-refresh').removeClass('icon-ajax')
-            },
-        })
+        if(confirm("Do you want to Repeat this notice?")){
+            var button = $(this)
+            var notice_id = $(button).parents('.notice').attr('id').replace(/[^0-9]+/, '')
+            $(button).children('i').removeClass('icon-refresh').addClass('icon-ajax')
+            crow.ajax_post('/notice/repeat', {'id': notice_id},{
+                'success': function(response){
+                    crow_template.notices([response.notice], true, true, $('#home .contents'))
+                },
+                'error': function(response){},
+                'fail': function(){},
+                'always': function(){
+                    $(button).children('i').addClass('icon-refresh').removeClass('icon-ajax')
+                },
+            })
+        }
     })
     $(document).on('click', '.notice_action .conversation', function(){
         var button = $(this)
-        if($(button).hasClass('conversation_reply')){
-            var notice_id = '#notice-'+($(button).parents('.notice').attr('id').replace(/[^0-9]+/, ''))
-            // var notice = $(notice_id)
-            if($(notice_id).length){
-                $('#link-home').trigger('click')
-                $(document).scrollTop($(notice_id).offset().top-50)
-                return null
-            }
-        }
         var conversation_id = $(button).parents('.notice').attr('data-conversation')
         var conversation_container = $(button).parents('.notice')
         $(button).children('i').removeClass('icon-comment').addClass('icon-ajax')
         crow.ajax_post('/notice/conversation', {'conversation_id': conversation_id},{
             'success': function(response){
                 if($(button).hasClass('conversation_reply')){
-                    container = $('#home .contents')
-                    var html = crow_template.notices(response.notices, true, false, $(container), false)
-                    $('#link-home').trigger('click')
+                    container = $('#timeline .contents')
+                    var html = crow_template.notices(response.notices, $(container), false)
                     $(document).scrollTop($(notice_id).offset().top-50)
                 }else{
                     container = $('<div></div>')
-                    var html = crow_template.notices(response.notices, true, false, $(container), false)
+                    var html = crow_template.notices(response.notices, container, false)
                     $(conversation_container).replaceWith($(html).html())
                 }
             },
@@ -184,13 +197,9 @@ $(document).ready(function(){
         })
     })
 
-    $('#replies .pager button').click(function(){
-        $('#replies .pager button').button('loading')
-        crow.get_user_replies(true)
-    })
-    $('#home .pager button').click(function(){
-        $('#home .pager button').button('loading')
-        crow.get_user_timeline(true)
+    $('#timeline .pager button').click(function(){
+        $(this).button('loading')
+        crow.load_view(true)
     })
 
     // Stream
@@ -214,12 +223,15 @@ $(document).ready(function(){
     // Links
     $(document).on('click', 'a', function(e){
         e.preventDefault()
-        if( (!$(this).hasClass('app-link') && (!$(this).hasClass('attachment') || !$(this).hasClass('more'))) ||
-            ($(this).hasClass('app-link') && $(this).hasClass('attachments')) ||
-            ($(this).hasClass('app-link') && $(this).attr('target')=='_blank')
+        if(
+            ($(this).hasClass('app-link') && $(this).attr('target')=='_blank') ||
+            !$(this).hasClass('app-link')
         ){
             var href = $(this).attr('href')
             window.open(href, '_blank')
+        }else{
+            
         }
+        
     })
 })

@@ -219,8 +219,19 @@ class StatusNet(object):
 
 ######## Timeline resources ########
 
-    def statuses_public_timeline(self):
-        return self.__makerequest("statuses/public_timeline")
+    def statuses_public_timeline(self, since_id=0, max_id=0, count=0, page=0, include_rts=False):
+        params = {}
+        if not (since_id == 0):
+            params['since_id'] = since_id
+        if not (max_id == 0):
+            params['max_id'] = max_id
+        if not (count == 0):
+            params['count'] = count
+        if not (page == 0):
+            params['page'] = page
+        if include_rts:
+            params['include_rts'] = "true"
+        return self.__makerequest("statuses/public_timeline", params)
 
     def statuses_home_timeline(self, since_id=0, max_id=0, count=0, page=0):
         params = {}
