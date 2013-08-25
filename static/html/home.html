@@ -30,6 +30,7 @@
         <script src="/static/js/moment.min.js"></script>
         <script src="/static/js/livestamp.min.js"></script>
         <script src="/static/js/jquery.hotkeys.js"></script>
+        <script src="/static/js/shortcut.js"></script>
         
         <!-- Twiter Bootstrap -->
         <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -80,23 +81,43 @@
                                 </div>
                             </div>
                             <ul class="nav" id="nav-pages">
-                                <li class="active">
-                                    <a class="app-link" href="#home" id="link-home">
-                                        <i class="icon icon-home"></i>
-                                        home
+                                <li class="" data-view="public" data-value="">
+                                    <a class="app-link" href="#public_timeline"  title="Public Timeline"> <!--id="link-home"-->
+                                        <i class="icon icon-road"></i>
                                     </a>
                                 </li>
-                                <li class="">
-                                    <a class="app-link" href="#replies" id="link-replies">
+                                <li class="active" data-view="home" data-value="">
+                                    <a class="app-link" href="#home_timeline"  title="Home Timeline"> <!--id="link-home"-->
+                                        <i class="icon icon-home"></i>
+                                    </a>
+                                </li>
+                                <li class="replies_timeline" data-view="replies" data-value="">
+                                    <a class="app-link" href="#replies" title="Replies"> <!--id="link-replies"-->
                                         <i class="icon icon-share-alt"></i>
-                                        replies
+                                    </a>
+                                </li>
+                                <li class="profile_timeline" data-view="profile" data-value="">
+                                    <a class="app-link" href="#profile" title="User's profile (ALT+u)">
+                                        <i class="icon-user"></i>
+                                    </a>
+                                </li>
+                                <li class="group_timeline" data-view="group" data-value="crow">
+                                    <a class="app-link" href="#group" title="Group's Timeline (ALT+g)">
+                                        <i class="icon-th-large"></i>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
+                <div id="timeline">
+                    <div class='contents'></div>
+                    <div class="pager">
+                        <button class="btn" data-loading-text="Loading...">Older Notes</button>
+                    </div>
+                </div>
                 
+<!--
                 <div class="tab-content">
                     <div class="tab-pane active" id="home">
                         <div class='contents'></div>
@@ -111,6 +132,7 @@
                         </div>
                     </div>
                 </div>
+-->
                 <div class="navbar" id="navbar-footer"> 
                     <div class="navbar-inner">
                         <div class='menu-left'>

@@ -129,6 +129,12 @@ body {
 .navbar .navbar-inner ul li a img.loading{
     display: none;
 }
+#nav-pages li a{
+    height: 20px;
+}
+#nav-pages li a img{
+    width: 24px;
+}
 
 #link-home i.loading,
 #link-replies i.loading{
@@ -136,6 +142,7 @@ body {
 }
 
 /* Tab Content */
+/*
 .tab-content{
     overflow-x: hidden !important;
     margin-bottom: 60px;
@@ -159,6 +166,31 @@ body {
     width: 80%;
     display: none;
 }
+*/
+#timeline{
+    overflow-x: hidden !important;
+    margin-bottom: 60px;
+    margin-top: 60px;
+}
+#timeline .contents{
+    width: 100%;
+    float: left;
+}
+#timeline .pager{
+    width: 100%;
+    text-align: center;
+    float: left;
+    padding: 0px;
+    margin: 0px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    
+}
+#timeline .pager button{
+    width: 80%;
+    display: none;
+}
+
 
 /* Notice */
 .notice{
@@ -198,8 +230,7 @@ body {
     float: left;
 }
 .notice .notice_body .notice_content p a.avatar img{
-    padding: 5px 5px 0px 0px;
-    float: left;
+    padding: 5px 5px 0px 0px; 
 }
 
 .notice .notice_body .notice_content p > span{

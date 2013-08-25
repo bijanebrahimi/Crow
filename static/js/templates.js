@@ -25,12 +25,16 @@ crow_template = {
             return '<span class="time" data-livestamp="' + notice_timestamp + '"></span> '
         }
         function _reply(notice){
-            if(notice.in_reply_to_user_id==crow.user_info.id)
+            if(crow.user_info.id && notice.in_reply_to_user_id==crow.user_info.id){
                 return 'mentioned'
-            else
-                return ''
+            }
+            for(var i=0; i<crow.server_info['triggered_text'].length; i++)
+                if (notice.text.match('(\\W|^)' + crow.server_info['triggered_text'][i] + '(\\W|$)')){
+                    return 'mentioned'
+                }
+            return ''
         }
-        return '<li class="stream-item ' + _reply(notice) + '">\
+        return '<li data-id="' + notice.id + '" class="stream-item ' + _reply(notice) + '">\
                     <a class="app-link" tabindex="-1" href="#notice-' + notice.id + '" title="' + crow.escape_quotes(notice.text) + '">\
                         <img class="icon" src="' + notice.user.profile_image_url + '" width=24px>\
                         ' + notice.user.screen_name + ', ' + _time(notice) + '\
@@ -102,14 +106,14 @@ crow_template = {
                             if(matched[2]=='youtube.com')
                                 var v = link.match(/v=([^&]+)/)[1]
                             else
-                                var v = link.match(/\/([^\/]*)*$/)[1]
+                                var v = link.match(/youtu.be\/([a-zA-Z0-9]*)/)[1]
                             var thumbnail = "http://i" + (Math.ceil(Math.random()*4)) + ".ytimg.com/vi/" + v + "/1.jpg"
                             attachments += '<a class="app-link" target=_blank href="' + notice.attachments[j].url + '"><img class="thumbnails" src="' + thumbnail + '"></a>'
                         }else{
-                            attachments += '<a class="app-link hide attachments text-html" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
+                            attachments += '<a class="app-link hide attachments text-html" target=_blank href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> show more</a>'
                         }
                     }else{
-                        attachments += '<a class="app-link attachments" href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
+                        attachments += '<a class="app-link attachments" target=_blank href="' + notice.attachments[j].url + '"><i class="icon icon-file"></i> ' + notice.attachments[j].url + '</a>'
                     }
                 }
             }
@@ -120,7 +124,7 @@ crow_template = {
                         <div class="notice_content">\
                             <strong>' + notice.user.screen_name + '</strong>\
                             <p class="' + _notice_direction(notice) + '">\
-                                <a class="avatar" href="' + notice.user.statusnet_profile_url + '"><img src="' + notice.user.profile_image_url + '"><a/>\
+                                <a data-value="' + notice.user.screen_name + '" class="avatar app-link" href="' + notice.user.statusnet_profile_url + '"><img src="' + notice.user.profile_image_url + '"><a/>\
                                 <span>' + _notice_html_content(notice) + '</span>\
                             </p>\
                             ' + _notice_attachments(notice) + '\
@@ -141,34 +145,25 @@ crow_template = {
         crow.plugin_mention($(notice_element).find('textarea'))
         return notice_element
     },
-    notices: function(notices, conversation, prepend, container, is_reply){
-        if(!notices.length){
+    notices: function(notices, container, olders){
+        if(!notices.length)
             return false
-        }
-        if(!container){
-            var container = $('<div>1</div>')
-        }
+        if(!container)
+            var container = $('<div></div>')
+        olders = olders ? true : false
+        
+        console.log('load olders?', olders)
         for (var i=notices.length-1; i>=0 ; i--) {
             var notice = notices[i]
-
-            // Skip already existing notices
-            if(!is_reply && $(container).find('#notice-' + notice.id).length){
+            if($(container).find('#notice-' + notice.id).length)
                 continue
-            }else if(is_reply && $(container).find('#reply-' + notice.id).length){
-                continue
-            }
-
-            // Add new profiles to friend list
-            crow.friend_add(notice.user)
-
-            var notice_html = crow_template.notice(notice, is_reply)
-            
-            if(conversation){
+            var notice_html = crow_template.notice(notice, false)
+            // if(conversation){
                 var conversation_parent = $(container).find('.notice[data-conversation=' + notice.statusnet_conversation_id + ']:first')
                 var conversation_parent_id = $(conversation_parent).attr('id')
                 if(conversation_parent_id){
                     var conversation_parent_id = parseInt(conversation_parent_id.replace('notice-', ''))
-                    if(parseInt(conversation_parent_id)>parseInt(notice.id)){
+                    if(conversation_parent_id>notice.id){
                         var tmp_array = conversation_parent.find('.notice')
                         $(conversation_parent).children('.notice_replies').html('')
                         tmp_array.push($(conversation_parent))
@@ -188,18 +183,18 @@ crow_template = {
                         }
                     }
                 }else{
-                    if(prepend)
+                    if(!olders)
                         $(notice_html).prependTo(container)
                     else
                         $(notice_html).appendTo(container)
                 }
-            }else{
-                if(prepend)
-                    $(notice_html).prependTo(container)
-                else
-                    $(notice_html).appendTo(container)
-            }
+            // }else{
+                // if(!olders)
+                    // $(notice_html).prependTo(container)
+                // else
+                    // $(notice_html).appendTo(container)
+            // }
         }
         return container
-    },
+    }
 }

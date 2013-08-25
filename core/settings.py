@@ -30,8 +30,6 @@ ROUTS = [
     (r'/', engine.HomeHandler),
     (r"/user/login", engine.UserLoginHandler),
     (r"/user/info", engine.UserInfoHandler),
-    (r"/user/timeline", engine.UserTimelineHandler),
-    (r"/user/replies", engine.UserRepliesHandler),
     (r"/user/autocompletion", engine.UserAutocompletionHandler),
     (r"/server/info", engine.ServerInfoHandler),
     (r"/notice/send", engine.NoticeSendHandler),
@@ -39,6 +37,7 @@ ROUTS = [
     (r"/notice/fav", engine.NoticeFavHandler),
     (r"/notice/attachment", engine.NoticeAttachmentHandler),
     (r"/notice/conversation", engine.NoticeConversationHandler),
+    (r"/notice/load", engine.NoticeHandler),
     (r"/check/update", engine.CheckUpdate),
     (r"/static/(.*)", engine.StaticFileHandlerCustomized, dict(path=SETTINGS['static_path'])),
 ]

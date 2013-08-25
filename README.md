@@ -9,7 +9,7 @@ you can get [current stable version](https://github.com/bijanebrahimi/crow) or [
 
 Current Version
 ---------------
-0.2.develop-6
+0.3.develop-2
 
 
 Requirements
@@ -87,6 +87,8 @@ any port number that is open
         SRV_PORT = 8888
 
 * `CRW_NOTIFY_PUBLICS` which will turn off notification for public notices when **False**
+
+* `CRW_NOTIFY_MAXIMUM` which will limit number of notifies in one go. zero means unlimited
 
 Run
 ---------------
