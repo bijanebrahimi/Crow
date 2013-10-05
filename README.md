@@ -133,6 +133,13 @@ To update to your Crow installation make sure you are in the folder you original
 
 	git pull origin
 
+Authors
+---------------
+
+* [Bijan Ebrahimi](https://quitter.se/bijan)
+* [Erkan Yılmaz](http://oracle.skilledtests.com/erkanyilmaz) (typo/grammar fixes)
+* [Shabgard](https://quitter.se/shabgard) (added Windows Installation constructions)
+* [Luke](luke@quitter.se) (added OSX Installation constructions)
 
 License
 ---------------
